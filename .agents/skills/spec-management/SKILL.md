@@ -41,7 +41,9 @@ Commit hashes reference the repo state at the time of the transition, not the co
 
 ### Product Vision (VISION-NNN)
 
-The highest-level specification artifact. Defines *what the product is* and *why it exists*. Typically one per product or major product area. Uses folder format to accommodate supporting documents.
+The highest-level specification artifact. Follow **Marty Cagan's product vision model** (from *Inspired*): a Vision is a short, aspirational narrative describing the future you want to create for your customers. It communicates *why* the product exists, *who* it serves, and *what better state of the world* it enables — and nothing else.
+
+A Vision is NOT a spec, NOT a feature list, NOT a roadmap, NOT a technical architecture document, and NOT a tracking artifact. If content describes *how* the system is built, *what* technologies it uses, *when* things ship, or *which tasks* remain, it belongs in a child artifact (Epic, PRD, ADR, Spike), not the Vision.
 
 - **Folder structure:** `docs/vision/(VISION-NNN)-<Title>/`
   - Primary file: `(VISION-NNN)-<Title>.md` — the vision document itself.
@@ -51,7 +53,8 @@ The highest-level specification artifact. Defines *what the product is* and *why
 - Frontmatter must include: title, status, author, created date, last updated date.
 - Must define: target audience, value proposition, success metrics, non-goals.
 - Should be stable — update infrequently. If a Vision needs frequent revision, it is likely scoped too narrowly (should be an Epic) or too early (needs a Spike first).
-- Vision documents do NOT contain implementation details, timelines, or task breakdowns.
+- Should fit on roughly one page. If a Vision is growing beyond that, extract detail into supporting docs or child artifacts.
+- Vision documents do NOT contain: implementation details, technical analysis, timelines, task breakdowns, tracking tables, dependency graphs, or phase-by-phase rollout plans.
 
 ### User Journey (JOURNEY-NNN)
 
