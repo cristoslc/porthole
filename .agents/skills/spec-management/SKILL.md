@@ -28,18 +28,43 @@ Every artifact embeds a lifecycle table tracking phase transitions:
 
 Commit hashes reference the repo state at the time of the transition, not the commit that writes the hash stamp itself. Commit first, then stamp the hash and amend — the pre-amend hash is the correct value.
 
+## Index maintenance
+
+Every doc-type directory keeps a single lifecycle index (`list-<type>.md`). **Refreshing the index is the final step of every artifact operation** — creation, content edits, phase transitions, and abandonment. No artifact change is complete until the index reflects it.
+
+### What "refresh" means
+
+1. Read (or create) `docs/<type>/list-<type>.md`.
+2. Ensure one table per active lifecycle phase, plus a table for each end-of-life phase that has entries.
+3. For the affected artifact, update its row: title, current phase, last-updated date, and commit hash of the change.
+4. If the artifact moved phases, remove it from the old phase table and add it to the new one.
+5. Sort rows within each table by artifact number.
+
+### When to refresh
+
+| Operation | Trigger |
+|-----------|---------|
+| Create artifact | New row in the appropriate phase table |
+| Edit artifact content or frontmatter | Update last-updated date and commit hash |
+| Transition phase | Move row between phase tables |
+| Abandon / end-of-life | Move row to the end-of-life table |
+
+This rule is referenced as the **index refresh step** in the workflows below. Do not skip it.
+
 ## Creating artifacts
 
 ### Workflow
 
 1. Scan `docs/<type>/` to determine the next available number for the prefix.
 2. Create the artifact using the appropriate format (see AGENTS.md artifact types table).
-3. Populate frontmatter with the required fields for the type (see sections below).
+3. Populate frontmatter with the required fields for the type (see the template in `references/<type>.md.j2`).
 4. Initialize the lifecycle table with the appropriate phase and current date. This is usually the first phase (Draft, Planned, etc.), but an artifact may be created directly in a later phase if it was fully developed during the conversation (see [Phase skipping](#phase-skipping)).
-5. Update or create the `list-<type>.md` index in the type's directory.
-6. Validate parent references exist (e.g., the Epic referenced by a new PRD must already exist).
+5. Validate parent references exist (e.g., the Epic referenced by a new PRD must already exist).
+6. **Index refresh step** — update `list-<type>.md` (see [Index maintenance](#index-maintenance)).
 
 ### Product Vision (VISION-NNN)
+
+**Template:** [references/vision.md.j2](references/vision.md.j2)
 
 The highest-level specification artifact. Follow **Marty Cagan's product vision model** (from *Inspired*): a Vision is a short, aspirational narrative describing the future you want to create for your customers. It communicates *why* the product exists, *who* it serves, and *what better state of the world* it enables — and nothing else.
 
@@ -50,21 +75,19 @@ A Vision is NOT a spec, NOT a feature list, NOT a roadmap, NOT a technical archi
   - Supporting docs live alongside it in the same folder. These are NOT numbered artifacts — they are informal reference material owned by the Vision.
   - Typical supporting docs: competitive analysis, market research, positioning docs, persona summaries, **architecture overview**.
 - **Architecture overview vs. ADRs:** An `architecture-overview.md` in the Vision folder describes *how the system works holistically* — a living description of the system shape. It is descriptive, not decisional. Individual architectural *decisions* ("we chose X over Y because Z") belong in ADRs. When extracting architecture content from a Vision document, split it: the holistic description stays as a Vision supporting doc; discrete decisions with alternatives considered become ADRs.
-- Frontmatter must include: title, status, author, created date, last updated date.
-- Must define: target audience, value proposition, success metrics, non-goals.
 - Should be stable — update infrequently. If a Vision needs frequent revision, it is likely scoped too narrowly (should be an Epic) or too early (needs a Spike first).
 - Should fit on roughly one page. If a Vision is growing beyond that, extract detail into supporting docs or child artifacts.
 - Vision documents do NOT contain: implementation details, technical analysis, timelines, task breakdowns, tracking tables, dependency graphs, or phase-by-phase rollout plans.
 
 ### User Journey (JOURNEY-NNN)
 
+**Template:** [references/journey.md.j2](references/journey.md.j2)
+
 Maps an end-to-end user experience across features and touchpoints. Journeys describe *how a user accomplishes a goal* and surface pain points and opportunities that inform which Epics to create.
 
 - **Folder structure:** `docs/journey/(JOURNEY-NNN)-<Title>/`
   - Primary file: `(JOURNEY-NNN)-<Title>.md` — the journey narrative.
   - Supporting docs: flow charts, interview notes, extended research.
-- Frontmatter must include: title, status, author, created date, last updated date, parent Vision, and linked Persona(s).
-- Must define: persona (who — reference a PERSONA-NNN artifact), goal (what they're trying to accomplish), steps/stages (the flow), pain points (friction), and opportunities (where the product can improve).
 - A Journey is "Validated" when its steps and pain points have been confirmed through user research, stakeholder review, or prototype testing.
 - Journeys are *discovery artifacts* — they inform Epic and PRD creation but are not directly implemented. They do NOT contain acceptance criteria or task breakdowns.
 
@@ -134,58 +157,58 @@ In this example, "Configure credentials" (2) and "Invite team member" (1) surfac
 
 ### Epics (EPIC-NNN)
 
+**Template:** [references/epic.md.j2](references/epic.md.j2)
+
 A strategic initiative that decomposes into multiple PRDs, Spikes, and ADRs. The **coordination layer** between product vision and feature-level work.
 
-- Frontmatter must include: title, status, author, created date, last updated date, parent Vision, success criteria.
-- Must define: goal/objective, scope boundaries, child PRD list (updated as PRDs are created), and key dependencies on other Epics.
 - An Epic is "Complete" when all child PRDs reach "Implemented" and success criteria are met.
 - An Epic is "Archived" after completion, when it no longer requires active reference.
 
 ### User Story (STORY-NNN)
 
+**Template:** [references/story.md.j2](references/story.md.j2)
+
 The atomic unit of user-facing requirements. Captures a single capability from the user's perspective with clear acceptance criteria. Decomposes an Epic into verifiable, implementable increments.
 
 - **Format:** Single markdown file at `docs/story/(STORY-NNN)-<Title>.md`.
-- Frontmatter must include: title, status, author, created date, last updated date, parent Epic, and optionally linked Journey(s).
-- Must follow the canonical format:
-  - **As a** [role/persona], **I want** [capability], **so that** [benefit/outcome].
-  - **Acceptance criteria:** Numbered list of testable conditions that must be true for the story to be complete.
 - Stories should be small enough to implement and verify independently. If a story requires multiple PRDs, it is likely scoped too broadly (should be an Epic).
 - A Story is "Ready" when acceptance criteria are defined and agreed upon. A Story is "Implemented" when all acceptance criteria pass.
-- Stories can link to Journeys via `related` frontmatter to show which user experience they improve.
 
 ### PRDs (PRD-NNN)
 
-- Frontmatter must include: title, status, author, created date, last updated date, parent Epic, and linked research artifacts and/or ADRs.
+**Template:** [references/prd.md.j2](references/prd.md.j2)
+
 - Should be scoped to something a team (or agent) can ship and validate independently.
 
 ### Research Spikes (SPIKE-NNN)
 
+**Template:** [references/spike.md.j2](references/spike.md.j2)
+
 - Number in intended execution order — sequence communicates priority.
-- Frontmatter must state: question, gate (e.g., Pre-MVP), risks addressed, dependencies, and what it blocks.
 - Gating spikes must define go/no-go criteria with measurable thresholds (not just "investigate X").
 - Gating spikes must recommend a specific pivot if the gate fails (not just "reconsider approach").
 - Spikes can belong to any artifact type (Vision, Epic, PRD, ADR, Persona). The owning artifact controls all spike tables: questions, risks, gate criteria, dependency graph, execution order, phase mappings, and risk coverage. There is no separate research roadmap document.
 
 ### Personas (PERSONA-NNN)
 
+**Template:** [references/persona.md.j2](references/persona.md.j2)
+
 A user archetype that represents a distinct segment of the product's audience. Personas are cross-cutting — they are referenced by Journeys, Stories, Visions, and other artifacts but are not owned by any single one.
 
 - **Folder structure:** `docs/persona/(PERSONA-NNN)-<Title>/`
   - Primary file: `(PERSONA-NNN)-<Title>.md` — the persona definition.
   - Supporting docs: interview notes, survey data, behavioral research, demographic analysis.
-- Frontmatter must include: title, status, author, created date, last updated date, and links to all Journeys and Stories that reference this persona.
-- Must define: name/archetype label, demographic summary, goals and motivations, frustrations and pain points, behavioral patterns, and context of use (when/where/how they interact with the product).
 - A Persona is "Validated" when its attributes have been confirmed through user research, interviews, or data analysis — not just assumed.
 - Personas are *reference artifacts* — they inform Journey, Story, and PRD creation but are not directly implemented. They do NOT contain acceptance criteria, task breakdowns, or feature specifications.
 
 ### ADRs (ADR-NNN)
 
+**Template:** [references/adr.md.j2](references/adr.md.j2)
+
 - **Directory structure:** `docs/adr/<Phase>/(ADR-NNN)-<Title>.md` — each ADR is a single Markdown file placed in the subdirectory matching its current lifecycle phase. Phase subdirectories: `Draft/`, `Proposed/`, `Adopted/`, `Retired/`, `Superseded/`.
   - Example: `docs/adr/Adopted/(ADR-001)-Subtree-Split-Distribution-Model.md`
   - When transitioning phases, **move the file** to the new phase directory (e.g., `git mv docs/adr/Draft/(ADR-003)-Foo.md docs/adr/Proposed/(ADR-003)-Foo.md`).
   - **Never** store ADRs flat in `docs/adr/` with phase tracked only in frontmatter — the directory structure must reflect the phase.
-- Frontmatter must include: title, status, author, created date, last updated date, and links to all affected Epics/PRDs.
 - ADRs are cross-cutting: they link to all affected artifacts but are not owned by any single one.
 - ADRs record **decisions**: a specific choice between alternatives, with rationale and consequences. They require status, alternatives considered, and a decision outcome.
 - ADRs are NOT for descriptive or explanatory architecture content. If the content describes "how the system works" without presenting a decision between alternatives, it belongs as an architecture overview supporting doc in the Vision folder — not as an ADR.
@@ -209,7 +232,7 @@ Phases listed in AGENTS.md are available waypoints, not mandatory gates. An arti
 3. Commit the change.
 4. Append a row to the artifact's lifecycle table with the commit hash from step 3.
 5. Amend the commit to include the hash stamp.
-6. Update `list-<type>.md` to reflect the new phase.
+6. **Index refresh step** — move the artifact's row to the new phase table (see [Index maintenance](#index-maintenance)).
 
 ### Completion rules
 
