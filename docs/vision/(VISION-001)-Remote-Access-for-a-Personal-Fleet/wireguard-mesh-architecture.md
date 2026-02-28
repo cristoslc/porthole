@@ -35,6 +35,10 @@ The network's source of truth is `network.sops.yaml` — a SOPS-encrypted YAML f
 - Zero-touch operation for non-operator peers after initial provisioning.
 - All WireGuard private keys encrypted in the repository; no secrets in plaintext at rest outside of deployed machines.
 
+## Runtime model
+
+All agents on client nodes — WireGuard, remote desktop (RustDesk), and the status web UI — run as background services (systemd units on Linux, launchd daemons on macOS, Windows services). No foreground application window or tray icon is required to maintain connectivity. The system is invisible to non-operator users during normal operation.
+
 ## Non-goals
 
 - Not a general-purpose SD-WAN or enterprise networking product.

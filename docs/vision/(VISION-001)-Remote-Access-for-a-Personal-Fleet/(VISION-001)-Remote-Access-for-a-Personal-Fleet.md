@@ -39,6 +39,7 @@ After the bootstrap: machines find each other automatically, connections travers
 | R7 | Automated provisioning | `make apply` (or equivalent) on Linux/macOS. Documented manual steps for Windows |
 | R8 | Low maintenance for ~10 machines | One person, spare time, not a job |
 | R9 | Reasonable cost | $0-20/mo, not enterprise pricing |
+| R10 | Silent background operation | All agents (VPN, remote desktop) run as background services — no foreground windows, no tray icons required, no user interaction to maintain connectivity |
 
 ## What we'd like
 
