@@ -27,7 +27,7 @@ A self-hosted, privacy-first remote access platform that lets a single operator 
 1. **Privacy by architecture.** All remote access traffic stays on a self-controlled mesh network. No third-party relay servers see session data, keystrokes, or screen content.
 2. **Reach any machine from anywhere.** Remote desktop and SSH access between any two enrolled machines within seconds, regardless of NAT topology or firewall configuration.
 3. **Family-friendly operations.** Remote family machines stay reachable without requiring the family member to perform ongoing technical tasks. Initial setup is a one-time, guided process.
-4. **Automation over manual effort.** Linux and macOS machines are fully provisioned via infrastructure-as-code (Ansible). A single `make apply` enrolls a machine. Windows machines have a documented manual procedure completable in under 15 minutes.
+4. **Automation with delight.** Machine provisioning is driven by infrastructure-as-code (Ansible) behind a friendly local UI — a Textual TUI app, local web dashboard, or similar — that shows fleet state, guides first-run setup, and applies updates. The operator experience should feel polished, not like raw shell commands. Windows machines have a documented guided procedure completable in under 15 minutes.
 5. **Cross-platform by default.** Linux, macOS, and Windows are first-class targets. Tool choices (network layer, remote desktop client) are made with all three platforms in mind.
 
 ## Core capabilities
@@ -37,7 +37,7 @@ A self-hosted, privacy-first remote access platform that lets a single operator 
 | Mesh networking | Private overlay network connecting all fleet machines with stable addressing, NAT traversal, and network isolation from existing infrastructure. |
 | Remote desktop | RustDesk-based remote desktop access over the mesh network, with optional self-hosted relay for edge cases. |
 | SSH access | Terminal access to all machines via stable hostnames or IPs on the mesh network. |
-| Automated provisioning | Ansible-driven setup for Linux and macOS; documented manual procedures for Windows. |
+| Operator UI | A local application (Textual TUI, web dashboard, or similar) that surfaces fleet state, guides first-run enrollment, and triggers updates — wrapping Ansible automation in a polished operator experience. |
 | Family onboarding | Low-friction enrollment path for non-technical users' machines. |
 
 ## Success metrics
@@ -46,7 +46,7 @@ A self-hosted, privacy-first remote access platform that lets a single operator 
 2. SSH access works between all enrolled machines via stable hostnames or IPs.
 3. Family machines remain reachable without ongoing technical intervention from family members.
 4. Zero session traffic transits third-party infrastructure.
-5. New Linux/macOS machine enrollment completes via `make apply`; Windows via documented manual procedure in under 15 minutes.
+5. New Linux/macOS machine enrollment completes through the operator UI (TUI or web dashboard); Windows via documented guided procedure in under 15 minutes.
 6. The remote-access network is isolated from existing infrastructure (VMs, Docker containers, other services).
 
 ## Non-goals
@@ -67,9 +67,9 @@ Every infrastructure component is self-hosted or operates peer-to-peer. The oper
 
 Family members should not need to understand networking, VPNs, or remote desktop protocols. The system should be invisible during normal use and recoverable without technical knowledge if something goes wrong.
 
-### Infrastructure as code
+### Infrastructure as code, operator experience as product
 
-Machine configuration is declarative and version-controlled. Drift is corrected by re-running automation, not by manual SSH sessions. The repo is the source of truth for what a managed machine should look like.
+Machine configuration is declarative and version-controlled. Drift is corrected by re-running automation, not by manual SSH sessions. The repo is the source of truth for what a managed machine should look like. But the operator interface should feel like a product — a local TUI or web dashboard that shows fleet health, guides enrollment, and applies changes — not a wall of Ansible output.
 
 ### Cross-platform pragmatism
 
