@@ -2,6 +2,7 @@
 
 **Supporting doc for:** [VISION-001](./(VISION-001)-Private-Remote-Access-Platform.md)
 **Last updated:** 2026-02-28
+**Pricing verified:** 2026-02-28 (via vendor websites and reseller listings)
 **Research sources:** [SPIKE-001](../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md), [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md), integrated platforms research
 
 ---
@@ -24,7 +25,7 @@ Options that don't have an N on any requirement (R1-R6). Ranked by how many requ
 | **Splashtop Pro** | P | N* | Y | Y | Y | Y | — | 4Y 1P 1N | $99/yr, up to 10 machines. Linux support is second-class. No SSH (would need separate solution). *Could pair with Tailscale for SSH → see combo below. |
 | **Splashtop Pro + Tailscale** | P | Y | Y | P | P | Y | Y | 4Y 3P | $99/yr + free Tailscale. Fixes SSH gap. Linux remote desktop still second-class. Two products to maintain + Tailscale for family = 2 installs. |
 | **TeamViewer Business** | Y | P | Y | Y | Y | N | — | 5Y 1P 1N | ~$610/yr — too expensive for personal use. Otherwise excellent: just works, great NAT, good fleet management. SSH via web terminal only. |
-| **Remotix On-Prem** | Y | P | Y | Y | P | P | — | 3Y 3P | $200/yr. NEAR protocol is best-in-class for performance. Already acquired by Acronis and rebranded as Cyber Protect Connect — product direction and on-prem licensing future unclear. SSH only via VNC/RDP tunnel. On-prem adds maintenance. |
+| **Acronis Cyber Protect Connect** *(formerly Remotix)* | Y | P | Y | Y | P | P | — | 3Y 3P | Now subscription-only: Free (15-min sessions, 2 clients), Personal (~$45/yr, 2 clients), Professional (3 clients/user, pricing unlisted). NEAR protocol is best-in-class for performance. On-prem option status unclear post-acquisition. SSH only via VNC/RDP tunnel. Product direction uncertain under Acronis. |
 
 ### Disqualified options
 
@@ -98,7 +99,7 @@ Options with a hard N on a non-negotiable requirement.
 | NetBird adds built-in remote desktop | Single-product answer — evaluate and likely adopt |
 | NoMachine improves fleet management in free tier | NoMachine + Tailscale becomes strictly dominant |
 | RustDesk Server Pro drops below $5/mo and adds SSH | RustDesk becomes a single-product answer |
-| Remotix stabilizes post-Acronis with reasonable pricing | Return to current tool |
+| Acronis Cyber Protect Connect clarifies on-prem future and pricing | Re-evaluate — NEAR protocol is still best-in-class |
 
 ---
 
