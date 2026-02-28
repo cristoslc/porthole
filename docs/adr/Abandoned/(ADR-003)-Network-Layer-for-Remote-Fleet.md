@@ -1,6 +1,6 @@
 # ADR-003: Network Layer for Remote Fleet
 
-**Status:** Proposed
+**Status:** Abandoned
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
@@ -12,6 +12,7 @@
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 9b4365e | Initial creation |
+| Abandoned | 2026-02-28 | d69e12e | Recommendation (Tailscale ACLs) not adopted; superseded by ADR-004 (WireGuard hub-and-spoke) |
 
 ---
 

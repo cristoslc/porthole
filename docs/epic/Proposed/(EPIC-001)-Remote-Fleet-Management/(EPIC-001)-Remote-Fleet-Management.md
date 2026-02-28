@@ -72,43 +72,28 @@ infrastructure or manual per-machine network configuration.
 | Spike | [SPIKE-001](../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
 | Spike | [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
 | ADR | [ADR-001](../../adr/Adopted/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Adopted | Tool selection decision |
-| ADR | [ADR-003](../../adr/Proposed/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Proposed | Tailscale ACLs vs ZeroTier vs WireGuard |
+| ADR | [ADR-003](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Abandoned | Evaluated Tailscale vs ZeroTier vs WireGuard; superseded by ADR-004 |
+| ADR | [ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Adopted | Self-hosted WireGuard via VPS; replaces ADR-003 |
 | Spec | [SPEC-002](../../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Implemented | RustDesk + GLI KVM + Remmina install |
-| PRD | [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | ADR-003 eliminated the need for a relay |
-| Spec | — | Fleet Agent Provisioning | — | Not yet created; scope depends on ADR-003 + repo boundary decision. May live in a separate repo. |
-| ADR/Spike | — | Repo Boundary: Fleet Agent vs Workstation | — | How does the fleet-agent repo relate to this workstation repo? (Galaxy role, submodule, or standalone) |
+| PRD | [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | WireGuard mesh eliminates the need for a relay |
 
 ## Key dependencies
 
-- **ADR-003 must be decided first.** The network layer decision determines
-  whether PRD-004 (self-hosted relay) is needed, what provisioning work is
-  required, and how client configuration works. (PRD-004 has since been
-  Abandoned — ADR-003 recommends Tailscale ACLs, eliminating the relay.)
+- **ADR-004 (Adopted):** WireGuard hub-and-spoke via VPS is the chosen network
+  layer. ADR-003 (Tailscale ACLs recommendation) was abandoned in favor of
+  self-hosted WireGuard for vendor independence and operational sovereignty.
 - SPEC-002 (formerly PRD-002) is already implemented — it installed RustDesk
   but deferred relay and network configuration. This epic completes that
   deferred work.
+- PRD-004 (RustDesk relay) is Abandoned — the WireGuard mesh eliminates the
+  need for a self-hosted relay.
 
 ## Key decisions pending
 
-1. **Network layer** (ADR-003): Tailscale ACL segmentation vs. separate
-   Tailscale account vs. self-hosted ZeroTier vs. WireGuard hub-and-spoke.
-2. **RustDesk relay necessity**: Depends on ADR-003 outcome. If all machines
-   are on a mesh VPN, direct IP connections may eliminate the need for a relay
-   entirely.
-3. **Family machine onboarding model**: How do non-technical family members
-   set up and maintain the network agent on their machines?
-4. **Repo boundary**: Should the fleet agent (Tailscale + RustDesk install and
+1. **Family machine onboarding model**: How do non-technical family members
+   set up and maintain the WireGuard client on their machines?
+2. **Repo boundary**: Should the fleet agent (WireGuard + RustDesk install and
    config) live in a separate repo from the workstation bootstrapper? Not every
-   machine that needs remote desktop is a personal dev workstation — family
+   machine that needs remote access is a personal dev workstation — family
    machines, lightweight non-coding boxes, and home servers need the network
-   layer without the full workstation stack. A separate `fleet-agent` repo
-   would:
-   - Support Linux, macOS, and Windows as first-class targets.
-   - Be runnable independently (no workstation repo dependency).
-   - Be invokable from the workstation repo as a dependency (Ansible Galaxy
-     role, git submodule, or loose prerequisite — TBD).
-   - Own the provisioning PRD and Windows setup docs.
-
-   The integration model (how the workstation repo consumes the fleet agent)
-   needs its own ADR or spike. Options include: Ansible Galaxy role,
-   git submodule, or standalone repo with loose coupling.
+   layer without the full workstation stack.
