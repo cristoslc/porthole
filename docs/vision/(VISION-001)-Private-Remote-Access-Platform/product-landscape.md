@@ -19,7 +19,7 @@ Options that don't have an N on any requirement (R1-R6). Ranked by how many requ
 
 | Option | R1 Desktop | R2 SSH | R3 NAT | R4 Family | R5 Maintenance | R6 Cost | R7 Isolation | Score | Notes |
 |--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
-| **NoMachine + Tailscale** | Y | Y | Y | Y | Y | Y | Y | 7/7 | Both free. NoMachine free tier = 1 incoming connection (fine for 1 operator). Tailscale ACLs for isolation. Dated UI. No fleet mgmt without NoMachine Enterprise ($445/yr). |
+| **NoMachine + Tailscale** | Y | Y | Y | Y | Y | Y | Y | 7/7 | Both free. NoMachine free tier = 1 incoming connection (fine for 1 operator). Tailscale provides stable IPs, SSH, and ACL isolation. Dated UI. No fleet mgmt without NoMachine Enterprise ($44.50/machine/yr). |
 | **RustDesk + Tailscale** *(this project)* | Y | Y | Y | P | P | Y | Y | 5Y 2P | RustDesk direct IP over Tailscale. Family: requires RustDesk + Tailscale install (2 apps). Maintenance: need Ansible or equivalent to manage config across 10 machines. |
 | **MeshCentral** | Y | P | Y | P | Y | Y | P | 4Y 3P | Free, self-hosted, all-in-one. SSH is web-console only (not direct terminal). Family: agent install is easy but web UI is MSP-grade. Isolation: no built-in network segmentation. |
 | **Splashtop Pro** | P | N* | Y | Y | Y | Y | — | 4Y 1P 1N | $99/yr, up to 10 machines. Linux support is second-class. No SSH (would need separate solution). *Could pair with Tailscale for SSH → see combo below. |
@@ -69,7 +69,8 @@ Options with a hard N on a non-negotiable requirement.
 - **NoMachine** provides remote desktop (NX protocol, Linux-first heritage, free for personal use) with multiple NAT traversal strategies (UPnP, hole-punching, relay, reverse SSH).
 - **Tailscale** provides mesh VPN (WireGuard-based, free tier: 100 devices/3 users), stable IPs, MagicDNS hostnames, Tailscale SSH, and ACL-based network isolation.
 - Together: NoMachine handles remote desktop, Tailscale handles SSH + networking + isolation. Both install on all three platforms. Family members install two apps once.
-- **Gap:** NoMachine free tier is limited to 1 incoming connection. Enterprise ($44.50/machine/yr = ~$445/yr for 10 machines) removes this but gets expensive. For a single operator this limit rarely matters.
+- **Gap:** NoMachine free tier is limited to 1 incoming connection. Enterprise Desktop ($44.50/machine/yr = ~$445/yr for 10 machines) removes this but gets expensive. For a single operator this limit rarely matters.
+- **NoMachine Network subscription** ($8.50/mo or $84.50/yr for 1 concurrent connection) adds internet-based machine discovery to the free edition — unlimited machines, cloud-registered IDs. This would let NoMachine work standalone without Tailscale for NAT traversal. But Tailscale gives you the same reachability for free *plus* SSH, stable IPs, MagicDNS, and network isolation, so the Network subscription is redundant in this combo.
 - **Gap:** No unified fleet management — Tailscale has its admin console, NoMachine has per-machine config. No single dashboard.
 
 ### RustDesk + Tailscale (this project)
