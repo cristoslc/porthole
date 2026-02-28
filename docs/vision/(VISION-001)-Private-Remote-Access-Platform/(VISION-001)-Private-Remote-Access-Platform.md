@@ -15,7 +15,11 @@
 
 ## Overview
 
-Reliable remote desktop and SSH access to ~10 machines — Linux, macOS, and Windows — including non-technical family members' machines in remote locations. The best solution is a product that does this out of the box. This project exists to find that product, or — if nothing on the market fits — to assemble one from components. See [product-landscape.md](./product-landscape.md) for the decision matrix.
+Reliable remote desktop and SSH access to ~10 machines — Linux, macOS, and Windows — including non-technical family members' machines in remote locations.
+
+The best outcome is adopting a product (or product combination) that does this out of the box. This project exists to systematically evaluate what's available and find that product. If nothing on the market fits all requirements, then — and only then — the fallback is assembling a solution from components (RustDesk + Tailscale + automation). The decision matrix in [product-landscape.md](./product-landscape.md) scores every option against the same criteria.
+
+**Context:** The operator currently uses Remotix (NEAR protocol), which was acquired by Acronis and rebranded as Acronis Cyber Protect Connect. The product's direction is uncertain under new ownership — subscription-only pricing, unclear on-prem future, sparse documentation. This motivates a systematic evaluation of alternatives before being forced to migrate reactively.
 
 ## Who
 
@@ -36,9 +40,9 @@ Reliable remote desktop and SSH access to ~10 machines — Linux, macOS, and Win
 
 ## What we'd like
 
-- Polished operator experience (TUI, local dashboard) — not raw shell commands
+- Polished operator experience (Textual TUI, local web dashboard) — not raw shell commands
 - Automation-friendly provisioning (IaC, headless setup, CLI enrollment)
-- Self-hosted fallback available for critical components
+- Self-hosted option available for critical components (not required — services are fine if trustworthy)
 - Cross-platform automation (Linux/macOS via Ansible; Windows at least documented)
 
 ## What we don't need
@@ -51,10 +55,11 @@ Reliable remote desktop and SSH access to ~10 machines — Linux, macOS, and Win
 
 ## Guiding principles
 
-1. **Buy over build.** If a product solves this at a reasonable cost — cloud, commercial, whatever — use it. Building is the fallback, not the goal.
+1. **Buy over build.** If a product solves this at a reasonable cost — cloud, commercial, self-hosted, whatever — adopt it. Building is the fallback, not the goal. The best outcome is discovering there's nothing to build.
 2. **Family-friendly is non-negotiable.** If it requires a family member to understand networking, it's disqualified.
 3. **Cross-platform is non-negotiable.** Linux, macOS, and Windows are all first-class. A solution that's great on two but broken on the third doesn't count.
-4. **Delight matters.** If we do build, the operator experience should feel like a product — not a pile of Ansible output.
+4. **Vendor resilience over vendor avoidance.** Services are fine. What matters is that the operator isn't forced into a reactive migration when a vendor changes direction (as happened with Remotix → Acronis). Prefer products with self-hosted fallbacks, open protocols, or sufficient market competition.
+5. **Delight matters.** If we do build, the operator experience should feel like a product — a Textual TUI or local web dashboard with clear state and one-click actions, not a pile of Ansible output.
 
 ## Child artifacts
 
@@ -62,9 +67,16 @@ Reliable remote desktop and SSH access to ~10 machines — Linux, macOS, and Win
 |------|----|-------|--------|
 | Epic | [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fleet Management | Proposed |
 
+## Supporting documents
+
+| Document | Description |
+|----------|-------------|
+| [product-landscape.md](./product-landscape.md) | Decision matrix scoring all options (products, combos, and the custom build) against R1-R7 |
+
 ## Open questions
 
-- Does an existing product or product combination score well enough on the decision matrix to adopt directly? (See [product-landscape.md](./product-landscape.md).)
+- Does NoMachine + Tailscale satisfy all requirements in practice? (Scores 7/7 on paper — needs hands-on validation of remote desktop quality, family onboarding flow, and ACL isolation.)
+- If NoMachine's remote desktop quality or UX isn't good enough, is the custom build (RustDesk + Tailscale + operator UI) worth the ongoing maintenance overhead?
 - If we build: what is the right network layer? (Tracked in ADR-003 under EPIC-001.)
 - If we build: should the fleet agent live in a separate repo from the workstation bootstrapper?
 - What is the family onboarding model — fully automated agent install, or guided manual setup?
