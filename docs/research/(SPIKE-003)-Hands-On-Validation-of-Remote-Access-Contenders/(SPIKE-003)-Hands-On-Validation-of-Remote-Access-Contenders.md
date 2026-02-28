@@ -4,7 +4,7 @@
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent Vision:** [VISION-001](../../vision/(VISION-001)-Private-Remote-Access-Platform/(VISION-001)-Private-Remote-Access-Platform.md)
+**Parent Vision:** [VISION-001](../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 **Blocks:** Final product selection; determines whether EPIC-001 build path is needed
 
 ### Lifecycle
@@ -16,7 +16,7 @@
 
 ## Question
 
-The [product landscape](../../vision/(VISION-001)-Private-Remote-Access-Platform/product-landscape.md) identified multiple combinations that satisfy all requirements on paper. **Which one actually works best in practice?**
+The [product landscape](../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/product-landscape.md) identified multiple combinations that satisfy all requirements on paper. **Which one actually works best in practice?**
 
 Desk research ([SPIKE-001](../\(SPIKE-001\)-Remote-Desktop-and-Mesh-Networking-Solutions/\(SPIKE-001\)-Remote-Desktop-and-Mesh-Networking-Solutions.md), [SPIKE-002](../\(SPIKE-002\)-Commercial-Remote-Desktop-Solution-Evaluation/\(SPIKE-002\)-Commercial-Remote-Desktop-Solution-Evaluation.md)) and the product landscape have narrowed the field. The remaining questions can't be answered by analysis — they require installing software on real machines and using it.
 

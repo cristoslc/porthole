@@ -10,4 +10,4 @@ Visions are organized by lifecycle phase within their folders. See [list-visions
 
 | ID | Title | Status |
 |----|-------|--------|
-| [VISION-001]((VISION-001)-Private-Remote-Access-Platform/(VISION-001)-Private-Remote-Access-Platform.md) | Private Remote Access Platform | Draft |
+| [VISION-001]((VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md) | Remote Access for a Personal Fleet | Draft |

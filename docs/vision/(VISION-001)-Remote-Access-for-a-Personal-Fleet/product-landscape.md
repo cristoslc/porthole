@@ -1,6 +1,6 @@
 # Product Landscape: Remote Access for a Personal Fleet
 
-**Supporting doc for:** [VISION-001](./(VISION-001)-Private-Remote-Access-Platform.md)
+**Supporting doc for:** [VISION-001](./(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 **Last updated:** 2026-02-28
 **Pricing verified:** 2026-02-28 (via vendor websites and reseller listings)
 **Research sources:** [SPIKE-001](../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md), [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md), integrated platforms research

@@ -36,14 +36,14 @@ The best outcome is adopting a product or combination that does this out of the 
 | R4 | Family members passive after one-time setup | Zero ongoing technical steps |
 | R5 | Low maintenance for ~10 machines | One person, spare time, not a job |
 | R6 | Reasonable cost for personal use | $0-20/mo, not enterprise pricing |
-| R7 | Network isolation from existing infrastructure | Fleet machines shouldn't see VMs/Docker/NAS on the existing tailnet |
+| R7 | Network isolation from existing infrastructure | Fleet machines shouldn't see VMs/Docker/NAS on the local physical network |
 
 ## What we'd like
 
-- Polished operator experience (TUI, local dashboard) — not raw shell commands
-- Automation-friendly provisioning (IaC, headless setup, CLI enrollment)
+- Polished operator experience — not raw shell commands
+- Automation-friendly provisioning — headless setup, easy enrollment
 - Self-hosted option available for critical components (not required — services are fine if trustworthy)
-- Cross-platform automation (Linux/macOS via Ansible; Windows at least documented)
+- Cross-platform provisioning, including documented Windows setup
 
 ## What we don't need
 
@@ -61,29 +61,9 @@ The best outcome is adopting a product or combination that does this out of the 
 4. **Vendor resilience over vendor avoidance.** Services are fine. What matters is that the operator isn't forced into a reactive migration when a vendor changes direction (as happened with Remotix → Acronis). Prefer products with self-hosted fallbacks, open protocols, or sufficient market competition.
 5. **Delight matters.** If we do build, the operator experience should feel like a product — not a pile of terminal output.
 
-## Child artifacts
-
-| Type | ID | Title | Status |
-|------|----|-------|--------|
-| Epic | [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fleet Management | Proposed |
-
 ## Supporting documents
 
 | Document | Description |
 |----------|-------------|
 | [product-landscape.md](./product-landscape.md) | Decision matrix: desktop tools and networking bridges evaluated independently, then combinations scored against R1-R7 |
 
-## Research
-
-| ID | Title | Status | Purpose |
-|----|-------|--------|---------|
-| [SPIKE-001](../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | OSS landscape research |
-| [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Commercial landscape research |
-| [SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Planned | Install and test top contenders on real machines |
-
-## Open questions
-
-- Which combination actually works best in practice? (Desktop quality, family onboarding, stability — [SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md).)
-- Is the base install-and-go solution good enough, or does the operator experience need custom automation?
-- If we build: should the fleet agent live in a separate repo from the workstation bootstrapper?
-- What is the family onboarding model — fully automated agent install, or guided manual setup?

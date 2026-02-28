@@ -13,7 +13,7 @@ risks_addressed:
   - Poor Linux support undermining cross-platform coverage
 dependencies: []
 blocks: []
-parent: none (standalone research)
+parent: "[EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)"
 ---
 
 ### Lifecycle

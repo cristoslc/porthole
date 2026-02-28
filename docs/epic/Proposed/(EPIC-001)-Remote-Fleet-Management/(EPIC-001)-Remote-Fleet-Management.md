@@ -4,7 +4,7 @@
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Private-Remote-Access-Platform/(VISION-001)-Private-Remote-Access-Platform.md)
+**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
 
