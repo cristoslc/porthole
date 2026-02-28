@@ -18,11 +18,13 @@
 |---|-------------|:---:|
 | 1 | Remote desktop across Linux, macOS, Windows | Yes |
 | 2 | SSH access via stable hostnames/IPs | Yes |
-| 3 | Self-hosted or P2P — no third-party traffic | Yes |
+| 3 | Vendor-resilient — documented self-hosted fallback for every critical component | Yes |
 | 4 | NAT traversal without manual port forwarding | Yes |
 | 5 | Non-technical family members passive after setup | Yes |
 | 6 | Low maintenance for ~10 machines | Yes |
 | 7 | Automation-friendly (IaC, headless setup) | Preferred |
+
+Note: self-hosting is the escape hatch, not the default. Third-party services are fine when they provide genuine value (e.g., Tailscale, Remotix). The requirement is that a vendor rug-pull (acquisition, pricing change, discontinuation) can't strand the fleet.
 
 ---
 
@@ -120,7 +122,7 @@ Zero-trust access platform for infrastructure. Excellent SSH. Windows RDP via br
 
 ### What the market misses (our niche)
 
-1. **Privacy-first + family-friendly is an empty quadrant.** Tools are either privacy-first but complex (raw WireGuard, Nebula) or family-friendly but cloud-dependent (TeamViewer, Chrome Remote Desktop). Nothing combines "no third-party traffic" with "non-technical family member can use it."
+1. **Vendor-resilient + family-friendly is an empty quadrant.** Tools are either self-hostable but complex (raw WireGuard, Nebula, MeshCentral) or family-friendly but locked to a single vendor (TeamViewer, Chrome Remote Desktop). Nothing combines "I can switch away if the vendor rug-pulls me" with "non-technical family member can use it."
 
 2. **Small-fleet sweet spot is underserved.** MSP tools (MeshCentral, Tactical RMM) assume hundreds of machines and IT professionals. Consumer tools (TeamViewer, AnyDesk) assume a single user connecting to 1-3 machines. A fleet of ~10 mixed-OS machines managed by one technical person with non-technical family members falls between these models.
 

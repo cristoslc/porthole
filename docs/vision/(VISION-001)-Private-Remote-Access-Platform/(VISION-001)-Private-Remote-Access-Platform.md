@@ -15,7 +15,7 @@
 
 ## Overview
 
-A self-hosted, privacy-first remote access platform that lets a single operator manage a personal fleet of ~10 machines — spanning Linux, macOS, and Windows — including non-technical family members' machines in remote locations. Every component is self-hosted or peer-to-peer; no session traffic (signaling or relay) passes through third-party infrastructure.
+A privacy-conscious, vendor-resilient remote access platform that lets a single operator manage a personal fleet of ~10 machines — spanning Linux, macOS, and Windows — including non-technical family members' machines in remote locations. Third-party services are acceptable when they earn trust; self-hosting is the fallback when they don't. The architecture should be portable enough that no single vendor acquisition or pricing change can strand the fleet.
 
 ## Target audience
 
@@ -24,7 +24,7 @@ A self-hosted, privacy-first remote access platform that lets a single operator 
 
 ## Value proposition
 
-1. **Privacy by architecture.** All remote access traffic stays on a self-controlled mesh network. No third-party relay servers see session data, keystrokes, or screen content.
+1. **Privacy without dogma.** Session traffic should not transit infrastructure we don't trust. Third-party services (e.g., Tailscale, Remotix) are fine when they provide genuine value and have a credible trust model. Self-hosting is the escape hatch, not the default — the architecture must support both modes so that a vendor rug-pull (acquisition, pricing change, product discontinuation) never strands the fleet.
 2. **Reach any machine from anywhere.** Remote desktop and SSH access between any two enrolled machines within seconds, regardless of NAT topology or firewall configuration.
 3. **Family-friendly operations.** Remote family machines stay reachable without requiring the family member to perform ongoing technical tasks. Initial setup is a one-time, guided process.
 4. **Automation with delight.** Machine provisioning is driven by infrastructure-as-code (Ansible) behind a friendly local UI — a Textual TUI app, local web dashboard, or similar — that shows fleet state, guides first-run setup, and applies updates. The operator experience should feel polished, not like raw shell commands. Windows machines have a documented guided procedure completable in under 15 minutes.
@@ -45,7 +45,7 @@ A self-hosted, privacy-first remote access platform that lets a single operator 
 1. Any two enrolled machines establish a remote desktop session within 30 seconds.
 2. SSH access works between all enrolled machines via stable hostnames or IPs.
 3. Family machines remain reachable without ongoing technical intervention from family members.
-4. Zero session traffic transits third-party infrastructure.
+4. Every critical component has a documented self-hosted fallback that can be activated without re-enrolling machines.
 5. New Linux/macOS machine enrollment completes through the operator UI (TUI or web dashboard); Windows via documented guided procedure in under 15 minutes.
 6. The remote-access network is isolated from existing infrastructure (VMs, Docker containers, other services).
 
@@ -59,9 +59,9 @@ A self-hosted, privacy-first remote access platform that lets a single operator 
 
 ## Strategic themes
 
-### Privacy and self-sovereignty
+### Vendor resilience over self-hosting purity
 
-Every infrastructure component is self-hosted or operates peer-to-peer. The operator retains full control over network topology, access policies, and data flow. No account with a third-party service is required for the remote access layer to function.
+Third-party services are welcome when they're good — Remotix was great until Acronis acquired it; Tailscale is great today. The architecture should make switching cheap: documented fallback paths for every critical component (Headscale for Tailscale, NoMachine or RustDesk for Remotix, etc.). Self-hosting is a capability to have in reserve, not a lifestyle choice. The goal is that no single vendor decision can break the fleet.
 
 ### Simplicity for non-technical users
 
