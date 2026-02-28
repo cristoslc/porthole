@@ -1,0 +1,52 @@
+# EPIC-003: Client Node Web UI
+
+**Status:** Proposed
+**Author:** cristos
+**Created:** 2026-02-28
+**Last Updated:** 2026-02-28
+**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+
+### Lifecycle
+
+| Phase | Date | Commit | Notes |
+|-------|------|--------|-------|
+| Proposed | 2026-02-28 | — | Initial creation, merged from external project |
+
+---
+
+## Goal
+
+Provide a lightweight local web interface on each client node that displays WireGuard tunnel health and provides basic troubleshooting actions. The primary user is the operator when remotely supporting family machines or checking status from a local network. Family members should never need to open it, but it's there if the operator needs to walk someone through a restart over the phone.
+
+## Success criteria
+
+- Each client node runs a local web UI accessible on the LAN showing tunnel status, assigned IP, DNS name, and last handshake.
+- UI provides a "restart tunnel" action for remote troubleshooting.
+- UI runs as a systemd service and auto-starts on boot.
+- Non-technical family members do not need to interact with the UI under normal operation.
+
+## Scope boundaries
+
+**In scope:**
+
+- Local web server (Node.js or Python) displaying tunnel status from `wg show`
+- Display: peer name, assigned IP, DNS name, last handshake time, transfer bytes, endpoint
+- "Restart tunnel" button that runs `wg-quick down/up` or `systemctl restart wg-quick@wg0`
+- systemd service unit for auto-start
+- Minimal, functional UI — no auth needed (LAN-only access)
+
+**Out of scope:**
+
+- Network-wide dashboard (EPIC-004)
+- Peer provisioning from the UI (handled by CLI in EPIC-002)
+- Configuration editing from the UI
+- Remote access to the UI over the WireGuard tunnel (could be done but not a goal — the operator can SSH)
+
+## Child artifacts
+
+_Updated as Agent Specs are created._
+
+## Key dependencies
+
+- WireGuard running on the client node
+- EPIC-002 for initial provisioning of the client config

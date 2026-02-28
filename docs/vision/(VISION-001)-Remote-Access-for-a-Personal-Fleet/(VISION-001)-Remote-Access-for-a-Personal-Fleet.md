@@ -67,6 +67,11 @@ After the bootstrap: machines find each other automatically, connections travers
 | Type | ID | Title | Status |
 |------|----|-------|--------|
 | Epic | [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fleet Management | Proposed |
+| Epic | [EPIC-002](../../epic/Proposed/(EPIC-002)-Provisioning-CLI/(EPIC-002)-Provisioning-CLI.md) | Provisioning CLI & Network State Management | Proposed |
+| Epic | [EPIC-003](../../epic/Proposed/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md) | Client Node Web UI | Proposed |
+| Epic | [EPIC-004](../../epic/Proposed/(EPIC-004)-Operator-Dashboard/(EPIC-004)-Operator-Dashboard.md) | Operator Dashboard | Proposed |
+| Epic | [EPIC-005](../../epic/Proposed/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md) | VPS Bootstrap & Disaster Recovery | Proposed |
+| Epic | [EPIC-006](../../epic/Proposed/(EPIC-006)-Internal-DNS/(EPIC-006)-Internal-DNS.md) | Internal DNS Resolution | Proposed |
 | Spike | [SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Planned |
 
 ## Supporting documents
@@ -74,3 +79,4 @@ After the bootstrap: machines find each other automatically, connections travers
 | Document | Description |
 |----------|-------------|
 | [product-landscape.md](./product-landscape.md) | Decision matrix: desktop tools and networking bridges evaluated independently, then combinations scored against requirements |
+| [wireguard-mesh-architecture.md](./wireguard-mesh-architecture.md) | Architecture overview: WireGuard hub-and-spoke relay via VPS, SOPS/age state management, CoreDNS |
