@@ -1,11 +1,12 @@
 # ADR-001: RustDesk for Remote Desktop
 
-**Status:** Adopted
+**Status:** Superseded
 **Author:** cristos
 **Created:** 2026-02-26
-**Last Updated:** 2026-02-26
+**Last Updated:** 2026-02-28
 **Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Spec:** [(SPEC-002) Remote Desktop Bootstrap](../../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md)
+**Superseded by:** [(ADR-005) Remote Desktop Access Model](../Adopted/(ADR-005)-Remote-Desktop-Access-Model.md)
 
 ### Lifecycle
 
@@ -13,6 +14,7 @@
 |-------|------|--------|-------|
 | Proposed | 2026-02-26 | d627b5b | Initial creation |
 | Adopted | 2026-02-26 | 7ccc7df | Approved and implemented |
+| Superseded | 2026-02-28 | 6d1cb09 | Replaced by ADR-005 (Guacamole gateway model); R10 and WireGuard network changed the calculus |
 
 ---
 

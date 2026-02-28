@@ -12,8 +12,8 @@ _No ADRs in this phase._
 
 | ID | Title | Author | Created | Last Updated | Commit |
 |----|-------|--------|---------|--------------|--------|
-| ADR-001 | RustDesk for Remote Desktop | cristos | 2026-02-26 | 2026-02-26 | 7ccc7df |
 | ADR-004 | WireGuard Hub-and-Spoke Relay | cristos | 2026-02-28 | 2026-02-28 | d69e12e |
+| ADR-005 | Remote Desktop Access Model | cristos | 2026-02-28 | 2026-02-28 | 6d1cb09 |
 
 ## Retired
 
@@ -21,7 +21,9 @@ _No ADRs in this phase._
 
 ## Superseded
 
-_No ADRs in this phase._
+| ID | Title | Author | Created | Last Updated | Commit |
+|----|-------|--------|---------|--------------|--------|
+| ADR-001 | RustDesk for Remote Desktop | cristos | 2026-02-26 | 2026-02-28 | 6d1cb09 |
 
 ## Abandoned
 
