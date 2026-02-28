@@ -18,13 +18,14 @@
 |---|-------------|:---:|
 | 1 | Remote desktop across Linux, macOS, Windows | Yes |
 | 2 | SSH access via stable hostnames/IPs | Yes |
-| 3 | Vendor-resilient — documented self-hosted fallback for every critical component | Yes |
-| 4 | NAT traversal without manual port forwarding | Yes |
-| 5 | Non-technical family members passive after setup | Yes |
-| 6 | Low maintenance for ~10 machines | Yes |
+| 3 | NAT traversal without manual port forwarding | Yes |
+| 4 | Non-technical family members passive after setup | Yes |
+| 5 | Low maintenance for ~10 machines | Yes |
+| 6 | Reasonable cost for personal use | Yes |
 | 7 | Automation-friendly (IaC, headless setup) | Preferred |
+| 8 | Self-hosted fallback available | Nice to have |
 
-Note: self-hosting is the escape hatch, not the default. Third-party services are fine when they provide genuine value (e.g., Tailscale, Remotix). The requirement is that a vendor rug-pull (acquisition, pricing change, discontinuation) can't strand the fleet.
+A product that checks 1-6 and costs $10-20/mo would be worth adopting over building anything custom. Self-hosting and vendor resilience are nice insurance but not worth over-engineering for.
 
 ---
 
@@ -122,7 +123,7 @@ Zero-trust access platform for infrastructure. Excellent SSH. Windows RDP via br
 
 ### What the market misses (our niche)
 
-1. **Vendor-resilient + family-friendly is an empty quadrant.** Tools are either self-hostable but complex (raw WireGuard, Nebula, MeshCentral) or family-friendly but locked to a single vendor (TeamViewer, Chrome Remote Desktop). Nothing combines "I can switch away if the vendor rug-pulls me" with "non-technical family member can use it."
+1. **Cross-platform + family-friendly + reasonably priced is an empty quadrant.** Enterprise tools handle the first two but cost $500+/yr. Consumer tools are cheap but break on Linux or cap at 3 devices. Nothing hits all three for a 10-machine mixed-OS fleet.
 
 2. **Small-fleet sweet spot is underserved.** MSP tools (MeshCentral, Tactical RMM) assume hundreds of machines and IT professionals. Consumer tools (TeamViewer, AnyDesk) assume a single user connecting to 1-3 machines. A fleet of ~10 mixed-OS machines managed by one technical person with non-technical family members falls between these models.
 
@@ -132,13 +133,14 @@ Zero-trust access platform for infrastructure. Excellent SSH. Windows RDP via br
 
 ### Could we just buy something?
 
-**Not today.** The gap is real: no product combines self-hosted mesh networking + quality remote desktop + SSH + cross-platform + family-friendly onboarding + low maintenance at small scale. The closest candidates:
+**Not quite, but close.** This is the right question — building is the last resort. The closest off-the-shelf options:
 
-- **MeshCentral** — if you can accept browser-based remote desktop quality and no persistent mesh VPN.
-- **Tailscale + RustDesk** — if you accept it's two tools, not one.
-- **NoMachine + Tailscale** — similar to above but NoMachine instead of RustDesk.
+- **TeamViewer Business (~$610/yr):** Does everything except cost. If they offered a personal-fleet tier at $10-20/mo, this project might not need to exist. The free tier's aggressive commercial-use detection and session limits make it impractical.
+- **MeshCentral (free):** Does 90% of the job in one product. If its remote desktop quality matched RustDesk and it had persistent mesh VPN, we'd use it and stop. Worth re-evaluating periodically.
+- **Splashtop Pro ($99/yr):** Right price, right device count (10 machines). Falls short on Linux support quality and routes all remote traffic through their relay.
+- **NoMachine (free) + Tailscale (free):** Two products, both free, covers all requirements. The main gap is that NoMachine's UI is dated and fleet management requires the paid tier. This is probably the closest to "just buy it" today.
 
-If MeshCentral ever adds WireGuard mesh networking or if NetBird adds built-in remote desktop, one of them could become the single-product answer. Watch both.
+**Watch list:** If MeshCentral adds WireGuard mesh, or NetBird adds built-in remote desktop, or TeamViewer introduces a personal-fleet tier — any of those would be worth adopting over maintaining a custom stack.
 
 ---
 
