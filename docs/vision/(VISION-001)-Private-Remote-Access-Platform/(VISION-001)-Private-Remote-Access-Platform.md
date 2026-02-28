@@ -74,7 +74,9 @@ The [product landscape](./product-landscape.md) evaluation reached two conclusio
 
 **Networking is settled on paper: Tailscale.** Free, covers SSH (R2) + NAT traversal (R3) + isolation (R7), works with any desktop tool. NoMachine Network is strictly inferior (NM-only, no SSH, no isolation, costs $84.50/yr). Needs hands-on validation of ACL isolation and family onboarding.
 
-**Desktop is the open question: NoMachine vs RustDesk.** Both pair with Tailscale. NoMachine + Tailscale scores 7Y with nothing to build. RustDesk + Tailscale scores 5Y 2P but offers better desktop UX at the cost of ongoing maintenance (Ansible + operator UI). The answer depends on whether NX protocol quality is good enough — which requires hands-on testing, not further analysis.
+**Desktop is the open question: NoMachine vs RustDesk.** Both pair with Tailscale. Both score 7Y — same R4 (two apps installed once, both passive after setup) and same R5 (both auto-update, no config management for basic operation). The requirements matrix doesn't differentiate them; the difference is purely desktop quality and UX (NX protocol vs. RustDesk native client), which requires hands-on testing.
+
+**Custom automation is orthogonal.** Adding Ansible playbooks and an operator UI is an optional enhancement to *either* combo. It improves the operator experience but adds maintenance (R5 → P). This decision comes after choosing a desktop tool, not before.
 
 ## Child artifacts
 
@@ -90,6 +92,7 @@ The [product landscape](./product-landscape.md) evaluation reached two conclusio
 
 ## Open questions
 
-- Is NoMachine's NX protocol quality good enough on fast and slow networks? (Hands-on testing required.)
-- If we build (RustDesk path): should the fleet agent live in a separate repo from the workstation bootstrapper?
+- **NoMachine vs RustDesk:** Which desktop tool feels better over Tailscale? NX protocol (compression, dated UI) vs. RustDesk native client (modern UI, fast networks). Hands-on testing required — the requirements matrix can't differentiate them.
+- **Custom automation — worth the maintenance?** Adding Ansible + operator UI to either combo improves the experience but commits to ongoing upkeep. Decide after the base combo is proven.
+- If we build: should the fleet agent live in a separate repo from the workstation bootstrapper?
 - What is the family onboarding model — fully automated agent install, or guided manual setup?
