@@ -17,7 +17,9 @@
 
 Reliable remote desktop and SSH access to ~10 machines — Linux, macOS, and Windows — including non-technical family members' machines in remote locations.
 
-The best outcome is adopting a product (or product combination) that does this out of the box. This project exists to systematically evaluate what's available and find that product. If nothing on the market fits all requirements, then — and only then — the fallback is assembling a solution from components (RustDesk + Tailscale + automation). The decision matrix in [product-landscape.md](./product-landscape.md) scores every option against the same criteria.
+The problem decomposes into two independent choices: a **remote desktop tool** (which product streams the desktop?) and a **networking bridge** (how do machines find and reach each other across NATs?). Some products bundle both; others are components that compose. The [product landscape](./product-landscape.md) evaluates each dimension separately, then scores every valid combination against the requirements below.
+
+The best outcome is adopting an existing product or combination. This project exists to find it. If nothing on the market fits, then — and only then — the fallback is building glue between best-of-breed components (RustDesk + Tailscale + automation).
 
 **Context:** The operator currently uses Remotix (NEAR protocol), which was acquired by Acronis and rebranded as Acronis Cyber Protect Connect. The product's direction is uncertain under new ownership — subscription-only pricing, unclear on-prem future, sparse documentation. This motivates a systematic evaluation of alternatives before being forced to migrate reactively.
 
@@ -71,12 +73,11 @@ The best outcome is adopting a product (or product combination) that does this o
 
 | Document | Description |
 |----------|-------------|
-| [product-landscape.md](./product-landscape.md) | Decision matrix scoring all options (products, combos, and the custom build) against R1-R7 |
+| [product-landscape.md](./product-landscape.md) | Two-dimensional evaluation: desktop tools and networking bridges scored independently, then combinations scored against R1-R7 |
 
 ## Open questions
 
-- Does NoMachine + Tailscale satisfy all requirements in practice? (Scores 7/7 on paper — needs hands-on validation of remote desktop quality, family onboarding flow, and ACL isolation.)
-- If NoMachine's remote desktop quality or UX isn't good enough, is the custom build (RustDesk + Tailscale + operator UI) worth the ongoing maintenance overhead?
-- If we build: what is the right network layer? (Tracked in ADR-003 under EPIC-001.)
-- If we build: should the fleet agent live in a separate repo from the workstation bootstrapper?
+- **Networking layer is settled on paper: Tailscale.** Nothing else covers SSH + NAT + isolation for free. Needs hands-on validation of ACL isolation and family onboarding.
+- **Desktop tool is the open question: NoMachine vs RustDesk.** NoMachine + Tailscale scores 7Y with nothing to build. RustDesk + Tailscale scores 5Y 2P but offers better desktop UX at the cost of ongoing maintenance. The answer depends on whether NX protocol quality is good enough — which requires hands-on testing, not analysis.
+- If we build (RustDesk path): should the fleet agent live in a separate repo from the workstation bootstrapper?
 - What is the family onboarding model — fully automated agent install, or guided manual setup?

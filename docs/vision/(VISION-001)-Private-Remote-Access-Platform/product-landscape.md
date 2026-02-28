@@ -15,32 +15,77 @@ Every option — commercial products, free products, product combos, and the cus
 
 ---
 
-## Decision matrix
+## The two dimensions
 
-**Scoring:** Y = fully meets, P = partially meets (see notes), N = does not meet, — = not applicable.
+The problem decomposes into two independent choices:
 
-### Contenders
+1. **Remote desktop tool** — which product provides the desktop streaming experience?
+2. **Networking bridge** — how do machines find and reach each other across NATs, and how does the operator get SSH access?
 
-Options with no N on any non-negotiable requirement (R1-R6). These are the options worth serious evaluation. Ranked by total Y count.
+Some products are **integrated** — they bundle both dimensions (TeamViewer, MeshCentral). Others are **components** that pair with a separate networking layer. The strongest solutions tend to be best-of-breed components composed together.
 
-| Option | R1 Desktop | R2 SSH | R3 NAT | R4 Family | R5 Maintenance | R6 Cost | R7 Isolation | Score | Notes |
-|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
-| **NoMachine + Tailscale** | Y | Y | Y | Y | Y | Y | Y | 7Y | Both free. NoMachine free tier = 1 incoming connection (fine for 1 operator). Tailscale provides stable IPs, Tailscale SSH, MagicDNS, and ACL isolation. NoMachine UI is dated. No unified fleet dashboard. |
-| **RustDesk + Tailscale** *(custom build)* | Y | Y | Y | P | P | Y | Y | 5Y 2P | RustDesk direct IP over Tailscale bypasses all relay infrastructure. Family: 2 apps to install. Maintenance: need Ansible + operator UI to manage config across 10 machines — ongoing commitment. |
-| **MeshCentral** | Y | P | Y | P | Y | Y | P | 4Y 3P | Free, self-hosted, all-in-one (remote desktop + terminal + file mgmt + device inventory). SSH is web-console only, not direct terminal. Family: agent install is easy but web UI is MSP-grade. No network segmentation. |
-| **Splashtop Pro + Tailscale** | P | Y | Y | P | P | Y | Y | 4Y 3P | $99/yr + free Tailscale. Fixes Splashtop's SSH gap. Linux remote desktop still second-class. Two products to maintain; family needs 2 app installs. |
-| **Acronis Cyber Protect Connect** *(formerly Remotix)* | Y | P | Y | Y | P | P | — | 3Y 3P 1— | Subscription-only: Free (15-min sessions, 2 clients), Personal (~$45/yr, 2 clients), Professional (3 clients/user, pricing unlisted). NEAR protocol is best-in-class for performance. On-prem status unclear post-acquisition. SSH only via VNC/RDP tunnel. Product direction uncertain under Acronis. |
+---
 
-### Near-misses
+## Dimension 1: Remote desktop
 
-Strong options with one critical gap. Worth watching — a pricing or feature change could make them contenders.
+Scored on desktop-specific criteria only. Networking is evaluated separately.
 
-| Option | R1 Desktop | R2 SSH | R3 NAT | R4 Family | R5 Maintenance | R6 Cost | R7 Isolation | Score | Gap | Notes |
-|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
-| **TeamViewer Business** | Y | P | Y | Y | Y | **N** | — | 5Y 1P 1N | R6: ~$610/yr | Otherwise the most complete solution — best NAT traversal, great fleet management, just works. Would be the answer if cost weren't a factor. SSH via web terminal only. |
-| **Splashtop Pro** *(standalone)* | P | **N** | Y | Y | Y | Y | — | 4Y 1P 1N | R2: no SSH | $99/yr for up to 10 machines — best price-to-value. But no SSH at all; pair with Tailscale to fix (see contenders). Linux desktop is second-class. |
+| Tool | R1 Cross-platform | Desktop quality | Family UX | Cost | Notes |
+|------|:---:|---|:---:|---|-------|
+| **NoMachine** | Y | Good. NX protocol — excellent compression, strong over slow links. Dated UI. | Y | Free (1 concurrent conn) | Linux heritage (NX = compressed X11). Self-hosted, no account needed. Enterprise: $44.50/machine/yr removes connection limit. |
+| **RustDesk** | Y | Better on fast networks. Modern native client. | Y | Free | Open source. Direct IP mode (no relay needed with mesh VPN). Needs config management across fleet. |
+| **Remotix / Acronis** | Y | Best. NEAR protocol — hardware-accelerated, lowest latency. | Y | ~$45/yr Personal (2 clients) | Best-in-class performance. Acquired by Acronis, uncertain future. Subscription-only. |
+| **Splashtop** | P (Linux second-class) | Good. Hardware-accelerated streaming. | Y | $99/yr (10 machines) | Best price-to-value. WAN connections always relay through Splashtop servers. |
+| **MeshCentral** | Y (macOS issues) | Adequate. Functional for support, not for sustained use. | P (MSP-grade UI) | Free | *Integrated* — bundles own networking. See combined scoring below. |
+| **TeamViewer** | Y | Good. Polished, reliable. | Y | ~$610/yr (Business, 10+ devices) | *Integrated* — bundles own networking. See combined scoring below. |
 
-### Disqualified options
+**For component pairing, the top desktop contenders are NoMachine and RustDesk** — both free, both genuinely cross-platform, both good-to-excellent desktop quality. The choice between them is the central open question. Remotix/NEAR is performance-superior but vendor-risky; Splashtop is affordable but Linux is second-class.
+
+---
+
+## Dimension 2: Networking bridge
+
+Scored on network-specific criteria only. Determines SSH access, NAT traversal, and isolation.
+
+| Layer | R2 SSH | R3 NAT traversal | R7 Isolation | Family UX | Cost | Compatible with |
+|-------|:---:|:---:|:---:|:---:|---|---|
+| **Tailscale** | Y — Tailscale SSH, MagicDNS, stable IPs | Y — WireGuard mesh, DERP relay fallback | Y — ACL policies | Y — install once | Free (100 devices / 3 users) | Any desktop tool |
+| **NoMachine Network** | N — NM connections only, no terminal SSH | Y — cloud machine discovery + relay | N — no segmentation | Y — built into NM client | $84.50/yr (1 concurrent conn) | NoMachine only |
+| **ZeroTier** | N — no built-in SSH mgmt | Y — P2P mesh | P — flow rules, less mature than Tailscale ACLs | P — more manual config | Free (25 devices) | Any desktop tool |
+| **NetBird** | Y — WireGuard, DNS | Y — WireGuard mesh | Y — ACL policies | P — newer, less polished | Free (5 users) | Any desktop tool |
+| **Product built-in** | Varies | Varies | N | Y — nothing extra | Included | Specific product only |
+
+**Tailscale is the clear winner.** Free, solves SSH + NAT + isolation, works with any desktop tool, single install for family members. The only competitor in the same tier is NetBird (less mature, smaller free tier).
+
+**NoMachine Network is redundant when Tailscale is present.** It only works with NoMachine, doesn't provide SSH or isolation, and costs $84.50/yr for capabilities Tailscale provides for free. Its sole advantage — cloud-based machine discovery without IP addresses — is superseded by Tailscale's MagicDNS.
+
+---
+
+## Combination matrix
+
+Each valid combination scored against all VISION-001 requirements (R1-R7).
+
+**Scoring:** Y = fully meets, P = partially meets, N = does not meet, — = not applicable.
+
+### Contenders (no N on R1-R6)
+
+| Desktop | Network | R1 | R2 | R3 | R4 | R5 | R6 | R7 | Score | Key trade-off |
+|---------|---------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---------------|
+| NoMachine | Tailscale | Y | Y | Y | Y | Y | Y | Y | 7Y | Dated desktop UI. NX quality needs hands-on testing vs modern alternatives. |
+| RustDesk | Tailscale | Y | Y | Y | P | P | Y | Y | 5Y 2P | Better desktop UX. But: 2 apps for family (R4), Ansible + operator UI maintenance (R5). |
+| MeshCentral | *(integrated)* | Y | P | Y | P | Y | Y | P | 4Y 3P | Single product, free. Web-only SSH (R2). MSP UI for family (R4). No isolation (R7). |
+| Splashtop | Tailscale | P | Y | Y | P | P | Y | Y | 4Y 3P | $99/yr + free TS. Linux desktop second-class (R1). 2 apps for family (R4). 2 products to maintain (R5). |
+| Remotix/Acronis | *(integrated)* | Y | P | Y | Y | P | P | — | 3Y 3P 1— | Best desktop performance (NEAR). Uncertain vendor future. Subscription-only, pricing opaque for >2 clients. |
+
+### Near-misses (one N, worth watching)
+
+| Desktop | Network | Score | Gap | Notes |
+|---------|---------|:---:|---|-------|
+| NoMachine | NoMachine Network | 4Y 1P 2N | R2: no terminal SSH. R7: no isolation. | Illustrates why Tailscale is needed — NM Network only solves NM connectivity, costs $84.50/yr, provides less than Tailscale does for free. |
+| TeamViewer | *(integrated)* | 5Y 1P 1N | R6: ~$610/yr | Best all-in-one if cost weren't a factor. Best NAT traversal, great fleet management, just works. SSH via web terminal only. |
+| Splashtop | *(standalone)* | 4Y 1P 1N | R2: no SSH | $99/yr for 10 machines. Pair with Tailscale to fix (see contenders above). Linux desktop second-class. |
+
+### Disqualified
 
 Options with fundamental, unfixable gaps on non-negotiable requirements.
 
@@ -53,92 +98,92 @@ Options with fundamental, unfixable gaps on non-negotiable requirements.
 | **Chrome Remote Desktop** | R1/R5: limited Linux support (Debian/Ubuntu only, X11 required), no fleet management, minimal updates | Free, simple, WebRTC NAT traversal. Good for ad-hoc use. |
 | **ConnectWise ScreenConnect** | R6: $540-660/yr, MSP-oriented. Server requires Windows. | Excellent scripting/automation, unlimited agents, session recording. |
 | **BeyondTrust** | R6: $2,000+/yr enterprise pricing | Enterprise-grade security and compliance (SOC 2, HIPAA). |
-| **Royal TSX** | R3: no NAT traversal, no agents — it's a connection manager, not a remote access solution | Multi-protocol client (RDP/VNC/SSH), excellent credential management. |
+| **Royal TSX** | R3: no NAT traversal, no agents — connection manager only | Multi-protocol client (RDP/VNC/SSH), excellent credential management. |
 | **DWService** | R3: cloud-only, no self-hosted server option | Browser-based, easy agent install. |
 | **HopToDesk** | No advantage over RustDesk; smaller community, trust concerns | — |
-| **Tactical RMM** | R5: 6-service deployment stack (MeshCentral + Saltstack + Nginx + Nats + Redis + PostgreSQL), overkill for 10 machines | Full RMM with monitoring/alerting/patching. |
+| **Tactical RMM** | R5: 6-service deployment stack, overkill for 10 machines | Full RMM with monitoring/alerting/patching. |
 | **Teleport** | R1: no remote desktop for any platform (SSH/kubectl/database only) | Excellent zero-trust SSH with certificate auth and session recording. |
-| **Apache Guacamole** | R3: gateway model requires all target machines be reachable from the gateway — no NAT traversal without VPN underneath | Good browser-based VNC/RDP/SSH gateway. Clientless (HTML5). |
-| **Nebula** | R4: certificate-based mesh requires CA management, impractical for non-technical family members | Fully self-hosted overlay mesh, MIT license, Slack heritage. |
-| **WireGuard (raw)** | R3/R4: no built-in NAT traversal (needs a publicly-routable endpoint), manual key management per peer | In-kernel, battle-tested, lowest-overhead VPN. Foundation for Tailscale/NetBird. |
+| **Apache Guacamole** | R3: gateway model requires targets reachable from gateway — no NAT traversal without VPN underneath | Good browser-based VNC/RDP/SSH gateway. Clientless (HTML5). |
+| **Nebula** | R4: certificate-based mesh requires CA management, impractical for family | Fully self-hosted overlay mesh, MIT license, Slack heritage. |
+| **WireGuard (raw)** | R3/R4: needs publicly-routable endpoint, manual key management per peer | In-kernel, battle-tested, lowest-overhead VPN. Foundation for Tailscale/NetBird. |
 | **Firezone** | R5: self-hosted option explicitly unsupported as of 2025 | WireGuard-based with SSO + access policies. Cloud-hosted product pivoted. |
 
 ---
 
 ## Analysis
 
-**NoMachine + Tailscale is the strongest off-the-shelf option.** Both free, covers all 7 requirements, no custom code needed. The trade-offs are NoMachine's dated UI and the 1-connection limit on the free tier (fine for a single operator — concurrent sessions aren't a requirement). If NoMachine's UX is tolerable, this is the answer. No building required.
+### The networking decision is settled
 
-**The custom build (RustDesk + Tailscale + automation) isn't clearly better than NoMachine + Tailscale.** The advantage is RustDesk's superior remote desktop quality on fast networks and the opportunity to build a polished operator UI. The disadvantage is real and ongoing: maintaining Ansible playbooks, a Textual TUI or dashboard, RustDesk config drift, Tailscale ACL updates. This is only worth it if NoMachine's remote desktop is genuinely not good enough after hands-on testing.
+**Tailscale wins the networking dimension outright.** It's free, solves SSH (R2) + NAT traversal (R3) + isolation (R7), installs on all platforms, and works with any desktop tool. NoMachine Network is strictly inferior (NM-only, no SSH, no isolation, costs $84.50/yr). ZeroTier and NetBird are viable alternatives but less mature. Any component desktop tool should be paired with Tailscale.
 
-**MeshCentral is the best single product** but has three "partial" gaps: web-only SSH (no direct `ssh hostname` from terminal), MSP-grade UI (intimidating for family onboarding), and no network isolation. For someone who can live with browser-based SSH and doesn't need segmentation, MeshCentral alone might be enough.
+### The desktop decision is the open question
 
-**TeamViewer is the obvious answer if cost weren't a factor.** At ~$610/yr it's overpriced for personal use, but it's the product that most completely solves the problem with zero self-management. Worth watching for pricing changes.
+With Tailscale as the networking layer, the real choice is between desktop tools:
 
-**Acronis Cyber Protect Connect (formerly Remotix) is in flux.** The NEAR protocol remains best-in-class for remote desktop performance — noticeably faster than competitors for latency-sensitive interactive work. But the product's future under Acronis is uncertain: subscription-only pricing, unclear on-prem status, limited documentation, no community forums. The same vendor-resilience concern that motivates this exploration applies to Acronis Cyber Protect Connect itself. Not the long-term answer, but worth retaining as a secondary tool for performance-critical sessions while the subscription is active.
+**NoMachine + Tailscale (7Y)** is the zero-effort answer. Both free, nothing to build, covers all requirements on paper. The risk is that NX protocol's dated UI and desktop quality might not be good enough — this can only be determined by hands-on testing.
+
+**RustDesk + Tailscale (5Y 2P)** has a better desktop experience but costs two P scores: family members install 2 apps (R4), and you maintain Ansible + operator UI indefinitely (R5). Only justified if NoMachine's desktop isn't good enough.
+
+### Integrated products fill niches
+
+**MeshCentral** is the best single-product option — free, all-in-one — but compromises on SSH quality, family UX, and isolation. Good enough if those gaps are tolerable.
+
+**TeamViewer** is the best all-in-one UX but at ~$610/yr is overpriced for personal use. If they launch a personal tier at $10-20/mo, adopt immediately.
+
+**Acronis Cyber Protect Connect** has the best desktop performance (NEAR protocol) but is the exact vendor-resilience scenario motivating this exploration. Not a long-term bet, but worth retaining for performance-critical sessions.
 
 ---
 
-## Detailed notes on contenders
+## Detailed notes
 
-### NoMachine + Tailscale (top contender)
+### NoMachine (desktop)
 
-**NoMachine** provides remote desktop via the NX protocol — originally a compressed X11 forwarding technology, now a full cross-platform remote desktop system. Linux is NoMachine's heritage platform; support is genuinely first-class, unlike competitors where Linux is an afterthought. Free for personal use with no nag screens or commercial-use detection. Fully self-hosted — no account required, no mandatory cloud dependency.
+- NX protocol — originally compressed X11 forwarding, now a full cross-platform remote desktop system. Linux is the heritage platform; support is genuinely first-class.
+- Free for personal use. No nag screens, no commercial-use detection. Fully self-hosted — no account required.
+- 1 concurrent incoming connection on free tier. Enterprise Desktop ($44.50/machine/yr) removes this limit. For a single operator, the free tier is sufficient.
+- NAT traversal (independent of networking bridge): UPnP/NAT-PMP, WebRTC-style hole-punching, relay fallback, reverse SSH tunnels. Can self-host STUN/TURN.
+- NX quality: excellent over slow links (compression heritage). On fast networks, may feel less responsive than modern native clients (RustDesk, NEAR). Subjective — needs testing.
 
-NAT traversal: UPnP/NAT-PMP (auto router config), WebRTC-style hole-punching, relay fallback through NoMachine Network servers, and reverse SSH tunnels. Can self-host STUN/TURN for complete relay independence.
+### NoMachine Network (networking)
 
-**Tailscale** provides WireGuard-based mesh VPN with a free tier (100 devices / 3 users), stable IPs, MagicDNS hostnames, Tailscale SSH (no key management), and ACL-based network isolation.
+- $8.50/mo ($84.50/yr) for Personal tier (1 concurrent connection). Higher tiers: Business $18.50/mo, Datacenter $32.50/mo.
+- Adds cloud-based machine discovery — registered machine IDs so you don't need IP/DNS. Enables NoMachine-to-NoMachine connections across the internet without manual network config.
+- **Only works with NoMachine.** Does not provide general IP connectivity, SSH, or network isolation.
+- **Redundant with Tailscale.** Tailscale provides stable IPs (MagicDNS), SSH, and isolation for free. The only scenario where NoMachine Network adds value is if you want NoMachine standalone without any mesh VPN — but then you lose SSH (R2) and isolation (R7).
 
-**Together:** NoMachine handles remote desktop. Tailscale handles SSH, networking, and isolation. Both install on all three platforms. Family members install two apps once.
+### RustDesk (desktop)
 
-**Free tier limit:** NoMachine free = 1 concurrent incoming connection per machine. Enterprise Desktop ($44.50/machine/yr = ~$445/yr for 10 machines) removes this limit. For a single operator who only connects to one machine at a time, the free tier is sufficient.
+- Open source, native client, modern UI. Better desktop quality than NX on fast networks.
+- Direct IP mode: connect by IP address, no relay server needed. Perfect over a mesh VPN like Tailscale.
+- Needs config management across the fleet — RustDesk doesn't have fleet provisioning built in. This is where the custom build lives: Ansible playbooks + operator UI (Textual TUI or local web dashboard).
+- RustDesk Server Pro (self-hosted relay + ID server) exists but adds complexity. With Tailscale providing connectivity, only the direct IP mode is needed.
 
-**NoMachine Network subscription** ($8.50/mo or $84.50/yr for 1 concurrent connection) adds internet-based machine discovery — cloud-registered machine IDs so you don't need IP addresses or DNS names. This would let NoMachine work standalone for NAT traversal. But Tailscale already provides stable reachability + MagicDNS + SSH + isolation for free, making the Network subscription redundant in this combination.
+### Tailscale (networking)
 
-**No unified fleet dashboard.** Tailscale has its admin console, NoMachine has per-machine config. No single pane of glass for the whole fleet.
+- WireGuard-based mesh VPN. Free tier: 100 devices, 3 users.
+- Stable IPs per device. MagicDNS hostnames (`hostname.tailnet-name.ts.net`).
+- Tailscale SSH: SSH access to any device on the tailnet without managing SSH keys. Auth via Tailscale identity.
+- ACL policies: restrict which devices can reach which others. Fleet machines can be isolated from existing infrastructure (VMs, Docker, NAS) on the same tailnet.
+- DERP relay fallback for connections that can't establish direct WireGuard tunnels.
+- Installs on Linux, macOS, Windows, iOS, Android. One install, runs as a service, family members never interact with it after setup.
 
-**NX protocol quality:** Excellent over slow links (strong compression heritage). On fast local networks, modern native-client solutions (RustDesk, Remotix NEAR) may feel more responsive. Subjective — needs hands-on testing to determine if the difference matters.
+### MeshCentral (integrated)
 
-### RustDesk + Tailscale (this project, if we build)
+- All-in-one: remote desktop + terminal + file management + device inventory. Self-hosted Node.js process, Docker deployment, invite links for agents.
+- SSH is browser-based only — can't `ssh hostname` from terminal without MeshCentral Router port tunneling.
+- macOS agent has documented click and permission issues.
+- Desktop quality: adequate for support tasks, not great for sustained use.
+- No network isolation between fleet machines and other infrastructure.
+- Single product, free, covers ~90% of the use case.
 
-Same architecture as above but RustDesk replaces NoMachine for remote desktop. RustDesk's native client provides better remote desktop quality than NX protocol on fast networks, and its direct IP mode over Tailscale eliminates all relay infrastructure.
+### Acronis Cyber Protect Connect / Remotix (integrated)
 
-The "project" part is the glue: Ansible playbooks for provisioning (Linux/macOS), a polished operator UI (Textual TUI or local web dashboard) for enrollment and fleet state, and documented manual setup for Windows.
-
-**Advantage over NoMachine + Tailscale:** Better remote desktop UX. Opportunity for a delightful operator experience with a purpose-built dashboard.
-
-**Disadvantage:** Ongoing maintenance commitment — Ansible playbooks, RustDesk config management, Tailscale ACL updates, operator UI feature development. NoMachine + Tailscale is install-and-go; this requires indefinite upkeep.
-
-**Only justified if** NoMachine's remote desktop quality or UX is genuinely not good enough after hands-on testing. The decision should be made with evidence, not assumed upfront.
-
-### MeshCentral (single product)
-
-All-in-one: remote desktop, terminal, file management, device inventory in one self-hosted Node.js process. Docker deployment, invite links for agent install. Free and open-source.
-
-- **Gap:** SSH is browser-based only. Can't `ssh hostname` from terminal without MeshCentral Router port tunneling.
-- **Gap:** macOS agent has documented click and permission issues.
-- **Gap:** Remote desktop quality is noticeably below RustDesk/NoMachine — adequate for support tasks, not great for sustained use.
-- **Gap:** No network isolation between fleet machines and other infrastructure.
-- **Strength:** Single product, free, covers ~90% of the use case. If the gaps are tolerable, stop here.
-
-### Splashtop Pro + Tailscale
-
-Splashtop Pro ($99/yr for up to 10 machines) is the best price-to-value ratio in the commercial landscape. Pairing with Tailscale addresses the SSH gap and adds network isolation.
-
-- **Gap:** Linux remote desktop is second-class — functional but fewer features than Windows/Mac.
-- **Gap:** Remote (non-LAN) desktop connections always go through Splashtop relay servers — no P2P hole-punching for WAN.
-- **Gap:** Two products to maintain. Family members need both apps installed.
-- **Strength:** Polished commercial product with good fleet management. Wake-on-LAN support.
-
-### Acronis Cyber Protect Connect (formerly Remotix)
-
-Remotix was acquired by Acronis and rebranded. Perpetual licenses discontinued; subscription-only going forward. The Remotix brand and website continue to operate in parallel with the Acronis branding.
-
-- **Current pricing:** Free (15-min sessions, 2 clients), Personal (~$45/yr, 2 clients), Professional (3 clients/user, pricing unlisted).
-- **NEAR protocol** remains best-in-class for interactive desktop performance — hardware-accelerated, low-latency, noticeably faster than competitors for gaming, video, and design work.
-- **On-prem status:** Unclear post-acquisition. Previously offered full on-premise deployment via OVA/Docker.
-- **SSH:** Only via VNC/RDP tunnel — no direct terminal SSH.
-- **Risk:** Product direction uncertain under Acronis. Limited documentation, no community forums. This is the exact vendor-resilience scenario that motivates the exploration.
+- Remotix acquired by Acronis, rebranded. Perpetual licenses discontinued; subscription-only.
+- Pricing: Free (15-min sessions, 2 clients), Personal (~$45/yr, 2 clients), Professional (3 clients/user, pricing unlisted).
+- NEAR protocol: hardware-accelerated, low-latency — best-in-class for interactive desktop (gaming, video, design).
+- On-prem status unclear post-acquisition. Previously OVA/Docker deployment.
+- SSH only via VNC/RDP tunnel, not direct terminal.
+- The exact vendor-resilience risk that motivates this exploration. Not a long-term answer.
 
 ---
 
@@ -146,7 +191,7 @@ Remotix was acquired by Acronis and rebranded. Perpetual licenses discontinued; 
 
 | Trigger | Impact |
 |---------|--------|
-| TeamViewer launches a personal-fleet tier ($10-20/mo) | Likely the best option — adopt and stop building |
+| TeamViewer launches a personal-fleet tier ($10-20/mo) | Likely the best option — adopt and stop |
 | MeshCentral adds WireGuard mesh or direct terminal SSH | Single-product answer — adopt and stop |
 | NetBird adds built-in remote desktop | Single-product answer — evaluate and likely adopt |
 | NoMachine improves fleet management in free tier | NoMachine + Tailscale becomes strictly dominant |
@@ -157,13 +202,17 @@ Remotix was acquired by Acronis and rebranded. Perpetual licenses discontinued; 
 
 ## Recommendation
 
-**Try NoMachine + Tailscale first.** It scores 7/7 on the requirements matrix, both products are free, and there's nothing to build. Install both on 2-3 machines across platforms and test:
+The networking layer is decided: **Tailscale.** Nothing else comes close for free.
 
-1. Remote desktop quality — NX protocol on fast networks and slow networks
-2. Family onboarding flow — how easy is it to install NoMachine + Tailscale on a family member's machine?
-3. SSH via Tailscale — MagicDNS hostnames, Tailscale SSH (no key management)
-4. ACL isolation — fleet machines can't see existing infrastructure on the tailnet
+The desktop tool is the open question: **NoMachine vs RustDesk.**
+
+**Try NoMachine + Tailscale first.** It scores 7Y, both products are free, and there's nothing to build. Install both on 2-3 machines across platforms and test:
+
+1. Remote desktop quality — NX protocol on fast and slow networks
+2. Family onboarding — how easy is it to install NoMachine + Tailscale on a family member's machine?
+3. SSH via Tailscale — MagicDNS hostnames, Tailscale SSH
+4. ACL isolation — fleet machines can't see existing infrastructure
 
 If it works well enough, stop. The best outcome is discovering there's nothing to build.
 
-If NoMachine's remote desktop quality or UX isn't good enough, **then** the custom build (RustDesk + Tailscale + operator UI) is justified — and the incremental cost is clear: you're trading NoMachine's install-and-go simplicity for better remote desktop and a custom operator experience. That trade-off should be made with evidence from hands-on testing, not assumed upfront.
+If NoMachine's desktop quality or UX isn't good enough, **then** swap NoMachine for RustDesk and build the glue (Ansible provisioning + operator UI). The incremental cost is clear: you're trading NoMachine's install-and-go simplicity for better desktop UX and ongoing maintenance. That trade-off should be made with evidence from hands-on testing, not assumed upfront.
