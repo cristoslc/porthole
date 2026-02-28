@@ -9,9 +9,9 @@ linked-epics:
 {%- for epic in linked_epics | default([]) %}
   - EPIC-{{ epic }}
 {%- endfor %}
-linked-prds:
-{%- for prd in linked_prds | default([]) %}
-  - PRD-{{ prd }}
+linked-specs:
+{%- for spec in linked_specs | default([]) %}
+  - SPEC-{{ spec }}
 {%- endfor %}
 ---
 
