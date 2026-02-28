@@ -69,6 +69,8 @@ infrastructure or manual per-machine network configuration.
 
 | Type | ID | Title | Status | Notes |
 |------|----|-------|--------|-------|
+| Spike | [SPIKE-001](../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
+| Spike | [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
 | ADR | [ADR-001](../../adr/Adopted/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Adopted | Tool selection decision |
 | ADR | [ADR-003](../../adr/Proposed/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Proposed | Tailscale ACLs vs ZeroTier vs WireGuard |
 | PRD | [PRD-002](../../prd/Implemented/(PRD-002)-Remote-Desktop/(PRD-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Implemented | RustDesk + GLI KVM + Remmina install |

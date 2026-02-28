@@ -11,6 +11,7 @@
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
+| Planned | 2026-02-28 | f7f4a39 | Initial creation |
 
 ---
 

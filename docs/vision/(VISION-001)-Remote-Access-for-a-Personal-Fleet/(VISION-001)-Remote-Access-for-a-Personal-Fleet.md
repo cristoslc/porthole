@@ -61,6 +61,13 @@ The best outcome is adopting a product or combination that does this out of the 
 4. **Vendor resilience over vendor avoidance.** Services are fine. What matters is that the operator isn't forced into a reactive migration when a vendor changes direction (as happened with Remotix → Acronis). Prefer products with self-hosted fallbacks, open protocols, or sufficient market competition.
 5. **Delight matters.** If we do build, the operator experience should feel like a product — not a pile of terminal output.
 
+## Child artifacts
+
+| Type | ID | Title | Status |
+|------|----|-------|--------|
+| Epic | [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fleet Management | Proposed |
+| Spike | [SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Planned |
+
 ## Supporting documents
 
 | Document | Description |

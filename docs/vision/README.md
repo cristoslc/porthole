@@ -5,9 +5,3 @@ Product-level vision documents defining what each product area is and why it exi
 ## Organization
 
 Visions are organized by lifecycle phase within their folders. See [list-visions.md](list-visions.md) for the full index.
-
-## Current Visions
-
-| ID | Title | Status |
-|----|-------|--------|
-| [VISION-001]((VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md) | Remote Access for a Personal Fleet | Draft |

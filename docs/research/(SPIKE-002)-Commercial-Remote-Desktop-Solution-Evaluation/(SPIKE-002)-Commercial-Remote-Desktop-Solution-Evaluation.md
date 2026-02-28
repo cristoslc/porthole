@@ -1,20 +1,10 @@
----
-title: "SPIKE-002: Commercial Remote Desktop Solution Evaluation"
-status: Complete
-author: Claude
-created: 2026-02-27
-updated: 2026-02-27
-question: "Which commercial remote desktop solution best fits a personal fleet of ~10 machines across Linux, macOS, and Windows with privacy, NAT traversal, unattended access, and low-maintenance requirements?"
-gate: Pre-implementation
-risks_addressed:
-  - Vendor lock-in to a tool that does not meet cross-platform or privacy requirements
-  - Ongoing subscription costs for a personal fleet
-  - Reliance on third-party relay servers for sensitive traffic
-  - Poor Linux support undermining cross-platform coverage
-dependencies: []
-blocks: []
-parent: "[EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)"
----
+# SPIKE-002: Commercial Remote Desktop Solution Evaluation
+
+**Status:** Complete
+**Author:** Claude
+**Created:** 2026-02-27
+**Last Updated:** 2026-02-27
+**Parent Epic:** [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 
 ### Lifecycle
 
@@ -24,7 +14,33 @@ parent: "[EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC
 
 ---
 
-# Commercial Remote Desktop Solution Evaluation
+## Question
+
+Which commercial remote desktop solution best fits a personal fleet of ~10 machines across Linux, macOS, and Windows with privacy, NAT traversal, unattended access, and low-maintenance requirements?
+
+## Gate
+
+Pre-implementation. This spike informs the desktop tool selection and validates alternatives to RustDesk.
+
+### Go criteria
+
+- At least 10 commercial remote desktop solutions evaluated with current (2025-2026) data.
+- Each solution assessed against: platforms, self-hosting, pricing, P2P vs relay, NAT traversal, unattended access, Linux quality, privacy, and automation.
+
+### No-go pivot
+
+Not applicable — this is an informational spike, not a gating decision. Findings feed into the product landscape.
+
+## Risks addressed
+
+- Vendor lock-in to a tool that does not meet cross-platform or privacy requirements.
+- Ongoing subscription costs for a personal fleet.
+- Reliance on third-party relay servers for sensitive traffic.
+- Poor Linux support undermining cross-platform coverage.
+
+## Dependencies
+
+- None. This spike is pure research.
 
 ## Research Objective
 
