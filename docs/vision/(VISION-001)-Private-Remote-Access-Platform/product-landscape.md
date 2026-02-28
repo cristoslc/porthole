@@ -24,7 +24,7 @@ Options that don't have an N on any requirement (R1-R6). Ranked by how many requ
 | **Splashtop Pro** | P | N* | Y | Y | Y | Y | — | 4Y 1P 1N | $99/yr, up to 10 machines. Linux support is second-class. No SSH (would need separate solution). *Could pair with Tailscale for SSH → see combo below. |
 | **Splashtop Pro + Tailscale** | P | Y | Y | P | P | Y | Y | 4Y 3P | $99/yr + free Tailscale. Fixes SSH gap. Linux remote desktop still second-class. Two products to maintain + Tailscale for family = 2 installs. |
 | **TeamViewer Business** | Y | P | Y | Y | Y | N | — | 5Y 1P 1N | ~$610/yr — too expensive for personal use. Otherwise excellent: just works, great NAT, good fleet management. SSH via web terminal only. |
-| **Remotix On-Prem** | Y | P | Y | Y | P | P | — | 3Y 3P | $200/yr. NEAR protocol is best-in-class for performance. Acronis acquisition risk. SSH only via VNC/RDP tunnel. On-prem adds maintenance. |
+| **Remotix On-Prem** | Y | P | Y | Y | P | P | — | 3Y 3P | $200/yr. NEAR protocol is best-in-class for performance. Already acquired by Acronis and rebranded as Cyber Protect Connect — product direction and on-prem licensing future unclear. SSH only via VNC/RDP tunnel. On-prem adds maintenance. |
 
 ### Disqualified options
 
