@@ -61,12 +61,6 @@ The best outcome is adopting a product or combination that does this out of the 
 4. **Vendor resilience over vendor avoidance.** Services are fine. What matters is that the operator isn't forced into a reactive migration when a vendor changes direction (as happened with Remotix → Acronis). Prefer products with self-hosted fallbacks, open protocols, or sufficient market competition.
 5. **Delight matters.** If we do build, the operator experience should feel like a product — not a pile of terminal output.
 
-## Current state
-
-Desk research is complete. The [product landscape](./product-landscape.md) evaluated 20+ options across two dimensions (remote desktop tools and networking bridges), scoring every viable combination against R1-R7. Multiple combinations satisfy all requirements on paper at $0 cost.
-
-**Next step:** Hands-on validation ([SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md)) — install the top contenders on real machines and test desktop quality, family onboarding, SSH access, and network isolation. The spike's outcome determines whether to adopt an off-the-shelf combination or proceed with the build path.
-
 ## Child artifacts
 
 | Type | ID | Title | Status |
