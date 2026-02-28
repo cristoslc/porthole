@@ -17,11 +17,16 @@
 
 Reliable remote desktop and SSH access to ~10 machines — Linux, macOS, and Windows — including non-technical family members' machines in remote locations.
 
-The problem decomposes into two independent choices: a **remote desktop tool** (which product streams the desktop?) and a **networking bridge** (how do machines find and reach each other across NATs?). Some products bundle both; others are components that compose. The [product landscape](./product-landscape.md) evaluates each dimension separately, then scores every valid combination against the requirements below.
+The solution has two independent dimensions:
 
-The best outcome is adopting an existing product or combination. This project exists to find it. If nothing on the market fits, then — and only then — the fallback is building glue between best-of-breed components (RustDesk + Tailscale + automation).
+1. **Remote desktop** — which tool streams the desktop?
+2. **Networking bridge** — how do machines find and reach each other across NATs, and how does the operator get SSH?
 
-**Context:** The operator currently uses Remotix (NEAR protocol), which was acquired by Acronis and rebranded as Acronis Cyber Protect Connect. The product's direction is uncertain under new ownership — subscription-only pricing, unclear on-prem future, sparse documentation. This motivates a systematic evaluation of alternatives before being forced to migrate reactively.
+Some products bundle both (TeamViewer, MeshCentral); others are components that compose (NoMachine + Tailscale, RustDesk + Tailscale). The [product landscape](./product-landscape.md) evaluates each dimension independently, then scores every valid combination against the requirements below.
+
+The best outcome is adopting an existing product or combination. This project exists to find it. If nothing fits, the fallback is building glue between best-of-breed components.
+
+**Context:** The operator currently uses Remotix (NEAR protocol), which was acquired by Acronis and rebranded as Acronis Cyber Protect Connect. The product's direction is uncertain under new ownership — subscription-only pricing, unclear on-prem future, sparse documentation. This motivates a systematic evaluation before being forced to migrate reactively.
 
 ## Who
 
@@ -30,15 +35,15 @@ The best outcome is adopting an existing product or combination. This project ex
 
 ## What we need
 
-| # | Requirement | Notes |
-|---|-------------|-------|
-| R1 | Remote desktop: Linux, macOS, Windows as both host and client | Must work for "help Mom with her computer" and "connect to my home lab from a hotel" |
-| R2 | SSH access via stable hostnames or IPs | Direct from terminal, not through a web console |
-| R3 | NAT traversal without port forwarding | Machines are behind residential NATs, carrier-grade NAT, hotel WiFi |
-| R4 | Family members passive after one-time setup | Zero ongoing technical steps |
-| R5 | Low maintenance for ~10 machines | One person, spare time, not a job |
-| R6 | Reasonable cost for personal use | $0-20/mo, not enterprise pricing |
-| R7 | Network isolation from existing infrastructure | Fleet machines shouldn't see VMs/Docker/NAS on the existing tailnet |
+| # | Requirement | Dimension | Notes |
+|---|-------------|-----------|-------|
+| R1 | Remote desktop: Linux, macOS, Windows as both host and client | Desktop | Must work for "help Mom with her computer" and "connect to my home lab from a hotel" |
+| R2 | SSH access via stable hostnames or IPs | Network | Direct from terminal, not through a web console |
+| R3 | NAT traversal without port forwarding | Network | Machines are behind residential NATs, carrier-grade NAT, hotel WiFi |
+| R4 | Family members passive after one-time setup | Both | Zero ongoing technical steps |
+| R5 | Low maintenance for ~10 machines | Both | One person, spare time, not a job |
+| R6 | Reasonable cost for personal use | Both | $0-20/mo, not enterprise pricing |
+| R7 | Network isolation from existing infrastructure | Network | Fleet machines shouldn't see VMs/Docker/NAS on the existing tailnet |
 
 ## What we'd like
 
@@ -63,6 +68,14 @@ The best outcome is adopting an existing product or combination. This project ex
 4. **Vendor resilience over vendor avoidance.** Services are fine. What matters is that the operator isn't forced into a reactive migration when a vendor changes direction (as happened with Remotix → Acronis). Prefer products with self-hosted fallbacks, open protocols, or sufficient market competition.
 5. **Delight matters.** If we do build, the operator experience should feel like a product — a Textual TUI or local web dashboard with clear state and one-click actions, not a pile of Ansible output.
 
+## Current state
+
+The [product landscape](./product-landscape.md) evaluation reached two conclusions:
+
+**Networking is settled on paper: Tailscale.** Free, covers SSH (R2) + NAT traversal (R3) + isolation (R7), works with any desktop tool. NoMachine Network is strictly inferior (NM-only, no SSH, no isolation, costs $84.50/yr). Needs hands-on validation of ACL isolation and family onboarding.
+
+**Desktop is the open question: NoMachine vs RustDesk.** Both pair with Tailscale. NoMachine + Tailscale scores 7Y with nothing to build. RustDesk + Tailscale scores 5Y 2P but offers better desktop UX at the cost of ongoing maintenance (Ansible + operator UI). The answer depends on whether NX protocol quality is good enough — which requires hands-on testing, not further analysis.
+
 ## Child artifacts
 
 | Type | ID | Title | Status |
@@ -77,7 +90,6 @@ The best outcome is adopting an existing product or combination. This project ex
 
 ## Open questions
 
-- **Networking layer is settled on paper: Tailscale.** Nothing else covers SSH + NAT + isolation for free. Needs hands-on validation of ACL isolation and family onboarding.
-- **Desktop tool is the open question: NoMachine vs RustDesk.** NoMachine + Tailscale scores 7Y with nothing to build. RustDesk + Tailscale scores 5Y 2P but offers better desktop UX at the cost of ongoing maintenance. The answer depends on whether NX protocol quality is good enough — which requires hands-on testing, not analysis.
+- Is NoMachine's NX protocol quality good enough on fast and slow networks? (Hands-on testing required.)
 - If we build (RustDesk path): should the fleet agent live in a separate repo from the workstation bootstrapper?
 - What is the family onboarding model — fully automated agent install, or guided manual setup?
