@@ -1,12 +1,12 @@
 # SPEC-002: Remote Desktop Bootstrap
 
-**Status:** Implemented
+**Status:** Deprecated
 **Author:** cristos
 **Created:** 2026-02-26
 **Last Updated:** 2026-02-26
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Research:** None (straightforward tool installation — no spike needed)
-**ADR:** [(ADR-001) RustDesk for Remote Desktop](../../../adr/Adopted/(ADR-001)-RustDesk-for-Remote-Desktop.md)
+**ADR:** [(ADR-001) RustDesk for Remote Desktop](../../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md) (Superseded by ADR-005)
 **Migrated from:** PRD-002 (renamed to Agent Spec during upstream scaffolding update)
 
 ### Lifecycle
@@ -15,6 +15,7 @@
 |-------|------|--------|-------|
 | Draft | 2026-02-26 | d627b5b | Initial creation (as PRD-002) |
 | Implemented | 2026-02-26 | 7ccc7df | Role implemented |
+| Deprecated | 2026-02-28 | d28a5bf | ADR-005 supersedes RustDesk with Guacamole + native protocols |
 
 ---
 

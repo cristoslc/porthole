@@ -2,9 +2,7 @@
 
 ## Planned
 
-| ID | Title | Date | Notes |
-|----|-------|------|-------|
-| [SPIKE-003](./(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | 2026-02-28 | Install top contenders on real machines, test against go criteria. Blocks adoption/build decision. |
+_No spikes in this phase._
 
 ## Active
 
@@ -20,4 +18,6 @@ _No spikes in this phase._
 
 ## Abandoned
 
-_No spikes in this phase._
+| ID | Title | Date | Notes |
+|----|-------|------|-------|
+| [SPIKE-003](./(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | 2026-02-28 | Architecture decisions (ADR-004, ADR-005) adopted before validation; planned test combinations no longer match adopted stack |

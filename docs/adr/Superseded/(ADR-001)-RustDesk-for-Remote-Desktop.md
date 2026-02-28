@@ -5,7 +5,7 @@
 **Created:** 2026-02-26
 **Last Updated:** 2026-02-28
 **Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**Spec:** [(SPEC-002) Remote Desktop Bootstrap](../../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md)
+**Spec:** [(SPEC-002) Remote Desktop Bootstrap](../../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md)
 **Superseded by:** [(ADR-005) Remote Desktop Access Model](../Adopted/(ADR-005)-Remote-Desktop-Access-Model.md)
 
 ### Lifecycle

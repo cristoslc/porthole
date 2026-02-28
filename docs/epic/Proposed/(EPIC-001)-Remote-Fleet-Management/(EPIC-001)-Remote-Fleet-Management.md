@@ -76,7 +76,7 @@ infrastructure or manual per-machine network configuration.
 | ADR | [ADR-003](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Abandoned | Evaluated Tailscale vs ZeroTier vs WireGuard; superseded by ADR-004 |
 | ADR | [ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Adopted | Self-hosted WireGuard via VPS; replaces ADR-003 |
 | ADR | [ADR-005](../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md) | Remote Desktop Access Model | Adopted | Guacamole gateway + native protocols; replaces ADR-001 |
-| Spec | [SPEC-002](../../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Implemented | RustDesk + GLI KVM + Remmina install (to be revisited per ADR-005) |
+| Spec | [SPEC-002](../../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Deprecated | ADR-005 supersedes RustDesk with Guacamole + native protocols |
 | PRD | [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | WireGuard mesh eliminates the need for a relay |
 
 ## Key dependencies

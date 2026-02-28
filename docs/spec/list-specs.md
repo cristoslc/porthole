@@ -14,13 +14,13 @@ _No specs in this phase._
 
 ## Implemented
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPEC-002 | Remote Desktop Bootstrap | cristos | 2026-02-26 | 2026-02-26 | 7ccc7df | Migrated from PRD-002 |
+_No specs in this phase._
 
 ## Deprecated
 
-_No specs in this phase._
+| ID | Title | Author | Created | Last Updated | Commit | Notes |
+|----|-------|--------|---------|--------------|--------|-------|
+| SPEC-002 | Remote Desktop Bootstrap | cristos | 2026-02-26 | 2026-02-28 | — | ADR-005 supersedes RustDesk with Guacamole + native protocols |
 
 ## Abandoned
 

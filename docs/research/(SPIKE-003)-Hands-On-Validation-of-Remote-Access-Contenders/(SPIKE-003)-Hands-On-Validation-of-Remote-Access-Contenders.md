@@ -1,6 +1,6 @@
 # SPIKE-003: Hands-On Validation of Remote Access Contenders
 
-**Status:** Planned
+**Status:** Abandoned
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
@@ -12,6 +12,7 @@
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Planned | 2026-02-28 | f7f4a39 | Initial creation |
+| Abandoned | 2026-02-28 | d28a5bf | Architecture decisions (ADR-004, ADR-005) adopted before validation; planned test combinations no longer match adopted stack |
 
 ---
 
