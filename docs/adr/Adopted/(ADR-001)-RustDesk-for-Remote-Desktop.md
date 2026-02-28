@@ -5,7 +5,7 @@
 **Created:** 2026-02-26
 **Last Updated:** 2026-02-26
 **Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**PRD:** [(PRD-002) Remote Desktop Bootstrap](../../prd/Implemented/(PRD-002)-Remote-Desktop/(PRD-002)-Remote-Desktop.md)
+**Spec:** [(SPEC-002) Remote Desktop Bootstrap](../../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md)
 
 ### Lifecycle
 

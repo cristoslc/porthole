@@ -220,7 +220,7 @@ Not applicable -- this is an informational spike, not a gating decision. Finding
 - Client only -- does not make a machine controllable. Requires VNC/RDP/SSH servers on target machines.
 - Cannot connect to RustDesk endpoints (different protocol).
 
-**Verdict for this fleet:** Already installed by PRD-002 as a complementary client for VNC/RDP connections. Not a primary tool -- it talks to servers that must be separately provisioned. Useful for connecting to Windows RDP, Proxmox SPICE, or legacy VNC servers.
+**Verdict for this fleet:** Already installed by SPEC-002 (formerly PRD-002) as a complementary client for VNC/RDP connections. Not a primary tool -- it talks to servers that must be separately provisioned. Useful for connecting to Windows RDP, Proxmox SPICE, or legacy VNC servers.
 
 ---
 

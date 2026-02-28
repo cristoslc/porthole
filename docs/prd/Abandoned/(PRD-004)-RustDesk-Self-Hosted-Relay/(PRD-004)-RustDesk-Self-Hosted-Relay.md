@@ -1,26 +1,20 @@
 # PRD-004: RustDesk Self-Hosted Relay
 
-**Status:** Draft
-**Blocked by:** [(ADR-003) Network Layer for Remote Fleet](../../../adr/Proposed/(ADR-003)-Network-Layer-for-Remote-Fleet.md) — pending decision
+**Status:** Abandoned
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
 **Research:** None (architecture is well-documented; no spike needed)
 **ADR:** [(ADR-001) RustDesk for Remote Desktop](../../../adr/Adopted/(ADR-001)-RustDesk-for-Remote-Desktop.md), [(ADR-003) Network Layer for Remote Fleet](../../../adr/Proposed/(ADR-003)-Network-Layer-for-Remote-Fleet.md)
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**Related:** [(PRD-002) Remote Desktop Bootstrap](../../Implemented/(PRD-002)-Remote-Desktop/(PRD-002)-Remote-Desktop.md)
-
-> **Note:** ADR-003 recommends Tailscale ACL segmentation as the network
-> layer, which would eliminate the need for a self-hosted RustDesk relay
-> entirely. If ADR-003 is adopted as recommended, this PRD should be moved
-> to **Abandoned**. The RustDesk architecture background in this document
-> remains useful as reference material.
+**Related:** [(SPEC-002) Remote Desktop Bootstrap](../../../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md)
 
 ### Lifecycle
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-02-28 | daa2035 | Initial creation |
+| Abandoned | 2026-02-28 | 40abf39 | ADR-003 recommends Tailscale ACLs, eliminating the need for a self-hosted relay. RustDesk architecture background retained as reference. |
 
 ---
 

@@ -1,13 +1,7 @@
-# Product Requirements Documents (PRDs)
+# Product Requirements Documents (PRDs) — Legacy
 
-Feature specifications scoped to something a team (or agent) can ship and validate independently.
+> **This artifact type has been replaced by Agent Specs (`docs/spec/`).** No new PRDs should be created. See [Agent Specs](../spec/README.md) for the current format.
 
-PRDs are organized by lifecycle phase in subdirectories:
+This directory is retained for abandoned PRDs that were never migrated.
 
-- `Draft/` — specification in progress.
-- `Review/` — ready for stakeholder review.
-- `Approved/` — reviewed and approved for implementation.
-- `Implemented/` — implementation complete and verified.
-- `Deprecated/` — no longer active or relevant.
-
-See [list-prds.md](list-prds.md) for the full lifecycle index.
+See [list-prds.md](list-prds.md) for the migration and abandonment index.

@@ -1,32 +1,18 @@
 # PRD Lifecycle Index
 
-## Draft
+> **Note:** The PRD artifact type has been replaced by **Agent Specs** (`docs/spec/`). See [list-specs.md](../spec/list-specs.md) for active specs. This index is retained for historical reference.
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| PRD-004 | RustDesk Self-Hosted Relay | cristos | 2026-02-28 | 2026-02-28 | daa2035 | Blocked pending ADR-003 decision |
+## Migrated
 
-## Review
-
-_No PRDs in this phase._
-
-## Approved
-
-_No PRDs in this phase._
-
-## Implemented
-
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| PRD-002 | Remote Desktop Bootstrap | cristos | 2026-02-26 | 2026-02-26 | 7ccc7df | RustDesk + GLI KVM + Remmina install |
-
-## Deprecated
-
-_No PRDs in this phase._
+| ID | Migrated to | Title | Date |
+|----|-------------|-------|------|
+| PRD-002 | [SPEC-002](../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | 2026-02-28 |
 
 ## Abandoned
 
-_No PRDs in this phase._
+| ID | Title | Author | Created | Last Updated | Commit | Notes |
+|----|-------|--------|---------|--------------|--------|-------|
+| PRD-004 | [RustDesk Self-Hosted Relay](Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | cristos | 2026-02-28 | 2026-02-28 | daa2035 | ADR-003 eliminated the need for a relay |
 
 ---
 

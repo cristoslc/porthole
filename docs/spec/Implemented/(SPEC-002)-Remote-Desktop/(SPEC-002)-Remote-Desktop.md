@@ -1,4 +1,4 @@
-# PRD-002: Remote Desktop Bootstrap
+# SPEC-002: Remote Desktop Bootstrap
 
 **Status:** Implemented
 **Author:** cristos
@@ -7,17 +7,18 @@
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Research:** None (straightforward tool installation — no spike needed)
 **ADR:** [(ADR-001) RustDesk for Remote Desktop](../../../adr/Adopted/(ADR-001)-RustDesk-for-Remote-Desktop.md)
+**Migrated from:** PRD-002 (renamed to Agent Spec during upstream scaffolding update)
 
 ### Lifecycle
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-02-26 | d627b5b | Initial creation |
+| Draft | 2026-02-26 | d627b5b | Initial creation (as PRD-002) |
 | Implemented | 2026-02-26 | 7ccc7df | Role implemented |
 
 ---
 
-## Problem
+## Problem Statement
 
 The workstation has no remote desktop tooling provisioned by bootstrap. The user currently:
 
@@ -27,7 +28,7 @@ The workstation has no remote desktop tooling provisioned by bootstrap. The user
 
 This leaves a gap: fresh machines require manual installation of remote desktop tools, and the Remotix dependency is a liability.
 
-## Goal
+## External Behavior
 
 After `make apply`, both macOS and Linux workstations have:
 
@@ -35,7 +36,16 @@ After `make apply`, both macOS and Linux workstations have:
 2. The GLI KVM client installed (macOS) or documented as browser-only (Linux) for hardware-level access.
 3. Self-hosted relay infrastructure configuration ready (RustDesk relay server address).
 
-## Scope
+## Acceptance Criteria
+
+1. `make apply` on a clean Linux machine installs RustDesk and Remmina, and prints a GLI KVM browser-access note.
+2. `make apply` on a clean macOS machine installs RustDesk and the GLI KVM app.
+3. `make apply ROLE=remote-desktop` runs only the remote-desktop role.
+4. Sub-tool tags work independently: `rustdesk`, `gli-kvm`, `remmina`.
+5. RustDesk is configured to use the self-hosted relay address (when available) without manual intervention.
+6. No Remotix or Acronis software is installed.
+
+## Scope & Constraints
 
 ### In scope
 
@@ -65,16 +75,3 @@ After `make apply`, both macOS and Linux workstations have:
 | GLI KVM app not in Homebrew | Can't automate macOS install | Use `ansible.builtin.get_url` for DMG + manual mount, or check if cask exists first |
 | RustDesk requires systemd service for unattended access | Extra configuration beyond simple install | Add systemd enable/start tasks on Linux; launchd plist on macOS |
 | Self-hosted relay not yet deployed | RustDesk falls back to public relay or direct connection | Direct connection via Tailscale works without relay; relay is a future enhancement |
-
-## Research
-
-No spike is needed. RustDesk and GLI KVM are well-documented tools with straightforward installation paths. The key decisions (tool selection, role structure) are captured in ADR-001.
-
-## Success Criteria
-
-1. `make apply` on a clean Linux machine installs RustDesk and Remmina, and prints a GLI KVM browser-access note.
-2. `make apply` on a clean macOS machine installs RustDesk and the GLI KVM app.
-3. `make apply ROLE=remote-desktop` runs only the remote-desktop role.
-4. Sub-tool tags work independently: `rustdesk`, `gli-kvm`, `remmina`.
-5. RustDesk is configured to use the self-hosted relay address (when available) without manual intervention.
-6. No Remotix or Acronis software is installed.

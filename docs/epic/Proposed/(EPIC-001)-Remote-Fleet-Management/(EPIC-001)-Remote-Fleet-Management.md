@@ -73,18 +73,20 @@ infrastructure or manual per-machine network configuration.
 | Spike | [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
 | ADR | [ADR-001](../../adr/Adopted/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Adopted | Tool selection decision |
 | ADR | [ADR-003](../../adr/Proposed/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Proposed | Tailscale ACLs vs ZeroTier vs WireGuard |
-| PRD | [PRD-002](../../prd/Implemented/(PRD-002)-Remote-Desktop/(PRD-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Implemented | RustDesk + GLI KVM + Remmina install |
-| PRD | [PRD-004](../../prd/Draft/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Draft | Blocked pending ADR-003 outcome |
-| PRD | — | Fleet Agent Provisioning | — | Not yet created; scope depends on ADR-003 + repo boundary decision. May live in a separate repo. |
+| Spec | [SPEC-002](../../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Implemented | RustDesk + GLI KVM + Remmina install |
+| PRD | [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | ADR-003 eliminated the need for a relay |
+| Spec | — | Fleet Agent Provisioning | — | Not yet created; scope depends on ADR-003 + repo boundary decision. May live in a separate repo. |
 | ADR/Spike | — | Repo Boundary: Fleet Agent vs Workstation | — | How does the fleet-agent repo relate to this workstation repo? (Galaxy role, submodule, or standalone) |
 
 ## Key dependencies
 
 - **ADR-003 must be decided first.** The network layer decision determines
   whether PRD-004 (self-hosted relay) is needed, what provisioning work is
-  required, and how client configuration works.
-- PRD-002 is already implemented — it installed RustDesk but deferred relay
-  and network configuration. This epic completes that deferred work.
+  required, and how client configuration works. (PRD-004 has since been
+  Abandoned — ADR-003 recommends Tailscale ACLs, eliminating the relay.)
+- SPEC-002 (formerly PRD-002) is already implemented — it installed RustDesk
+  but deferred relay and network configuration. This epic completes that
+  deferred work.
 
 ## Key decisions pending
 
