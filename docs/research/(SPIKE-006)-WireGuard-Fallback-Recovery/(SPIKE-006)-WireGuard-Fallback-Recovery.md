@@ -143,12 +143,30 @@ The TUI could also expose a "Restart VPN" action for this scenario.
 
 ### Layer 5: Side-channel remote desktop
 
-As a last resort, use a temporary commercial tool (the operator already mentioned Remotix, TeamViewer as side-channels in the Q&A). Options:
+As a last resort when all automated and remote-operator channels have failed, a commercial remote desktop tool provides out-of-band access that is completely independent of the WireGuard tunnel. The key requirement: a family member at the machine must be able to participate (read a code, click "allow"), so the tool must have a simple, walkthrough-friendly flow.
 
-- **RustDesk with self-hosted relay on VPS** — open source, the relay runs independently of WireGuard (it uses the VPS's public IP). Since the VPS already exists, this adds minimal infrastructure. The relay survives WireGuard being down because it uses its own TCP/UDP connections.
-- **AnyDesk / TeamViewer** — pre-installed but used only for emergencies. Harden with 2FA, device allowlists, and unattended access passwords.
+**Evaluated tools (2026-02-28):**
 
-RustDesk is the better fit here: self-hosted relay eliminates the commercial cloud dependency, and it's already been evaluated (SPIKE-004). Ironic that RustDesk returns as a fallback recovery tool rather than the primary remote desktop solution.
+| Tool | Free tier | Cross-platform | Family-friendly flow | Verdict |
+|------|-----------|----------------|---------------------|---------|
+| **RustDesk (self-hosted)** | Unlimited (self-hosted relay) | Linux, macOS, Windows | "Read me the 9-digit code" — simple | **Recommended** |
+| **Chrome Remote Desktop** | Unlimited | Windows, macOS, Debian-based Linux only | Google account required; "enter this code" flow | Good supplement for Debian/Ubuntu nodes |
+| **Quick Assist** | Unlimited | Windows only | Built into Windows; "enter this 6-digit code" | Excellent for Windows nodes |
+| **AnyDesk** | Free tier exists | All platforms | Simple code flow | **Disqualified** — flags personal use as commercial with >3 devices |
+| **TeamViewer** | Free tier exists | All platforms | Simple code flow | **Disqualified** — aggressive commercial-use detection; sessions limited to 5 min |
+
+**Recommended approach — RustDesk self-hosted:**
+- Run `hbbs` (rendezvous) and `hbbr` (relay) on the VPS alongside the other hub services. The relay uses the VPS's public IP directly (TCP/UDP 21115-21119), not the WireGuard tunnel, so it survives WireGuard failures.
+- Pre-install the RustDesk client on all fleet nodes. Configure it to point at the self-hosted relay (`relay=<VPS_PUBLIC_IP>`).
+- The family member's role: open RustDesk, read the 9-digit ID displayed on screen, and click "Allow" when prompted. The operator connects from any device with RustDesk installed.
+- No account creation, no SaaS dependency, no commercial-use detection. The relay and rendezvous server are fully self-hosted.
+- Ironic that RustDesk returns as a fallback recovery tool rather than the primary remote desktop solution (see SPIKE-004).
+
+**Supplements:**
+- **Chrome Remote Desktop** for Debian/Ubuntu nodes where a Google account is already active. The "generate a one-time code" flow is family-friendly.
+- **Quick Assist** (built into Windows 10/11) for Windows nodes. Zero-install, 6-digit code flow, works immediately.
+
+**Family walkthrough:** Pre-write a one-page PDF/printout for each platform: "If Cristos asks you to help fix the VPN, open the app with this icon, read the code." Laminate it. Tape it to the desk. This is the last line of defense.
 
 ### Failure mode coverage
 

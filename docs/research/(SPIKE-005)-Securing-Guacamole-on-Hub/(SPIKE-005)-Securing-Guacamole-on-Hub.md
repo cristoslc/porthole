@@ -167,6 +167,14 @@ No fundamental conflicts. Key details:
 - guacd runs as a non-root user inside its container
 - PostgreSQL data volume is ephemeral — recreated from seed SQL on rebuild
 
+### 9. Ephemeral hub model (see SPIKE-007)
+
+SPIKE-007 evaluates whether the hub can be destroyed when not in use and recreated on demand. The recommended hybrid model — always-on WireGuard relay + on-demand Guacamole via Docker Compose — significantly changes the security profile:
+
+- **Guacamole is not running 24/7.** The operator starts it with `docker compose up -d guacamole coredns` when remote desktop access is needed, and stops it afterward. The Guacamole attack surface (web application, Tomcat, PostgreSQL) exists only during active sessions.
+- **All other findings in this spike remain valid** — network binding, TLS, authentication, SQL seeding, firewall rules apply whenever Guacamole is running.
+- **The persistent attack surface reduces to WireGuard UDP only** — one of the narrowest possible surfaces for an internet-facing service.
+
 ## Lifecycle
 
 | Phase | Date | Commit | Notes |

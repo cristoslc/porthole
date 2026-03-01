@@ -17,6 +17,7 @@ _No spikes in this phase._
 | [SPIKE-004](./(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md) | Remote Desktop Agent Architecture | 2026-02-28 | RustDesk vs NoMachine vs Guacamole for R10 compliance; informs ADR-005 |
 | [SPIKE-005](./(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md) | Securing Guacamole on the Hub | 2026-02-28 | Network binding, TLS, auth, Docker deployment, firewall; informs EPIC-007 |
 | [SPIKE-006](./(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md) | WireGuard Fallback & Recovery | 2026-02-28 | Defense-in-depth: watchdog, reverse SSH, Tailscale, recovery scripts; informs EPIC-008 |
+| [SPIKE-007](./(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | 2026-02-28 | Create/destroy vs stop/start, floating IPs, WireGuard reconnection, Terraform lifecycle, P2P NAT traversal; informs ADR-004 |
 
 ## Abandoned
 
