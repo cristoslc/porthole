@@ -51,20 +51,28 @@ runs:
 - **Status endpoint** — JSON status for monitoring
 
 **Key properties:**
-- Fully rebuildable from repo state in <10 minutes
-- Idempotent — safe to re-run
-- Guacamole config (connections, users) generated from network state, not
-  manually configured
-- No state lives only on the VPS — everything is in the repo
+- **Ephemeral create/destroy model** (SPIKE-007) — hub is created from
+  scratch when needed, destroyed afterward. No persistent VPS. Fresh build
+  via cloud-init from repo state every time (~5-8 min). No snapshots.
+- **DNS-based endpoint** (SPIKE-007) — peers use `Endpoint =
+  hub.yourdomain.com:51820`. Cloudflare DNS record updated by Terraform.
+  Enables provider portability (Hetzner, DO, Vultr).
+- **Guacamole secured to WireGuard only** (SPIKE-005) — all services bind to
+  `10.100.0.1`. Public interface exposes only WireGuard UDP + SSH. Caddy
+  reverse proxy with DNS-01 TLS. Database auth + TOTP.
+- Guacamole connections seeded from SQL generated from `network.sops.yaml`
+  (SPIKE-005) — no manual connection setup.
+- Idempotent — safe to re-run.
+- No state lives only on the VPS — everything is in the repo.
 
 **Success criteria:**
-- `wgmesh hub deploy` against a fresh Ubuntu VPS installs and configures
-  everything
-- Destroying the VPS and redeploying to a new one restores full
-  functionality
-- All services start automatically on boot
-- Guacamole connections are auto-generated from peer list (no manual
-  connection setup per machine)
+- `wgmesh hub deploy` (or `hub-up.sh`) against any cloud provider creates a
+  fully configured hub from scratch
+- Destroying the VPS and redeploying restores full functionality — nodes
+  reconnect automatically via DNS re-resolution + PersistentKeepalive
+- Guacamole connections are auto-generated from peer list
+- Mobile trigger (GitHub Actions `workflow_dispatch`) can spin up the hub
+  from a phone
 
 ---
 
@@ -98,6 +106,15 @@ protocols, and gives the operator a TUI for troubleshooting.
   all peers → enables `ssh mom.wg` from any node
 - Configures DNS client (sets WireGuard DNS to hub IP)
 
+**Fallback & recovery (SPIKE-006):**
+- Layer 1: Watchdog + auto-restart (handles ~80% of WireGuard failures).
+  Includes `reresolve-dns.sh` logic for hub DNS changes (SPIKE-007).
+- Layer 2: Reverse SSH tunnel to VPS public IP (independent of WireGuard).
+  Deterministic port assignment from peer number.
+- Layer 5: RustDesk pre-installed on all nodes, configured for public relay.
+  Emergency break-glass when all other layers fail.
+- Layers 1 + 2 are MVP. Layers 3-5 are post-MVP hardening.
+
 **TUI:**
 - Textual (Python) or similar terminal UI framework
 - Shows: tunnel status, assigned IP, DNS name, last handshake, transfer
@@ -113,6 +130,8 @@ protocols, and gives the operator a TUI for troubleshooting.
 - TUI shows accurate tunnel status on all three platforms
 - Native remote access protocol enabled automatically based on detected role
 - `ssh <peer>.wg` works from any onboarded node
+- WireGuard watchdog auto-recovers from process crashes and stale handshakes
+  without human intervention
 
 ---
 
@@ -194,6 +213,10 @@ Then layer on git-polling, TUI, and auto-updates as EPIC-008 matures.
    repo? The repo contains SOPS-encrypted secrets — the node needs the age
    key to decrypt its own config. Does the node get a read-only deploy key?
    Does it clone the whole repo or fetch just the state file?
+   *Spike context:* SPIKE-007 addresses a related question for the hub side
+   — the age identity key is injected via Terraform variable or the
+   `hub-up.sh` wrapper. The node side is different: each node needs its own
+   age key (provisioned during onboarding) and a way to pull state from git.
 
 4. **Magic Wormhole dependency:** Is Magic Wormhole acceptable as an
    onboarding dependency? It requires `wormhole` installed on both the

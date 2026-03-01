@@ -7,6 +7,7 @@
 **Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Replaces:** [(ADR-003) Network Layer for Remote Fleet](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) (Abandoned)
 **Affects:** [EPIC-002](../../epic/Proposed/(EPIC-002)-Provisioning-CLI/(EPIC-002)-Provisioning-CLI.md), [EPIC-005](../../epic/Proposed/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md), [EPIC-006](../../epic/Proposed/(EPIC-006)-Internal-DNS/(EPIC-006)-Internal-DNS.md)
+**Informed by:** [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
 
 ### Lifecycle
 
@@ -41,12 +42,22 @@ A single VPS runs WireGuard as a relay hub. All fleet nodes connect to the hub a
 - **SOPS/age encryption.** Private keys never exist in plaintext in the repo. The age private key lives only on the operator's workstation and the VPS.
 - **Internal DNS.** CoreDNS on the hub serves a `.wg` zone generated from the state file. `ssh mom.wg` instead of `ssh 10.100.0.10`.
 
+### Hub lifecycle model (SPIKE-007)
+
+SPIKE-007 confirmed the hub is operationally viable as an ephemeral, on-demand VPS:
+
+- **Ephemeral create/destroy.** The hub is created from scratch when needed and destroyed afterward. No persistent VPS, no idle attack surface. Fresh build via cloud-init from repo state every time — no snapshots.
+- **DNS-based endpoint.** Peer configs use `Endpoint = hub.yourdomain.com:51820`. A Terraform `cloudflare_record` resource updates the A record on each creation. This enables **provider portability** — the hub can be created on any provider without configuration changes on nodes.
+- **Automatic node reconnection.** Nodes run `reresolve-dns.sh` (integrated into the node agent watchdog) to detect DNS changes. Combined with `PersistentKeepalive = 25`, nodes reconnect automatically within ~2-3 minutes of the hub coming online. No restart, no manual intervention.
+- **Spin-up time.** ~5-8 minutes from trigger to fully operational hub (VM creation + cloud-init + DNS propagation). Acceptable for the use case.
+- **Fallback: hybrid model.** If the ephemeral model proves fragile, fall back to an always-on minimal hub (~€3.85/month) running only WireGuard + firewall, with Guacamole/CoreDNS started on demand via Docker Compose.
+
 ### Limitations accepted
 
-- **All traffic relays through the VPS.** Latency is higher than a direct P2P connection. Acceptable for SSH and remote desktop at personal-fleet scale.
-- **VPS is a single point of failure.** If it goes down, no inter-node connectivity. Mitigated by fast disaster recovery (clone repo, point at new VPS, one command).
+- **All traffic relays through the VPS.** Latency is higher than a direct P2P connection. Acceptable for SSH and remote desktop at personal-fleet scale. SPIKE-007 confirmed that pure P2P WireGuard (without a hub) fails in 10-30% of residential NAT scenarios.
+- **Hub must be running for inter-node connectivity.** Under the ephemeral model, the hub is intentionally not running most of the time. Nodes operate independently when the hub is down. The operator spins up the hub when remote access or inter-node connectivity is needed.
 - **No automatic P2P hole-punching.** Two nodes on the same LAN still route through the VPS. Acceptable tradeoff for simplicity.
-- **Manual key distribution.** The operator runs `wgmesh add`, then delivers the generated config to the target machine (via SSH, USB, or walking it over). No automated config push to client nodes.
+- **Initial key distribution via Magic Wormhole.** The operator runs `wgmesh add`, transfers the config to the target node via Magic Wormhole (one short code, works over any network). Ongoing topology changes propagate via git-polling on the node agent.
 
 ## Consequences
 

@@ -8,6 +8,7 @@
 **Informed by:** [(SPIKE-004) Remote Desktop Agent Architecture](../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md)
 **Supersedes:** [(ADR-001) RustDesk for Remote Desktop](../Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md)
 **Affects:** EPIC-001, EPIC-002, SPEC-002
+**Informed by:** [(SPIKE-005) Securing Guacamole on Hub](../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md), [(SPIKE-006) WireGuard Fallback & Recovery](../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md), [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
 
 ### Lifecycle
 
@@ -35,7 +36,7 @@ SPIKE-004 evaluated three approaches: RustDesk (local agent), NoMachine (local a
 
 ### How it works
 
-1. A Guacamole server (guacd + web app + database) runs on the operator's homelab, accessible over the WireGuard network.
+1. A Guacamole server (guacd + web app + database) runs on the VPS hub, accessible only from within the WireGuard network (SPIKE-005).
 2. Target machines run only their native remote access services:
    - **Windows:** Built-in RDP (Remote Desktop, port 3389)
    - **Linux:** xrdp for desktop access, sshd for terminal
@@ -68,12 +69,21 @@ NoMachine is the stronger local agent, but it still means maintaining a custom a
 
 - **macOS desktop quality is lower** than a native ARD client. Guacamole connects via VNC to macOS Screen Sharing, which lacks Apple Remote Desktop protocol optimizations. Acceptable for occasional remote support; not ideal for extended desktop use.
 - **Performance overhead.** guacd renders the remote display server-side and re-encodes for browser delivery. Latency is higher than native RDP or NX clients. Acceptable for a personal fleet over WireGuard.
-- **Gateway is a single point of failure.** If the Guacamole server is down, browser-based access is unavailable. Direct SSH and RDP/VNC via native clients remain available as fallback — the gateway is a convenience layer, not the only path.
-- **Infrastructure complexity.** Guacamole requires Tomcat + guacd + PostgreSQL. Mitigated by deploying as a Docker Compose stack on the homelab.
+- **Gateway is on-demand, not always-on.** Under the ephemeral hub model (SPIKE-007), Guacamole runs only when the operator needs remote desktop access. The hub is created from scratch, Guacamole starts as part of Docker Compose, and the hub is destroyed afterward. When the hub is down, browser-based access is unavailable — direct SSH and RDP/VNC via native clients remain available as fallback over WireGuard (if the hub is running in hybrid mode) or via the defense-in-depth fallback stack (SPIKE-006).
+- **Infrastructure complexity.** Guacamole requires Tomcat + guacd + PostgreSQL. Mitigated by deploying as a Docker Compose stack on the VPS hub, with connections seeded from repo state (SPIKE-005).
+- **RustDesk pre-installed as Layer 5 fallback.** RustDesk is installed on all fleet nodes during provisioning as emergency break-glass tooling (SPIKE-006 Layer 5). When WireGuard is down and all other recovery layers have failed, the operator connects via RustDesk's public relay. This is not the primary remote desktop solution — it is dormant infrastructure for emergencies only.
 
 ### Fallback
 
 If macOS VNC performance through Guacamole is unacceptable for a specific use case, install NoMachine on that macOS target as a supplement. NoMachine's NX protocol is the highest-performance option for remote desktop. This is a per-machine exception, not a fleet-wide deployment.
+
+### Guacamole security model (SPIKE-005)
+
+- All services bind to the WireGuard interface (`10.100.0.1`) only — Guacamole is unreachable from the public internet.
+- Caddy reverse proxy with DNS-01 TLS via Cloudflare (browser-trusted certs, no public exposure).
+- Database auth + TOTP, with TOTP bypass for connections from the WireGuard subnet.
+- Connections seeded from SQL generated from `network.sops.yaml` — the hub is fully rebuildable from repo state.
+- Docker Compose deployment: guacd, guacamole (Tomcat), PostgreSQL, Caddy.
 
 ## Consequences
 
@@ -87,7 +97,7 @@ The "remote desktop agent" component of EPIC-001 simplifies from "install and co
 - Enabling and configuring RDP on Windows (manual, documented steps)
 - Installing and configuring xrdp on Linux (automatable via the bootstrap)
 - Enabling Screen Sharing on macOS (automatable via `kickstart`)
-- Deploying the Guacamole Docker stack on the homelab
+- Deploying the Guacamole Docker stack on the VPS hub
 
 ### For EPIC-002 (Provisioning CLI)
 

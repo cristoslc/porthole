@@ -218,7 +218,9 @@ Adding Ansible playbooks and an operator UI (Textual TUI, local web dashboard) i
 
 ---
 
-## Recommendation
+## Recommendation (original, 2026-02-27)
+
+> **Superseded by subsequent architecture decisions.** The recommendations below were the output of the initial landscape analysis. ADR-004 and ADR-005 changed both the networking and desktop answers. See the update section below.
 
 The networking layer is decided: **Tailscale.**
 
@@ -232,3 +234,33 @@ The desktop tool is the open question: **NoMachine vs RustDesk.** Both score 7Y 
 4. Family onboarding — which is easier to install on a family member's machine?
 
 Pick whichever feels better. If either is good enough out of the box, there's nothing to build. The optional automation layer (Ansible + operator UI) is a separate decision that can be made later, on top of whichever desktop tool wins.
+
+---
+
+## Update: Adopted architecture (2026-02-28)
+
+Two architecture decisions changed both dimensions of this analysis:
+
+### Networking: WireGuard hub-and-spoke (ADR-004), not Tailscale
+
+[ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) adopted self-hosted WireGuard hub-and-spoke via an ephemeral VPS. The decision prioritized operational sovereignty and zero SaaS dependency over Tailscale's convenience. Tailscale remains on the existing tailnet for infrastructure services but is not the networking layer for the family fleet.
+
+This changes the scoring for Dimension 2: Tailscale is no longer the networking bridge for fleet machines. Raw WireGuard — listed as "Disqualified" above because it requires a publicly routable endpoint and manual key management — is the adopted approach, with the VPS hub providing the routable endpoint and a CLI tool (`wgmesh`) automating key management.
+
+### Desktop: Guacamole gateway + native protocols (ADR-005), not NoMachine/RustDesk
+
+[ADR-005](../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md) adopted Apache Guacamole as the remote desktop gateway, using each OS's native remote access services (RDP, VNC, SSH) as the protocol layer. No custom remote desktop agent is installed on targets.
+
+This changes the scoring for Dimension 1: Guacamole was listed as "Disqualified" above because "gateway model requires targets reachable from gateway — no NAT traversal without VPN underneath." With WireGuard providing that VPN, the disqualifying gap is eliminated. Guacamole is the adopted desktop tool.
+
+The "test NoMachine vs RustDesk" recommendation was superseded before testing began. SPIKE-004 found that both tools have platform-specific issues with R10 (silent background operation) — RustDesk breaks keyboard input when hiding the tray on macOS, and NoMachine can't suppress notification balloons. Guacamole sidesteps both issues: targets run only native OS services (R10 satisfied trivially).
+
+### RustDesk returns as emergency fallback
+
+RustDesk is pre-installed on all fleet nodes as Layer 5 emergency fallback (SPIKE-006). When WireGuard is down and all other recovery layers have failed, the operator uses RustDesk via public relay to reach the broken node and fix it. This is emergency break-glass tooling, not the primary remote desktop solution.
+
+### Revised combination
+
+| Desktop | Network | R1 | R2 | R3 | R4 | R5 | R6 | R7 | Notes |
+|---------|---------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|-------|
+| Guacamole | WireGuard hub-and-spoke | Y | Y | Y | Y | Y | Y | Y | Adopted (ADR-004 + ADR-005). Browser-based, no client software. Native OS protocols. Ephemeral VPS hub. |
