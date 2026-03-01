@@ -20,8 +20,8 @@ The current design (ADR-004) assumes a persistent hub running WireGuard relay, C
 
 ## Go / No-Go Criteria
 
-- **Go:** Cold start (API call to usable hub) under 5 minutes, IP stability solved without manual peer reconfiguration, Terraform+cloud-init automation achievable, state remains in git.
-- **No-go:** DNS propagation lag exceeds 2 minutes, or WireGuard peers require manual restart on every hub recreation, or Terraform state cannot be safely committed to the git repo.
+- **Go:** Cold start (API call to usable hub) under 10 minutes from a fresh build (no snapshots), IP stability solved via DNS without manual peer reconfiguration, Terraform+cloud-init automation achievable, all hub state derived from git repo.
+- **No-go:** DNS propagation lag exceeds 5 minutes, or WireGuard peers require manual restart on every hub recreation, or hub secrets cannot be safely managed outside Terraform state.
 
 ## Pivot Recommendation
 
@@ -160,36 +160,58 @@ Understanding WireGuard's timer constants is critical for this use case. The val
 
 **PersistentKeepalive consideration:** Setting `PersistentKeepalive = 25` on spoke peers helps maintain NAT mappings while the hub is up. When the hub is down, it causes rapid detection of the outage (within 25 seconds) rather than waiting for a timeout. There is no meaningful downside to having this set — the periodic UDP packet is negligible traffic. However, it does mean spokes will immediately notice and begin retrying handshakes the moment the hub goes offline, which is the desired behavior.
 
-**Does WireGuard resume established connections?** TCP sessions that were routed through the tunnel will drop (the tunnel going down is equivalent to a network partition for the TCP stack). After the hub returns and the WireGuard handshake completes, new TCP connections can be made. The user will need to reconnect their SSH session or refresh their Guacamole browser connection — the sessions themselves do not resume.
+**Do nodes need to restart WireGuard when the hub is instantiated?** No. The full reconnection sequence is automatic:
+
+1. Hub is created → Terraform updates Cloudflare DNS A record with the new IP.
+2. Nodes have `Endpoint = hub.yourdomain.com:51820` and `PersistentKeepalive = 25` in their WireGuard config.
+3. The node agent's watchdog (SPIKE-006 Layer 1) runs `reresolve-dns.sh` logic on a 30-second timer, which re-resolves `hub.yourdomain.com` and calls `wg set wg0 peer <hub-pubkey> endpoint <new-IP>:51820` if the IP changed.
+4. The next PersistentKeepalive packet (within 25 seconds) triggers a handshake attempt to the new IP. The hub responds, handshake completes.
+5. The tunnel is up. No restart, no manual intervention, no family member involvement.
+
+The entire reconnection happens within **~2–3 minutes** of the DNS record updating — overlapping with cloud-init, so by the time the hub's WireGuard is actually listening, most nodes have already resolved the new IP and are retrying.
+
+**Does WireGuard resume established connections?** No. TCP sessions that were routed through the tunnel drop (the tunnel going down is equivalent to a network partition for the TCP stack). After the hub returns and the WireGuard handshake completes, new TCP connections can be made. The user will need to reconnect their SSH session or refresh their Guacamole browser connection — the sessions themselves do not survive the hub cycle.
 
 ### 4. Terraform for VPS Lifecycle
 
 Terraform with the Hetzner provider can manage the full create/destroy cycle. The operational sequence is:
 
 ```
-terraform apply     # Creates server + assigns floating IP → outputs hub IP
-                    # cloud-init bootstraps WireGuard, CoreDNS, Guacamole
-                    # Hub is reachable in 3–8 min (packages) or ~90 s (snapshot)
+terraform apply     # Creates server → gets new IP
+                    # Updates Cloudflare DNS A record (hub.yourdomain.com → new IP)
+                    # cloud-init bootstraps everything from scratch
+                    # Hub is reachable in ~5–8 min
 
 # ... operator uses remote access ...
 
-terraform destroy   # Destroys server, floating IP survives
+terraform destroy   # Destroys server completely
                     # Hub is gone; nodes lose mesh connectivity
-                    # Cost: €0 for the destroyed server (floating IP: €3/month prorated)
+                    # Cost: €0 — nothing persists
 ```
 
-**Total elapsed time, fresh install path:**
+**Total elapsed time (fresh build every time — no snapshots):**
 - VM creation → SSH: ~25 s (Hetzner)
-- cloud-init: Docker + WireGuard + CoreDNS + Guacamole pull and start: 3–7 min (variable, depends on image layer caching)
-- **Total: ~3.5–8 minutes**
+- cloud-init: install WireGuard, Docker; pull Guacamole/CoreDNS images; configure and start services: 3–7 min (variable, depends on upstream package mirrors and Docker Hub)
+- DNS propagation to Cloudflare: ~60–120 s (overlaps with cloud-init)
+- **Total: ~5–8 minutes**
 
-**Total elapsed time, snapshot path (recommended):**
-- Snapshot captures a fully configured image with Docker images pre-pulled
-- VM creation from snapshot → SSH: ~25–45 s
-- cloud-init: inject WireGuard private key + peer configs + start services: ~30–60 s
-- **Total: ~90 seconds**
+**Why no snapshots:** The hub is fully defined by repo state. Every hub instance is built from scratch by cloud-init, ensuring:
+- No configuration drift between git and the running system
+- No snapshot maintenance or storage cost
+- True provider portability — cloud-init works on any provider, snapshots are provider-specific
+- Every boot is a clean, auditable build from known inputs
 
-Creating a snapshot is a one-time operation. On Hetzner, snapshots cost €0.01/GB/month (a minimal Ubuntu+Docker+WG image is ~5–8 GB after layers, so €0.05–€0.08/month).
+**Key management for fresh builds:** The hub's WireGuard private key and all peer configurations are SOPS/age-encrypted in the git repo. The fresh-build workflow:
+
+1. cloud-init receives a `user_data` payload from Terraform containing the age identity key (or a reference to it).
+2. cloud-init clones the git repo (or Terraform templates the config files into `user_data` directly).
+3. SOPS decrypts `network.sops.yaml` using the age key → WireGuard configs are generated and written.
+4. WireGuard, Docker Compose (Guacamole + CoreDNS), and supporting services start.
+
+The age identity key is the one secret that must be injected from outside the repo. Options:
+- **Terraform variable** passed via `TF_VAR_age_key` environment variable (never in state if marked `sensitive` + TF 1.10+ `ephemeral`)
+- **Provider secret store** (Hetzner doesn't have one; use a `local_sensitive_file` or environment variable)
+- **Operator's machine** — the `hub-up.sh` wrapper reads the key from the operator's local keyring/GPG agent and passes it to Terraform
 
 **Terraform state management:** Terraform state must not be committed to git in plaintext because it can contain provider API tokens, private key material injected via variables, and resource metadata. Options:
 
@@ -296,18 +318,18 @@ This is by design in the ephemeral model. The family fleet is isolated when the 
 
 Based on the above findings and the operator's acceptance of a few minutes' spin-up delay, the DNS-based ephemeral model is recommended. A few minutes to bring the hub online is acceptable; provider portability and zero idle cost are more valuable than instant reconnection.
 
-### Recommended: Full Ephemeral with DNS Endpoint
+### Recommended: Full Ephemeral with DNS Endpoint, Fresh Build Every Time
 
 - **DNS endpoint:** All peer WireGuard configs use `Endpoint = hub.yourdomain.com:51820`. No floating IP, no provider lock-in.
 - **Terraform module** per provider (Hetzner, DigitalOcean, etc.) in the git repo manages the server lifecycle. A shared `cloudflare_record` resource updates the DNS A record after VM creation.
-- **Snapshot** of a fully configured hub (WireGuard + Docker + Guacamole + CoreDNS images pre-pulled). Snapshot cost: ~€0.05–€0.08/month (Hetzner).
-- **Wrapper script** (`hub-up.sh` / `hub-down.sh`) wraps `terraform apply` and `terraform destroy`, waits for cloud-init + DNS propagation, prints status.
-- **On each peer node:** `Endpoint = hub.yourdomain.com:51820`, `PersistentKeepalive = 25`. The node agent watchdog (SPIKE-006 Layer 1) incorporates `reresolve-dns.sh` logic to pick up the new IP within 30 seconds of DNS propagation.
+- **Fresh build from repo state:** No snapshots. Every hub instance is built from scratch by cloud-init — install packages, decrypt SOPS/age keys from git, generate WireGuard configs, pull Docker images, start services. This ensures the running hub always matches the repo and eliminates provider-specific snapshot management.
+- **Wrapper script** (`hub-up.sh` / `hub-down.sh`) wraps `terraform apply` and `terraform destroy`, waits for cloud-init completion + DNS propagation, prints status.
+- **On each peer node:** `Endpoint = hub.yourdomain.com:51820`, `PersistentKeepalive = 25`. The node agent watchdog (SPIKE-006 Layer 1) incorporates `reresolve-dns.sh` logic to pick up the new IP within 30 seconds of DNS propagation. **No node restart needed** — reconnection is fully automatic (see section 3).
 - **Mobile trigger:** GitHub Actions `workflow_dispatch` or similar webhook, triggerable from the GitHub mobile app.
-- **Spin-up timeline:** VM creation (~25 s) + cloud-init from snapshot (~60 s) + DNS propagation (~60–120 s) = **~3–5 minutes** from trigger to operational hub.
-- **Total inactive cost:** ~€0.05–€0.08/month (snapshot storage only). Domain registration is a sunk cost (already needed for Caddy DNS-01 TLS).
+- **Spin-up timeline:** VM creation (~25 s) + cloud-init fresh build (~3–7 min) + DNS propagation (~60–120 s, overlaps with cloud-init) = **~5–8 minutes** from trigger to operational hub.
+- **Total inactive cost:** €0. Domain registration is a sunk cost (already needed for Caddy DNS-01 TLS).
 - **Total active cost:** ~€0.006/hour (Hetzner CAX11).
-- **Provider portability:** Switch providers by changing the Terraform module. Peers don't care — they resolve the DNS name.
+- **Provider portability:** Switch providers by changing the Terraform module. Cloud-init is provider-agnostic. Peers don't care — they resolve the DNS name.
 
 ### Alternative: Hybrid (24/7 Relay + On-Demand Services)
 
@@ -326,14 +348,16 @@ The hybrid model is the fallback if ephemeral doesn't work in practice. Start wi
 
 | Question | Answer |
 |----------|--------|
-| Is create/destroy feasible? | Yes. Snapshot-based provisioning, ~90 s to SSH-ready. |
+| Is create/destroy feasible? | Yes. Fresh build via cloud-init, ~5–8 min to fully operational. No snapshots — repo is authoritative. |
 | Floating IP or DNS? | **DNS.** A few minutes' delay is acceptable. DNS enables provider portability and eliminates the €3/month floating IP. Cloudflare account already needed for TLS (SPIKE-005). |
 | Does WireGuard reconnect after DNS change? | Yes, via `reresolve-dns.sh` (bundled with wireguard-tools). Peers pick up the new IP within ~30 s of DNS propagation. No restart needed. |
 | Can Terraform manage the lifecycle? | Yes. `hcloud` provider is mature. State must not go in git. `cloudflare_record` updates DNS automatically. |
 | Stop/start vs. create/destroy? | Create/destroy wins on attack surface and config freshness. No cost difference once floating IP is removed from the equation. |
 | P2P without hub? | Not viable for residential fleet. ~10–30% failure rate across NAT types. |
 | Provider portability? | Yes — DNS endpoint + per-provider Terraform module. Switch providers by changing one variable. |
-| Is ephemeral operationally viable for emergency access? | Yes, with a mobile trigger (GitHub Actions `workflow_dispatch`, webhook). ~3–5 min from trigger to operational hub. |
+| Do nodes need to restart WireGuard? | No. `PersistentKeepalive` + `reresolve-dns.sh` in the node agent handles reconnection automatically. |
+| Can it build fresh every time (no snapshots)? | Yes. cloud-init + SOPS/age-encrypted keys from git. ~5–8 min. True IaC — repo is the single source of truth. |
+| Is ephemeral operationally viable for emergency access? | Yes, with a mobile trigger (GitHub Actions `workflow_dispatch`, webhook). ~5–8 min from trigger to operational hub. |
 | Best overall recommendation? | **Full ephemeral with DNS.** Fall back to hybrid (always-on WireGuard + on-demand Guacamole) if spin-up delay causes real problems. |
 
 ---

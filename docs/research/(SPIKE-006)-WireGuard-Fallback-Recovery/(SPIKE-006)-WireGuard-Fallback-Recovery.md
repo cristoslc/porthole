@@ -141,33 +141,37 @@ pause
 
 The TUI could also expose a "Restart VPN" action for this scenario.
 
-### Layer 5: Side-channel remote desktop (ephemeral)
+### Layer 5: Side-channel remote desktop (pre-installed)
 
-A last resort when all automated and remote-operator channels have failed. The operator walks a family member through getting a temporary remote desktop connection, fixes WireGuard, then removes the tool. **Nothing is pre-installed; nothing persists after the fix.**
+A last resort when all automated and remote-operator channels have failed. RustDesk is pre-installed on every fleet node during provisioning so it's ready when needed — no family member needs to download anything. The operator connects, fixes WireGuard, and the node returns to the normal Guacamole path.
 
-**Operational model:** At any given time, at most two machines have the tool installed — the operator's workstation and the broken node. Once WireGuard is restored and the node is reachable via Guacamole again, the tool is removed from the remote node. This is emergency break-glass tooling, not infrastructure.
+**Operational model:** RustDesk is installed and configured on all fleet nodes as part of the bootstrap. It runs as a background service (consistent with R10 — silent operation). Only two machines are actively connected at any time: the operator's workstation and the broken node. RustDesk is infrastructure, not a throwaway tool — but it is dormant infrastructure that activates only during emergencies.
 
 **Evaluated tools (2026-02-28):**
 
 | Tool | Free tier | Cross-platform | Family-friendly flow | Verdict |
 |------|-----------|----------------|---------------------|---------|
-| **RustDesk** | Unlimited (public relay OK for 2 devices) | Linux, macOS, Windows | Download portable exe, "read me the 9-digit code" | **Recommended** |
-| **Quick Assist** | Unlimited | Windows only | Built into Windows; zero-install, 6-digit code | Excellent for Windows nodes |
-| **Chrome Remote Desktop** | Unlimited | Windows, macOS, Debian-based Linux only | Google account required; "enter this code" flow | Good for Debian/Ubuntu nodes |
-| **AnyDesk** | Free tier exists | All platforms | Simple code flow | Viable — 2-device ephemeral use unlikely to trigger commercial detection, but unpredictable |
-| **TeamViewer** | Free tier exists | All platforms | Simple code flow | Marginal — free tier limits sessions to 5 min; may suffice for a quick WireGuard restart |
+| **RustDesk** | Unlimited (self-hosted or public relay) | Linux, macOS, Windows | Pre-installed; "read me the 9-digit code" | **Recommended** |
+| **Quick Assist** | Unlimited | Windows only | Built into Windows; zero-install, 6-digit code | Excellent supplement for Windows nodes |
+| **Chrome Remote Desktop** | Unlimited | Windows, macOS, Debian-based Linux only | Google account required; "enter this code" flow | Good supplement for Debian/Ubuntu nodes |
+| **AnyDesk** | Free tier exists | All platforms | Simple code flow | Viable but unpredictable — commercial-use detection is pattern-based, not device-count-based |
+| **TeamViewer** | Free tier exists | All platforms | Simple code flow | Marginal — free tier limits sessions to 5 min |
 
-**Recommended approach — RustDesk portable:**
-- RustDesk runs as a standalone portable binary on all three platforms — no installation required. The family member downloads it, runs it, reads a code. Done.
-- With only two devices and ephemeral usage, the public RustDesk relay servers are sufficient. No need to self-host `hbbs`/`hbbr` for this use case.
-- After the fix: delete the binary from the remote node. No residual services, no background processes, no attack surface.
+**Recommended approach — RustDesk pre-installed, public relay with optional private:**
 
-**Platform-specific notes:**
-- **Windows:** Prefer Quick Assist first (zero-install, built-in). Fall back to RustDesk portable if Quick Assist fails or the operator's machine isn't Windows.
-- **macOS:** RustDesk portable is the only viable option. Chrome Remote Desktop requires a Chrome extension install that's harder to walk through over the phone.
-- **Linux (Debian/Ubuntu):** RustDesk AppImage or Chrome Remote Desktop (if Google account already active). RustDesk's AppImage is the simpler phone walkthrough.
+RustDesk is pre-installed on all nodes during provisioning (node agent bootstrap). The relay configuration depends on whether the hub is running:
 
-**Family walkthrough:** A one-page printout per platform kept near the machine: "If Cristos asks you to help fix the VPN, go to rustdesk.com, click Download, run the file, read the number on screen." The printout is the guide for downloading and running — not for using a pre-installed app.
+- **Default config: public relay.** Nodes are configured to use RustDesk's public relay infrastructure. This ensures RustDesk always works, even when the hub VPS is completely down — the most critical scenario for Layer 5.
+- **Private relay when hub is up:** The hub runs `hbbs`/`hbbr` alongside the other services. However, **RustDesk does not support native fallback** from private to public relay. The client is bound to one server; if that server is unreachable, connections fail entirely. There is no comma-separated server list or priority ordering.
+- **Practical implication:** Since the hub is ephemeral (SPIKE-007), it may be down precisely when Layer 5 is needed. Configuring clients for the private relay would make RustDesk *less* reliable as emergency tooling. **Use public relay as the default and only configuration.**
+
+If private relay becomes important (e.g., for privacy during non-emergency use), the node agent could implement a config-swap: check hbbs reachability, update `RustDesk2.toml`, restart the service. But this adds complexity for marginal benefit — Layer 5 is emergency tooling, not a primary access channel.
+
+**Platform-specific supplements:**
+- **Windows:** Quick Assist is built-in and zero-install. Use as the first attempt on Windows; fall back to RustDesk if the operator's machine isn't Windows.
+- **macOS / Linux:** RustDesk is the only cross-platform option that's pre-installable and self-contained.
+
+**Family walkthrough:** A one-page printout per platform kept near the machine: "If Cristos asks you to help fix the VPN, open the app with the blue icon, read the number on screen." No download steps — the app is already there.
 
 ### Failure mode coverage
 
