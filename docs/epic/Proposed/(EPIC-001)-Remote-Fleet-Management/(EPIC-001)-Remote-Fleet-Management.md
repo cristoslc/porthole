@@ -34,7 +34,7 @@ infrastructure or manual per-machine network configuration.
 - Onboarding of remote family machines with minimal friction for non-technical
   family members.
 - Network isolation: the remote-access network should be segmented from
-  existing infrastructure (VMs, Docker containers) already on the tailnet.
+  existing infrastructure (VMs, Docker containers) already on the node'# local network.
 - **Windows machines:** Documented manual setup procedures for the network
   agent and RDP enablement. The fleet includes Windows machines (home and
   family); all chosen tools must have native Windows clients.
@@ -57,13 +57,11 @@ infrastructure or manual per-machine network configuration.
 3. Remote family machines are reachable without requiring the family member to
    perform any ongoing technical steps after initial setup.
 4. The remote-access network is isolated from existing infrastructure —
-   RustDesk-only machines cannot reach VMs, Docker containers, or other
-   services on the existing tailnet.
+   remote machines cannot directly reach VMs, Docker containers, or other
+   services on the existing local net.
 5. `make apply` on a managed Linux/macOS workstation configures the network
    layer and RustDesk client automatically. Windows machines have a documented
    manual setup procedure that can be completed in under 15 minutes.
-6. No session traffic (signaling or relay) passes through third-party
-   infrastructure.
 
 ## Child artifacts
 
