@@ -25,7 +25,7 @@ The current design (ADR-004) assumes a persistent hub running WireGuard relay, C
 
 ## Pivot Recommendation
 
-If create/destroy is operationally too slow or fragile, fall back to the **stop/start model with a reserved IP**: pre-allocate a floating/reserved IP that survives power cycles, keep a minimal VM image (snapshot), and accept the stopped-VM cost (~$0.40–$1.00/month) as the residual surface. This eliminates the IP churn problem entirely while still removing the hub from the exposed state when not in active use.
+If the full ephemeral model is operationally too fragile (DNS propagation delays, cloud-init reliability), fall back to the **hybrid model**: an always-on minimal hub (~€3.85/month) running only WireGuard + firewall, with Guacamole/CoreDNS started on demand via Docker Compose. This preserves the DNS-based endpoint (and therefore provider portability) while eliminating the spin-up delay for WireGuard connectivity.
 
 ---
 
@@ -53,7 +53,7 @@ All major providers expose a REST API and a Terraform provider that can create a
 
 WireGuard peer configurations hardcode the hub's endpoint as an IP address or hostname. When the hub is destroyed and recreated, it typically receives a new IP. There are three clean solutions:
 
-#### Solution A: Floating / Reserved IP (Recommended)
+#### Solution A: Floating / Reserved IP (Zero-Delay, Provider-Locked)
 
 Every major provider offers a static IP that persists independently of any VM instance. The IP can be assigned to a new VM after creation.
 
@@ -92,7 +92,7 @@ Running `terraform destroy -target=hcloud_server.hub` destroys the VM while leav
 
 **AWS Lightsail:** Static IPs are free when attached, but Lightsail static IPs are region-scoped and cannot be re-attached via the standard AWS Elastic IP mechanism — use the Lightsail API (`attach-static-ip` action).
 
-#### Solution B: DNS-Based Endpoint (Requires reresolve-dns Workaround)
+#### Solution B: DNS-Based Endpoint (Recommended — Provider-Portable)
 
 WireGuard peers can use a hostname as the `Endpoint` value instead of a literal IP. However, **WireGuard resolves hostnames only at startup** — it does not re-resolve when the tunnel goes stale or when the peer becomes unreachable. If the hub's IP changes, existing peers will continue sending to the old IP until the WireGuard interface is restarted.
 
@@ -113,7 +113,17 @@ This script calls `wg set wg0 peer <pubkey> endpoint <new-IP>:<port>` whenever t
 
 A cloud-init script on the new hub can POST the new IP to DuckDNS or Cloudflare on first boot. Peers running `reresolve-dns.sh` on a 30-second timer will pick it up within 1–2 minutes of the DNS record propagating. This is operationally simpler than the floating-IP model but has more moving parts and a longer reconnection delay.
 
-**Recommendation:** Use a floating/reserved IP (Solution A). It eliminates the DNS propagation lag entirely, costs €3.00/month or less, and makes the create/destroy lifecycle transparent to all peers.
+#### Provider portability via DNS
+
+DNS-based endpoints decouple the hub's identity from any specific cloud provider. The peer WireGuard configs contain `Endpoint = hub.yourdomain.com:51820` — no IP, no provider-specific resource. This enables:
+
+- **Provider hopping:** Create the hub on whichever provider has the best price, uptime, or geographic proximity today. Next month, switch to another. Terraform modules for each provider, one shared `cloudflare_record` resource.
+- **Disaster recovery:** If a provider has an outage, spin up the hub on a different provider. Peers converge to the new IP within ~2 minutes.
+- **No idle-cost infrastructure:** Floating IPs incur monthly charges even when no VM exists. A DNS record costs nothing beyond the domain registration.
+
+The Cloudflare DNS account is already needed for Caddy's DNS-01 TLS challenge (SPIKE-005), so this adds no new accounts or infrastructure — just a Terraform `cloudflare_record` resource in the hub module.
+
+**Recommendation:** Use DNS-based endpoints (Solution B). A few minutes' reconnection delay after hub creation is acceptable for this use case, and DNS-based endpoints unlock **provider portability** — the hub can be created on any provider (Hetzner, DigitalOcean, Vultr, etc.) without being locked to a provider-specific floating IP. The Cloudflare DNS record is already needed for SPIKE-005's DNS-01 TLS for Guacamole, so no new infrastructure is introduced. Floating IPs (Solution A) remain a valid optimization if zero-delay reconnection becomes a requirement later.
 
 ### 3. WireGuard Reconnection Behavior
 
@@ -133,18 +143,20 @@ Understanding WireGuard's timer constants is critical for this use case. The val
 3. After 90 seconds of failed handshake attempts, WireGuard's `REKEY_ATTEMPT_TIME` expires: it stops retrying and drops queued packets. **The peer enters a silent-fail state.**
 4. When new data is queued (user triggers a new connection attempt), WireGuard restarts the handshake initiation cycle automatically.
 
-**What happens when the hub comes back (same IP via floating IP):**
+**What happens when the hub comes back (same IP — floating IP or same provider):**
 
-- The hub comes up with the same floating IP and the same WireGuard config from git.
+- The hub comes up with the same IP and the same WireGuard config from git.
 - Peers that are still in the 90-second retry window will complete the handshake automatically.
 - Peers that have already given up (past the `REKEY_ATTEMPT_TIME`) will restart the handshake cycle the next time they have traffic to send — no manual intervention required.
 - **WireGuard does not require a service restart on the peer side.** The protocol is designed to self-heal.
 
-**What happens when the hub comes back with a new IP (no floating IP):**
+**What happens when the hub comes back with a new IP (DNS-based endpoint — the recommended model):**
 
-- Peers continue sending to the old IP. No traffic reaches the hub.
-- The `reresolve-dns.sh` approach (Solution B above) or a manual `wg set` call is required on each peer to update the endpoint.
-- Without that, peers will not reconnect until their WireGuard interface is restarted (e.g., by the watchdog from SPIKE-006 Layer 1).
+- Peers are configured with `Endpoint = hub.yourdomain.com:51820`.
+- The Terraform workflow updates the Cloudflare DNS A record as part of `terraform apply`.
+- Peers running `reresolve-dns.sh` on a 30-second timer re-resolve the hostname and call `wg set wg0 peer <pubkey> endpoint <new-IP>:<port>`. No service restart needed.
+- Combined delay: DNS propagation (~60–120 s) + reresolve polling (~30 s) = **~90–150 seconds** from DNS update to reconnection.
+- The SPIKE-006 Layer 1 watchdog can incorporate the reresolve logic directly, eliminating the need for a separate cron job.
 
 **PersistentKeepalive consideration:** Setting `PersistentKeepalive = 25` on spoke peers helps maintain NAT mappings while the hub is up. When the hub is down, it causes rapid detection of the outage (within 25 seconds) rather than waiting for a timeout. There is no meaningful downside to having this set — the periodic UDP packet is negligible traffic. However, it does mean spokes will immediately notice and begin retrying handshakes the moment the hub goes offline, which is the desired behavior.
 
@@ -282,29 +294,31 @@ This is by design in the ephemeral model. The family fleet is isolated when the 
 
 ## Recommended Architecture
 
-Based on the above findings, the following architecture is recommended for the operator's specific requirements (~10 nodes, family machines, infrequent remote access, security-conscious):
+Based on the above findings and the operator's acceptance of a few minutes' spin-up delay, the DNS-based ephemeral model is recommended. A few minutes to bring the hub online is acceptable; provider portability and zero idle cost are more valuable than instant reconnection.
 
-### Option 1: Full Ephemeral (Best Attack Surface, Moderate Operational Friction)
+### Recommended: Full Ephemeral with DNS Endpoint
 
-- **Pre-allocate one Hetzner Floating IP** (~€3/month IPv4). This is the only persistent cost.
-- **Create a Hetzner snapshot** of a fully configured hub (WireGuard + Docker + Guacamole + CoreDNS images pre-pulled). Snapshot cost: ~€0.05–€0.08/month.
-- **Terraform module** in the git repo manages the server lifecycle. Secrets (Hetzner API token, WireGuard private key) are SOPS-encrypted and never appear in Terraform state (use `sensitive` + ephemeral resources in TF 1.10+, or pass via environment variable `HCLOUD_TOKEN`).
-- **Wrapper script** (`hub-up.sh` / `hub-down.sh`) wraps `terraform apply` and `terraform destroy`, polls for cloud-init completion, and prints a status summary.
-- **On each peer node:** Set `Endpoint = <floating-IP>:51820` in wg0 config. No DNS needed. Set `PersistentKeepalive = 25`.
-- **Mobile trigger:** A GitHub Actions `workflow_dispatch` workflow that calls `hub-up.sh` on a self-hosted runner or directly via the Hetzner API. Triggerable from the GitHub mobile app.
-- **Total inactive cost:** ~€3.05/month (floating IP + snapshot storage)
-- **Total active cost:** ~€3.05 + €0.006/hour active
+- **DNS endpoint:** All peer WireGuard configs use `Endpoint = hub.yourdomain.com:51820`. No floating IP, no provider lock-in.
+- **Terraform module** per provider (Hetzner, DigitalOcean, etc.) in the git repo manages the server lifecycle. A shared `cloudflare_record` resource updates the DNS A record after VM creation.
+- **Snapshot** of a fully configured hub (WireGuard + Docker + Guacamole + CoreDNS images pre-pulled). Snapshot cost: ~€0.05–€0.08/month (Hetzner).
+- **Wrapper script** (`hub-up.sh` / `hub-down.sh`) wraps `terraform apply` and `terraform destroy`, waits for cloud-init + DNS propagation, prints status.
+- **On each peer node:** `Endpoint = hub.yourdomain.com:51820`, `PersistentKeepalive = 25`. The node agent watchdog (SPIKE-006 Layer 1) incorporates `reresolve-dns.sh` logic to pick up the new IP within 30 seconds of DNS propagation.
+- **Mobile trigger:** GitHub Actions `workflow_dispatch` or similar webhook, triggerable from the GitHub mobile app.
+- **Spin-up timeline:** VM creation (~25 s) + cloud-init from snapshot (~60 s) + DNS propagation (~60–120 s) = **~3–5 minutes** from trigger to operational hub.
+- **Total inactive cost:** ~€0.05–€0.08/month (snapshot storage only). Domain registration is a sunk cost (already needed for Caddy DNS-01 TLS).
+- **Total active cost:** ~€0.006/hour (Hetzner CAX11).
+- **Provider portability:** Switch providers by changing the Terraform module. Peers don't care — they resolve the DNS name.
 
-### Option 2: Hybrid (24/7 Relay + On-Demand Services)
+### Alternative: Hybrid (24/7 Relay + On-Demand Services)
 
-- **Always-on minimal hub:** Hetzner CX22 (~€3.85/month) running only WireGuard and a strict firewall. Nodes stay connected 24/7. Attack surface: one UDP port, WireGuard only.
-- **Guacamole + CoreDNS:** Managed with Docker Compose, started/stopped via SSH when remote desktop access is needed. `docker compose up -d guacamole coredns` takes ~10–20 seconds from a running node.
-- **No IP problem:** The hub never changes IP.
-- **No Terraform lifecycle complexity.**
-- **Attack surface:** WireGuard UDP only when idle. Guacamole HTTPS only when the operator starts it.
+If the full ephemeral model proves too operationally fragile (e.g., DNS propagation delays are worse than expected, or the operator needs instant node access for monitoring), fall back to:
+
+- **Always-on minimal hub** (~€3.85/month) running only WireGuard and a strict firewall. Nodes stay connected 24/7. Attack surface: one UDP port.
+- **Guacamole + CoreDNS:** Started/stopped via Docker Compose when remote desktop access is needed (~10–20 seconds).
+- **DNS endpoint still works here** — the hub's IP doesn't change, but peers use the DNS name anyway for consistency. This preserves the option to go full ephemeral later.
 - **Total cost:** ~€3.85/month flat.
 
-**Option 2 is likely the better operational choice** for most use cases. The 24/7 WireGuard-only surface is minimal (WireGuard's attack surface is extremely narrow — it silently drops all traffic that doesn't present a valid Noise handshake). Guacamole — the higher-risk surface — is brought up only when needed.
+The hybrid model is the fallback if ephemeral doesn't work in practice. Start with full ephemeral; degrade to hybrid if the spin-up delay or DNS lag causes real problems.
 
 ---
 
@@ -312,14 +326,15 @@ Based on the above findings, the following architecture is recommended for the o
 
 | Question | Answer |
 |----------|--------|
-| Is create/destroy feasible? | Yes, with a floating IP and snapshot-based provisioning. Cold start ~90 s. |
-| Does WireGuard reconnect automatically? | Yes (same IP via floating IP). Automatic; no peer restart needed. |
-| Does WireGuard handle IP changes? | Not natively. Requires `reresolve-dns.sh` + DDNS. Adds ~2 min delay. |
-| Can Terraform manage the lifecycle? | Yes. `hcloud` provider is mature. State must not go in git. |
-| Stop/start vs. create/destroy? | Create/destroy wins on attack surface. Same cost when a floating IP is held. |
+| Is create/destroy feasible? | Yes. Snapshot-based provisioning, ~90 s to SSH-ready. |
+| Floating IP or DNS? | **DNS.** A few minutes' delay is acceptable. DNS enables provider portability and eliminates the €3/month floating IP. Cloudflare account already needed for TLS (SPIKE-005). |
+| Does WireGuard reconnect after DNS change? | Yes, via `reresolve-dns.sh` (bundled with wireguard-tools). Peers pick up the new IP within ~30 s of DNS propagation. No restart needed. |
+| Can Terraform manage the lifecycle? | Yes. `hcloud` provider is mature. State must not go in git. `cloudflare_record` updates DNS automatically. |
+| Stop/start vs. create/destroy? | Create/destroy wins on attack surface and config freshness. No cost difference once floating IP is removed from the equation. |
 | P2P without hub? | Not viable for residential fleet. ~10–30% failure rate across NAT types. |
-| Is ephemeral operationally viable for emergency access? | Only with a mobile trigger mechanism (GitHub Actions, webhook, etc.). |
-| Best overall recommendation? | Hybrid: 24/7 WireGuard-only hub + on-demand Guacamole. Simpler, same security profile for the real risk (Guacamole). |
+| Provider portability? | Yes — DNS endpoint + per-provider Terraform module. Switch providers by changing one variable. |
+| Is ephemeral operationally viable for emergency access? | Yes, with a mobile trigger (GitHub Actions `workflow_dispatch`, webhook). ~3–5 min from trigger to operational hub. |
+| Best overall recommendation? | **Full ephemeral with DNS.** Fall back to hybrid (always-on WireGuard + on-demand Guacamole) if spin-up delay causes real problems. |
 
 ---
 

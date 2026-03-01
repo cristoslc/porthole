@@ -39,7 +39,7 @@ Five layers, in order of implementation priority:
 | 2 | Reverse SSH tunnel | WireGuard config errors, hub IP changes, persistent failures | Yes (operator) |
 | 3 | Tailscale (pre-installed, passive) | Complete WireGuard stack failure | Yes (operator) |
 | 4 | One-click recovery script | Failures requiring local action | Yes (family member on phone) |
-| 5 | Side-channel remote desktop | Everything else | Yes (operator via family member) |
+| 5 | Side-channel remote desktop (ephemeral) | Everything else | Yes (operator via family member) |
 
 ### Layer 1: Watchdog + auto-restart
 
@@ -141,32 +141,33 @@ pause
 
 The TUI could also expose a "Restart VPN" action for this scenario.
 
-### Layer 5: Side-channel remote desktop
+### Layer 5: Side-channel remote desktop (ephemeral)
 
-As a last resort when all automated and remote-operator channels have failed, a commercial remote desktop tool provides out-of-band access that is completely independent of the WireGuard tunnel. The key requirement: a family member at the machine must be able to participate (read a code, click "allow"), so the tool must have a simple, walkthrough-friendly flow.
+A last resort when all automated and remote-operator channels have failed. The operator walks a family member through getting a temporary remote desktop connection, fixes WireGuard, then removes the tool. **Nothing is pre-installed; nothing persists after the fix.**
+
+**Operational model:** At any given time, at most two machines have the tool installed — the operator's workstation and the broken node. Once WireGuard is restored and the node is reachable via Guacamole again, the tool is removed from the remote node. This is emergency break-glass tooling, not infrastructure.
 
 **Evaluated tools (2026-02-28):**
 
 | Tool | Free tier | Cross-platform | Family-friendly flow | Verdict |
 |------|-----------|----------------|---------------------|---------|
-| **RustDesk (self-hosted)** | Unlimited (self-hosted relay) | Linux, macOS, Windows | "Read me the 9-digit code" — simple | **Recommended** |
-| **Chrome Remote Desktop** | Unlimited | Windows, macOS, Debian-based Linux only | Google account required; "enter this code" flow | Good supplement for Debian/Ubuntu nodes |
-| **Quick Assist** | Unlimited | Windows only | Built into Windows; "enter this 6-digit code" | Excellent for Windows nodes |
-| **AnyDesk** | Free tier exists | All platforms | Simple code flow | **Disqualified** — flags personal use as commercial with >3 devices |
-| **TeamViewer** | Free tier exists | All platforms | Simple code flow | **Disqualified** — aggressive commercial-use detection; sessions limited to 5 min |
+| **RustDesk** | Unlimited (public relay OK for 2 devices) | Linux, macOS, Windows | Download portable exe, "read me the 9-digit code" | **Recommended** |
+| **Quick Assist** | Unlimited | Windows only | Built into Windows; zero-install, 6-digit code | Excellent for Windows nodes |
+| **Chrome Remote Desktop** | Unlimited | Windows, macOS, Debian-based Linux only | Google account required; "enter this code" flow | Good for Debian/Ubuntu nodes |
+| **AnyDesk** | Free tier exists | All platforms | Simple code flow | Viable — 2-device ephemeral use unlikely to trigger commercial detection, but unpredictable |
+| **TeamViewer** | Free tier exists | All platforms | Simple code flow | Marginal — free tier limits sessions to 5 min; may suffice for a quick WireGuard restart |
 
-**Recommended approach — RustDesk self-hosted:**
-- Run `hbbs` (rendezvous) and `hbbr` (relay) on the VPS alongside the other hub services. The relay uses the VPS's public IP directly (TCP/UDP 21115-21119), not the WireGuard tunnel, so it survives WireGuard failures.
-- Pre-install the RustDesk client on all fleet nodes. Configure it to point at the self-hosted relay (`relay=<VPS_PUBLIC_IP>`).
-- The family member's role: open RustDesk, read the 9-digit ID displayed on screen, and click "Allow" when prompted. The operator connects from any device with RustDesk installed.
-- No account creation, no SaaS dependency, no commercial-use detection. The relay and rendezvous server are fully self-hosted.
-- Ironic that RustDesk returns as a fallback recovery tool rather than the primary remote desktop solution (see SPIKE-004).
+**Recommended approach — RustDesk portable:**
+- RustDesk runs as a standalone portable binary on all three platforms — no installation required. The family member downloads it, runs it, reads a code. Done.
+- With only two devices and ephemeral usage, the public RustDesk relay servers are sufficient. No need to self-host `hbbs`/`hbbr` for this use case.
+- After the fix: delete the binary from the remote node. No residual services, no background processes, no attack surface.
 
-**Supplements:**
-- **Chrome Remote Desktop** for Debian/Ubuntu nodes where a Google account is already active. The "generate a one-time code" flow is family-friendly.
-- **Quick Assist** (built into Windows 10/11) for Windows nodes. Zero-install, 6-digit code flow, works immediately.
+**Platform-specific notes:**
+- **Windows:** Prefer Quick Assist first (zero-install, built-in). Fall back to RustDesk portable if Quick Assist fails or the operator's machine isn't Windows.
+- **macOS:** RustDesk portable is the only viable option. Chrome Remote Desktop requires a Chrome extension install that's harder to walk through over the phone.
+- **Linux (Debian/Ubuntu):** RustDesk AppImage or Chrome Remote Desktop (if Google account already active). RustDesk's AppImage is the simpler phone walkthrough.
 
-**Family walkthrough:** Pre-write a one-page PDF/printout for each platform: "If Cristos asks you to help fix the VPN, open the app with this icon, read the code." Laminate it. Tape it to the desk. This is the last line of defense.
+**Family walkthrough:** A one-page printout per platform kept near the machine: "If Cristos asks you to help fix the VPN, go to rustdesk.com, click Download, run the file, read the number on screen." The printout is the guide for downloading and running — not for using a pre-installed app.
 
 ### Failure mode coverage
 
