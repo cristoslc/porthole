@@ -12,8 +12,8 @@
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Proposed | 2026-02-26 | d627b5b | Initial creation |
-| Adopted | 2026-02-26 | 7ccc7df | Approved and implemented |
+| Proposed | 2026-02-26 | d627b5b | Initial creation (hash from pre-merge external project) |
+| Adopted | 2026-02-26 | 7ccc7df | Approved and implemented (hash from pre-merge external project) |
 | Superseded | 2026-02-28 | 6d1cb09 | Replaced by ADR-005 (Guacamole gateway model); R10 and WireGuard network changed the calculus |
 
 ---

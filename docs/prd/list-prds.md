@@ -6,7 +6,7 @@
 
 | ID | Migrated to | Title | Date |
 |----|-------------|-------|------|
-| PRD-002 | [SPEC-002](../spec/Implemented/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | 2026-02-28 |
+| PRD-002 | [SPEC-002](../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | 2026-02-28 |
 
 ## Abandoned
 

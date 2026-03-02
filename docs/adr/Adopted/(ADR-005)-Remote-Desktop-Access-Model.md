@@ -121,8 +121,3 @@ Best performance (NX protocol), clean background operation on all platforms, emb
 
 Installing both a gateway and per-machine agents adds complexity without proportional benefit. The gateway alone covers the common case; agents are only justified as per-machine exceptions.
 
-## Lifecycle
-
-| Phase | Date | Commit | Notes |
-|-------|------|--------|-------|
-| Adopted | 2026-02-28 | — | Created directly as Adopted; informed by SPIKE-004 |

@@ -20,7 +20,7 @@ _No specs in this phase._
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
-| SPEC-002 | Remote Desktop Bootstrap | cristos | 2026-02-26 | 2026-02-28 | — | ADR-005 supersedes RustDesk with Guacamole + native protocols |
+| SPEC-002 | Remote Desktop Bootstrap | cristos | 2026-02-26 | 2026-02-28 | d28a5bf | ADR-005 supersedes RustDesk with Guacamole + native protocols |
 
 ## Abandoned
 

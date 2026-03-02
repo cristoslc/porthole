@@ -10,7 +10,7 @@
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Proposed | 2026-02-28 | — | Initial creation, merged from external project |
+| Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
 
 ---
 
