@@ -11,7 +11,7 @@
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 616849b | Initial creation |
-| Active | 2026-03-03 | _pending_ | Research complete (7 spikes, 2 ADRs adopted); agent specs created |
+| Active | 2026-03-03 | 72c4790 | Research complete (7 spikes, 2 ADRs adopted); agent specs created |
 
 ---
 
@@ -39,10 +39,6 @@ infrastructure or manual per-machine network configuration.
 - **Windows machines:** Documented manual setup procedures for the network
   agent and RDP enablement. The fleet includes Windows machines (home and
   family); all chosen tools must have native Windows clients.
-- **CoreDNS `.wg` zone:** Internal DNS resolution for mesh peers
-  (`hostname.wg`). The `.wg` zone is mesh infrastructure — CoreDNS runs on
-  the VPS hub alongside WireGuard, with zone files generated from
-  `network.sops.yaml`.
 
 **Out of scope:**
 

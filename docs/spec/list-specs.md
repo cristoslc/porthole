@@ -2,7 +2,11 @@
 
 ## Draft
 
-_No specs in this phase._
+| ID | Title | Author | Created | Last Updated | Commit | Notes |
+|----|-------|--------|---------|--------------|--------|-------|
+| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-03 | 6297014 | Foundation: hub config, state schema, CoreDNS, peer enrollment |
+| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-03 | 6297014 | Docker Compose stack, WireGuard-only binding, connection seeding |
+| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-03 | 6297014 | Watchdog + reverse SSH tunnel; MVP layers 1-2 from SPIKE-006 |
 
 ## Review
 
