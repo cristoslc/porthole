@@ -1,7 +1,7 @@
 ---
 title: "Zero-Touch Hub Provisioning & Interactive Node Bootstrap"
 artifact: EPIC-007
-status: Proposed
+status: Active
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-03
@@ -17,7 +17,7 @@ depends-on: []
 
 # EPIC-007: Zero-Touch Hub Provisioning & Interactive Node Bootstrap
 
-**Status:** Proposed
+**Status:** Active
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
@@ -28,6 +28,7 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-03-03 | 2ec07f7 | Initial creation — architectural direction established |
+| Active | 2026-03-03 | 5719c48 | Implementation begins — SPEC-008 and SPEC-009 tasks ready |
 
 ---
 

@@ -2,15 +2,14 @@
 
 ## Proposed
 
-| ID | Title | Created | Last Updated | Commit | Notes |
-|----|-------|---------|--------------|--------|-------|
-| EPIC-007 | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | 2026-03-03 | 2026-03-03 | 2ec07f7 | Terraform + Ansible for hub IaC; Textual TUI for node enrollment |
+_None._
 
 ## Active
 
 | ID | Title | Created | Last Updated | Commit | Notes |
 |----|-------|---------|--------------|--------|-------|
 | EPIC-001 | Remote Fleet Management | 2026-02-28 | 2026-03-03 | 72c4790 | Research complete; 3 agent specs (SPEC-003/004/005) all Implemented |
+| EPIC-007 | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | 2026-03-03 | 2026-03-03 | 5719c48 | Terraform + Ansible for hub IaC; Textual TUI for node enrollment |
 
 ## Complete
 
