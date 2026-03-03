@@ -4,7 +4,7 @@
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Affects:** [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) (Abandoned)
 
 ### Lifecycle

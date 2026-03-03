@@ -4,7 +4,7 @@
 **Author:** cristos
 **Created:** 2026-02-26
 **Last Updated:** 2026-02-28
-**Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Research:** None (straightforward tool installation — no spike needed)
 **ADR:** [(ADR-001) RustDesk for Remote Desktop](../../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md) (Superseded by ADR-005)
 **Migrated from:** PRD-002 (renamed to Agent Spec during upstream scaffolding update)

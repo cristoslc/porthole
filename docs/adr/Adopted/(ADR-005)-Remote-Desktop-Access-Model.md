@@ -4,7 +4,7 @@
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Informed by:** [(SPIKE-004) Remote Desktop Agent Architecture](../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md)
 **Supersedes:** [(ADR-001) RustDesk for Remote Desktop](../Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md)
 **Affects:** EPIC-001, EPIC-002, SPEC-002
