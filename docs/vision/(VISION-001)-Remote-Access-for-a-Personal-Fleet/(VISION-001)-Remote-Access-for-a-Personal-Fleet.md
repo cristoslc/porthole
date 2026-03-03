@@ -1,15 +1,16 @@
 # VISION-001: Remote Access for a Personal Fleet
 
-**Status:** Draft
+**Status:** Active
 **Author:** cristos
 **Created:** 2026-02-27
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-02
 
 ### Lifecycle
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-02-27 | d8d3270 | Initial creation from EPIC-001 |
+| Active | 2026-03-02 | aad1d3a | Research complete, ADRs adopted, epics defined |
 
 ---
 
