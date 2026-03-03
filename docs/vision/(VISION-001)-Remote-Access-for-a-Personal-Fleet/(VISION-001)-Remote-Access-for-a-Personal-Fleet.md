@@ -90,5 +90,6 @@ After the bootstrap: machines find each other automatically, connections travers
 
 | Document | Description |
 |----------|-------------|
+| [branding-and-style-guide.md](./branding-and-style-guide.md) | Project name (Porthole), terminology, component names, and writing conventions |
 | [product-landscape.md](./product-landscape.md) | Decision matrix: desktop tools and networking bridges evaluated independently, then combinations scored against requirements |
 | [wireguard-mesh-architecture.md](./wireguard-mesh-architecture.md) | Architecture overview: WireGuard hub-and-spoke relay via VPS, SOPS/age state management, CoreDNS |
