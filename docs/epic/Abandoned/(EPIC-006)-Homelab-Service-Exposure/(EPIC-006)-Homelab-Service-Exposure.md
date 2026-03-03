@@ -1,10 +1,10 @@
 ---
 artifact: EPIC-006
 title: Homelab Service Exposure
-status: Proposed
+status: Abandoned
 author: cristos
 created: 2026-02-28
-last-updated: 2026-03-02
+last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on:
   - EPIC-001
@@ -13,7 +13,7 @@ depends-on:
 
 # EPIC-006: Homelab Service Exposure
 
-**Status:** Proposed
+**Status:** Abandoned
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-03-02
@@ -24,6 +24,7 @@ depends-on:
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
+| Abandoned | 2026-03-03 | ce2fa6a | Out of scope for fleet remote access; belongs in a dedicated homelab-infra repo |
 
 ---
 

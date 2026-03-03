@@ -4,7 +4,6 @@
 
 | ID | Title | Created | Last Updated | Commit | Notes |
 |----|-------|---------|--------------|--------|-------|
-| EPIC-006 | Homelab Service Exposure | 2026-02-28 | 2026-03-02 | 21da409 | Service-exposure architecture: DNS, TLS, reverse proxy across LAN / Tailscale / internet |
 
 ## Active
 
@@ -27,4 +26,6 @@ _None._
 
 ## Abandoned
 
-_None._
+| ID | Title | Created | Last Updated | Commit | Notes |
+|----|-------|---------|--------------|--------|-------|
+| EPIC-006 | Homelab Service Exposure | 2026-02-28 | 2026-03-03 | ce2fa6a | Out of scope; service-exposure problem belongs in a dedicated homelab-infra repo |
