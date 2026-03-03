@@ -1,3 +1,16 @@
+---
+artifact: EPIC-006
+title: Homelab Service Exposure
+status: Proposed
+author: cristos
+created: 2026-02-28
+last-updated: 2026-03-02
+parent-vision: VISION-001
+depends-on:
+  - EPIC-001
+  - EPIC-005
+---
+
 # EPIC-006: Homelab Service Exposure
 
 **Status:** Proposed

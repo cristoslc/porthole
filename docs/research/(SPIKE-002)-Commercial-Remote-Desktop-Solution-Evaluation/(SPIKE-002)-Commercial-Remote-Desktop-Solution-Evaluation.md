@@ -1,3 +1,14 @@
+---
+artifact: SPIKE-002
+title: Commercial Remote Desktop Solution Evaluation
+status: Complete
+author: Claude
+created: 2026-02-27
+last-updated: 2026-02-27
+parent-epic: EPIC-001
+depends-on: []
+---
+
 # SPIKE-002: Commercial Remote Desktop Solution Evaluation
 
 **Status:** Complete

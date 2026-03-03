@@ -1,3 +1,14 @@
+---
+artifact: SPIKE-004
+title: Remote Desktop Agent Architecture
+status: Complete
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+parent-epic: EPIC-001
+depends-on: []
+---
+
 # SPIKE-004: Remote Desktop Agent Architecture
 
 **Status:** Complete

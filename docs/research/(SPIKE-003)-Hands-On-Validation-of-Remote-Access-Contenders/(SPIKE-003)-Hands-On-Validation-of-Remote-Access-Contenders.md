@@ -1,3 +1,14 @@
+---
+artifact: SPIKE-003
+title: Hands-On Validation of Remote Access Contenders
+status: Abandoned
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+parent-vision: VISION-001
+depends-on: []
+---
+
 # SPIKE-003: Hands-On Validation of Remote Access Contenders
 
 **Status:** Abandoned

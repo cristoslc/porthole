@@ -1,3 +1,14 @@
+---
+artifact: EPIC-001
+title: Remote Fleet Management
+status: Active
+author: cristos
+created: 2026-02-28
+last-updated: 2026-03-03
+parent-vision: VISION-001
+depends-on: []
+---
+
 # EPIC-001: Remote Fleet Management
 
 **Status:** Active

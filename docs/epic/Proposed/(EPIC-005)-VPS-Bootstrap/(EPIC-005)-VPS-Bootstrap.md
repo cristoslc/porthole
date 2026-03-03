@@ -1,3 +1,15 @@
+---
+artifact: EPIC-005
+title: VPS Bootstrap & Disaster Recovery
+status: Proposed
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+parent-vision: VISION-001
+depends-on:
+  - EPIC-002
+---
+
 # EPIC-005: VPS Bootstrap & Disaster Recovery
 
 **Status:** Proposed

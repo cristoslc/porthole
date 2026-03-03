@@ -1,3 +1,15 @@
+---
+artifact: EPIC-003
+title: Client Node Web UI
+status: Proposed
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+parent-vision: VISION-001
+depends-on:
+  - EPIC-002
+---
+
 # EPIC-003: Client Node Web UI
 
 **Status:** Proposed

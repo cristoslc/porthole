@@ -1,3 +1,19 @@
+---
+artifact: ADR-005
+title: Remote Desktop Access Model
+status: Adopted
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+supersedes: ADR-001
+linked-epics:
+  - EPIC-001
+  - EPIC-002
+linked-specs:
+  - SPEC-002
+depends-on: []
+---
+
 # ADR-005: Remote Desktop Access Model
 
 **Status:** Adopted

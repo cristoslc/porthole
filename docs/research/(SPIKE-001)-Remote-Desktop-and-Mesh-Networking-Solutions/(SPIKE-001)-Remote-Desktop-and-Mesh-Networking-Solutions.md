@@ -1,3 +1,14 @@
+---
+artifact: SPIKE-001
+title: Remote Desktop and Mesh Networking Solutions for Personal Fleet
+status: Complete
+author: cristos
+created: 2026-02-27
+last-updated: 2026-02-27
+parent-epic: EPIC-001
+depends-on: []
+---
+
 # SPIKE-001: Remote Desktop and Mesh Networking Solutions for Personal Fleet
 
 **Status:** Complete

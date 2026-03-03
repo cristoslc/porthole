@@ -1,3 +1,16 @@
+---
+artifact: ADR-003
+title: Network Layer for Remote Fleet
+status: Abandoned
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+linked-epics:
+  - EPIC-001
+linked-specs: []
+depends-on: []
+---
+
 # ADR-003: Network Layer for Remote Fleet
 
 **Status:** Abandoned

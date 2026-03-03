@@ -1,3 +1,18 @@
+---
+artifact: SPEC-005
+title: Node Health & Recovery Agent
+status: Draft
+author: cristos
+created: 2026-03-03
+last-updated: 2026-03-03
+parent-epic: EPIC-001
+linked-research:
+  - SPIKE-006
+linked-adrs: []
+depends-on:
+  - SPEC-003
+---
+
 # SPEC-005: Node Health & Recovery Agent
 
 **Status:** Draft

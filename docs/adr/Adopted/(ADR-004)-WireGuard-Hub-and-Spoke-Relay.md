@@ -1,3 +1,19 @@
+---
+artifact: ADR-004
+title: WireGuard Hub-and-Spoke Relay
+status: Adopted
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+linked-epics:
+  - EPIC-001
+  - EPIC-002
+  - EPIC-005
+  - EPIC-006
+linked-specs: []
+depends-on: []
+---
+
 # ADR-004: WireGuard Hub-and-Spoke Relay
 
 **Status:** Adopted

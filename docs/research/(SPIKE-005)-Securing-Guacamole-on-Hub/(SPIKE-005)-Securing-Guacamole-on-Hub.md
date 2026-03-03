@@ -1,3 +1,14 @@
+---
+artifact: SPIKE-005
+title: Securing Guacamole on the Hub
+status: Complete
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+parent-epic: EPIC-005
+depends-on: []
+---
+
 # SPIKE-005: Securing Guacamole on the Hub
 
 **Status:** Complete

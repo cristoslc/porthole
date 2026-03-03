@@ -1,3 +1,14 @@
+---
+artifact: SPIKE-007
+title: Ephemeral VPS Hub Feasibility
+status: Complete
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+parent-epic: EPIC-001
+depends-on: []
+---
+
 # SPIKE-007: Ephemeral VPS Hub Feasibility
 
 **Status:** Complete

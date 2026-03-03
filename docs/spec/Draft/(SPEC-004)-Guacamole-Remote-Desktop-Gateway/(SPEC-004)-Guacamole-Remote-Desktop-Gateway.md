@@ -1,3 +1,20 @@
+---
+artifact: SPEC-004
+title: Guacamole Remote Desktop Gateway
+status: Draft
+author: cristos
+created: 2026-03-03
+last-updated: 2026-03-03
+parent-epic: EPIC-001
+linked-research:
+  - SPIKE-004
+  - SPIKE-005
+linked-adrs:
+  - ADR-005
+depends-on:
+  - SPEC-003
+---
+
 # SPEC-004: Guacamole Remote Desktop Gateway
 
 **Status:** Draft

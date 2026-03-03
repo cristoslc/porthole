@@ -1,3 +1,14 @@
+---
+artifact: EPIC-002
+title: Provisioning CLI & Network State Management
+status: Proposed
+author: cristos
+created: 2026-02-28
+last-updated: 2026-02-28
+parent-vision: VISION-001
+depends-on: []
+---
+
 # EPIC-002: Provisioning CLI & Network State Management
 
 **Status:** Proposed

@@ -1,3 +1,18 @@
+---
+artifact: SPEC-003
+title: WireGuard Hub & Mesh Network
+status: Draft
+author: cristos
+created: 2026-03-03
+last-updated: 2026-03-03
+parent-epic: EPIC-001
+linked-research:
+  - SPIKE-007
+linked-adrs:
+  - ADR-004
+depends-on: []
+---
+
 # SPEC-003: WireGuard Hub & Mesh Network
 
 **Status:** Draft
@@ -87,9 +102,10 @@ After this spec is implemented, the operator can:
 - **DNS endpoint strategy**: Peers connect to `hub.yourdomain.com:51820`.
   Cloudflare A record points to VPS public IP. `reresolve-dns.sh` on peers
   handles hub IP changes (provider migration, ephemeral VPS recreation).
-- **Peer enrollment procedure**: Manual workflow — generate key pair, assign
-  next available IP, update `network.sops.yaml`, render templates, transfer
-  peer config via Magic Wormhole.
+- **Peer enrollment procedure**: Manual workflow — install WireGuard on the
+  target machine (per-OS), generate key pair, assign next available IP, update
+  `network.sops.yaml`, render templates, transfer peer config via Magic
+  Wormhole, enable and start the WireGuard service.
 - **SOPS/age encryption**: All private keys encrypted in repo. Age key on
   operator workstation and VPS only.
 
@@ -113,6 +129,7 @@ After this spec is implemented, the operator can:
 | VPS with public IP | Infrastructure | Any provider, any region; ~$3-6/mo |
 | Cloudflare DNS | Service | A record management for hub endpoint |
 | SOPS + age | Tooling | Secret encryption for `network.sops.yaml` |
+| WireGuard on peers | Software | Linux: `apt install wireguard` (kernel module built-in 5.6+); macOS: `brew install wireguard-tools`; Windows: official MSI installer |
 
 ## Design
 
@@ -184,6 +201,31 @@ mom-imac        IN A    10.100.0.10
 ```
 
 Upstream DNS (Cloudflare 1.1.1.1) handles all non-`.wg` queries.
+
+### Peer WireGuard installation
+
+WireGuard must be installed on each peer before enrollment. The steps vary
+by OS:
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt install wireguard wireguard-tools
+# Kernel module is built-in on Linux 5.6+; older kernels need wireguard-dkms
+```
+
+**macOS:**
+```bash
+brew install wireguard-tools
+# Uses userspace Go implementation; no kernel module needed
+```
+
+**Windows:**
+- Download and run the official MSI installer from
+  [wireguard.com/install](https://www.wireguard.com/install/)
+- Installs both the tunnel service and `wg.exe` / `wg-quick.exe` CLI tools
+
+After installation, verify with `wg --version`. The WireGuard interface
+(`wg0`) is created when `wg-quick up` is run with the peer's rendered config.
 
 ### DNS endpoint and `reresolve-dns.sh`
 

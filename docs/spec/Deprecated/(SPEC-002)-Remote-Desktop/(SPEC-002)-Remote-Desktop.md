@@ -1,3 +1,17 @@
+---
+artifact: SPEC-002
+title: Remote Desktop Bootstrap
+status: Deprecated
+author: cristos
+created: 2026-02-26
+last-updated: 2026-02-28
+parent-epic: EPIC-001
+linked-research: []
+linked-adrs:
+  - ADR-001
+depends-on: []
+---
+
 # SPEC-002: Remote Desktop Bootstrap
 
 **Status:** Deprecated
