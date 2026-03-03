@@ -60,6 +60,10 @@ def load_state(state_file: Path = Path("network.sops.yaml")) -> NetworkState:
 
     data = json.loads(result.stdout)
 
+    net = data.get("network", data)  # support both wrapped and flat formats
+    hub = net.get("hub", {})
+    endpoint = hub.get("endpoint", net.get("endpoint", ""))
+
     peers = [
         Peer(
             name=p["name"],
@@ -67,10 +71,10 @@ def load_state(state_file: Path = Path("network.sops.yaml")) -> NetworkState:
             public_key=p.get("public_key", ""),
             role=p.get("role", ""),
         )
-        for p in data.get("peers", [])
+        for p in net.get("peers", [])
     ]
 
     return NetworkState(
-        endpoint=data.get("endpoint", ""),
+        endpoint=endpoint,
         peers=peers,
     )
