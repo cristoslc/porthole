@@ -13,6 +13,49 @@ metadata:
 
 Create, transition, and validate documentation artifacts defined in AGENTS.md. The authoritative list of artifact types, phases, and hierarchy lives in AGENTS.md — this skill provides the operational procedures.
 
+## Stale reference watcher
+
+The `specwatch.sh` script monitors `docs/` for file moves, renames, and deletes, and flags stale markdown link references with suggested fixes.
+
+**Script location:** `scripts/specwatch.sh` (relative to this skill)
+
+**Subcommands:**
+
+| Command | What it does |
+|---------|-------------|
+| `scan` | Run a full stale-reference scan (no watcher needed) |
+| `watch` | Start background filesystem watcher (requires `fswatch`) |
+| `stop` | Stop a running watcher |
+| `status` | Show watcher status and log summary |
+| `touch` | Refresh the sentinel keepalive timer |
+
+**Log format:** When stale references are found, they are written to `.agents/specwatch.log` (gitignored) in a structured format:
+```
+STALE <source-file>:<line>
+  broken: <relative-path-as-written>
+  found: <suggested-new-path>
+  artifact: <TYPE-NNN>
+```
+
+### Specwatch check (MANDATORY pre-step)
+
+**Before every artifact operation** (create, edit, transition, audit), check for stale references:
+
+1. If `.agents/specwatch.log` exists and is non-empty, read its contents and surface the stale references as warnings.
+2. Present each entry: source file, line number, broken path, and suggested fix.
+3. Fix stale references before proceeding with the operation (or acknowledge them if they are false positives).
+4. After addressing, delete the log file to clear the warnings.
+
+### Sentinel keepalive
+
+**After every artifact operation** (create, edit, transition, audit), refresh the specwatch sentinel:
+
+```bash
+scripts/specwatch.sh touch
+```
+
+This keeps the background watcher alive. If no spec-management operation runs for the timeout period (default 1 hour), the watcher self-terminates.
+
 ## Dependency graph
 
 The `specgraph.sh` script builds and queries the artifact dependency graph from frontmatter. It caches a JSON graph in `/tmp/` and auto-rebuilds when any `docs/*.md` file changes.

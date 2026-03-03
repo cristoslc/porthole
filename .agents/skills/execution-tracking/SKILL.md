@@ -38,9 +38,10 @@ Other skills use these abstract terms. This skill maps them to the current backe
    - Linux: `cargo install beads`
    - If install fails, go to [Fallback](#fallback).
 3. **Check for existing database:** look for `.beads/` directory.
-4. **If no `.beads/`, initialize:** `bd init --stealth` (keeps beads invisible to git collaborators).
+4. **If no `.beads/`, initialize:** `bd init`.
 5. **Validate:** `bd doctor --json`. If errors, try `bd doctor --fix`.
-6. **Load context:** `bd prime` for dynamic workflow context.
+6. **If `git status` shows modified `.beads/dolt-*.pid` or `.beads/dolt-server.activity`:** these are ephemeral runtime files that were tracked by mistake. See `.beads/README.md` § "Remediation: Untrack Ephemeral Runtime Files" for the fix.
+7. **Load context:** `bd prime` for dynamic workflow context.
 
 ## Statuses
 
