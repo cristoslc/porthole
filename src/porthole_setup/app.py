@@ -1,7 +1,10 @@
 """Porthole setup Textual application."""
 
-from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Label
+from textual.app import App
+
+from porthole_setup.screens.hub_check import HubCheckScreen
+from porthole_setup.screens.prerequisites import PrerequisitesScreen
+from porthole_setup.screens.secrets import SecretsScreen
 
 
 class PortholeApp(App):
@@ -9,7 +12,11 @@ class PortholeApp(App):
 
     TITLE = "Porthole Setup"
 
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield Label("Welcome to Porthole Setup. (Screens not yet implemented.)")
-        yield Footer()
+    SCREENS = {
+        "prerequisites": PrerequisitesScreen,
+        "secrets": SecretsScreen,
+        "hub_check": HubCheckScreen,
+    }
+
+    def on_mount(self) -> None:
+        self.push_screen("prerequisites")
