@@ -28,7 +28,7 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-03 | 6297014 | Initial creation |
-| Implemented | 2026-03-03 | TBD | wgmesh CLI (EPIC-002) implements all templates, state schema, subnet/key/sops/state/render/ssh modules |
+| Implemented | 2026-03-03 | d46e0d2 | wgmesh CLI (EPIC-002) implements all templates, state schema, subnet/key/sops/state/render/ssh modules |
 
 ---
 

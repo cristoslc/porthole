@@ -19,7 +19,7 @@ _No specs in this phase._
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
-| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-03 | TBD | wgmesh CLI implements all templates, state schema, modules |
+| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-03 | d46e0d2 | wgmesh CLI implements all templates, state schema, modules |
 
 ## Deprecated
 
