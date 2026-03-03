@@ -28,6 +28,35 @@ variable "ssh_key_path" {
 }
 
 # ---------------------------------------------------------------------------
+# DNS provider selection
+# ---------------------------------------------------------------------------
+
+variable "dns_provider" {
+  description = "Which DNS provider to use for the hub A record. Set to 'none' to skip DNS (manage manually). Valid values: cloudflare, digitalocean, hetzner, none."
+  type        = string
+  default     = "none"
+
+  validation {
+    condition     = contains(["cloudflare", "digitalocean", "hetzner", "none"], var.dns_provider)
+    error_message = "dns_provider must be one of: cloudflare, digitalocean, hetzner, none."
+  }
+}
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token. Required when dns_provider = cloudflare. Set via TF_VAR_cloudflare_api_token or CLOUDFLARE_API_TOKEN."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "do_token" {
+  description = "DigitalOcean API token for DNS. Required when dns_provider = digitalocean. Set via TF_VAR_do_token."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+# ---------------------------------------------------------------------------
 # Provider-portability note
 # ---------------------------------------------------------------------------
 # This Hetzner implementation mirrors the DigitalOcean reference in terraform/.
