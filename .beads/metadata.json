@@ -1,0 +1,6 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "iac_remote_desktop_node"
+}
