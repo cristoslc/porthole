@@ -1,5 +1,28 @@
 ---
-# TODO: Create tunnel user and set authorized_keys (TODO)
-- name: Create tunnel user and set authorized_keys (TODO)
-  ansible.builtin.debug:
-    msg: "tunnel-user role not yet implemented — placeholder only."
+# The 'tunnel' user accepts incoming reverse-SSH connections from enrolled nodes.
+# authorized_keys is populated from the ssh_pub_key field on each peer in the
+# network state (if present); keys are also safe to add manually.
+
+- name: Create tunnel user
+  ansible.builtin.user:
+    name: tunnel
+    comment: Reverse SSH tunnel user
+    shell: /usr/sbin/nologin
+    create_home: true
+    system: false
+
+- name: Ensure ~/.ssh exists for tunnel user
+  ansible.builtin.file:
+    path: /home/tunnel/.ssh
+    state: directory
+    owner: tunnel
+    group: tunnel
+    mode: "0700"
+
+- name: Render authorized_keys from network state
+  ansible.builtin.template:
+    src: authorized_keys.j2
+    dest: /home/tunnel/.ssh/authorized_keys
+    owner: tunnel
+    group: tunnel
+    mode: "0600"

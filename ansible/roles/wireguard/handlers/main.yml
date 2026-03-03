@@ -1,0 +1,5 @@
+---
+- name: Reload WireGuard
+  ansible.builtin.shell: wg syncconf wg0 <(wg-quick strip /etc/wireguard/wg0.conf)
+  args:
+    executable: /bin/bash

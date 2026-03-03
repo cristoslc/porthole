@@ -1,0 +1,8 @@
+# authorized_keys for the 'tunnel' user — managed by Ansible.
+# Add each enrolled node's SSH public key (not WireGuard key) below.
+# The ssh_pub_key field on each peer in network.sops.yaml is used if present.
+{% for peer in spoke_peers %}
+{% if peer.ssh_pub_key is defined and peer.ssh_pub_key %}
+{{ peer.ssh_pub_key }}  # {{ peer.name }}
+{% endif %}
+{% endfor %}

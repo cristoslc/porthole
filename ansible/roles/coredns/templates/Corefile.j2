@@ -1,0 +1,14 @@
+.:53 {
+    errors
+    health
+
+    file /etc/coredns/wg.zone {{ net.domain }} {
+        reload 30s
+    }
+
+    forward . 1.1.1.1 1.0.0.1
+
+    cache 30
+    bind {{ hub_peer.ip }}
+    log
+}

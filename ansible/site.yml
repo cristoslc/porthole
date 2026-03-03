@@ -1,9 +1,24 @@
 ---
 # Hub playbook — provisions all services on the VPS hub.
-# Run with: ansible-playbook -i inventory.yml site.yml -e hub_ip=<IP>
+#
+# Prerequisites:
+#   - network.sops.yaml at repo root (or override with -e state_file=<path>)
+#   - SOPS/age key available (~/.config/sops/age/keys.txt or SOPS_AGE_KEY_FILE)
+#
+# Run with:
+#   ansible-playbook -i inventory.yml site.yml -e hub_ip=$(terraform output -raw hub_ip)
+#
 - name: Configure hub VPS
   hosts: hub
   become: true
+
+  vars:
+    _state_file: "{{ state_file | default('../network.sops.yaml') }}"
+    net_state:   "{{ lookup('sops_state', _state_file) }}"
+    net:         "{{ net_state.network }}"
+    hub_peer:    "{{ net.peers | selectattr('role', 'equalto', 'hub') | first }}"
+    spoke_peers: "{{ net.peers | rejectattr('role', 'equalto', 'hub') | list }}"
+
   roles:
     - wireguard
     - coredns

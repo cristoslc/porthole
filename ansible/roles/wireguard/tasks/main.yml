@@ -1,5 +1,38 @@
 ---
-# TODO: Install and configure WireGuard (TODO)
-- name: Install and configure WireGuard (TODO)
-  ansible.builtin.debug:
-    msg: "WireGuard role not yet implemented — placeholder only."
+- name: Install wireguard-tools
+  ansible.builtin.apt:
+    name: wireguard
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Ensure /etc/wireguard exists
+  ansible.builtin.file:
+    path: /etc/wireguard
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Render wg0.conf
+  ansible.builtin.template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Reload WireGuard
+
+- name: Enable IPv4 forwarding (persistent)
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_file: /etc/sysctl.d/99-wg.conf
+    reload: true
+
+- name: Enable and start wg-quick@wg0
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    enabled: true
+    state: started
+    daemon_reload: true

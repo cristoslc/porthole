@@ -1,0 +1,3 @@
+---
+- name: Apply nftables rules
+  ansible.builtin.command: nft -f /etc/nftables.conf

@@ -1,0 +1,13 @@
+[Interface]
+Address = {{ hub_peer.ip }}/24
+ListenPort = {{ wg_port }}
+PrivateKey = {{ hub_peer.private_key }}
+PostUp   = sysctl -w net.ipv4.ip_forward=1
+PostDown = sysctl -w net.ipv4.ip_forward=0
+{% for peer in spoke_peers %}
+
+[Peer]
+# {{ peer.name }} ({{ peer.role }})
+PublicKey  = {{ peer.public_key }}
+AllowedIPs = {{ peer.ip }}/32
+{% endfor %}

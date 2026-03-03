@@ -1,0 +1,51 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        # Allow established/related
+        ct state established,related accept
+
+        # Allow loopback
+        iif lo accept
+
+        # Allow WireGuard
+        udp dport {{ wg_port }} accept
+
+        # Allow SSH from WireGuard subnet
+        ip saddr {{ net.subnet }} tcp dport 22 accept
+
+        # Allow SSH from public internet (for initial access + reverse tunnel listening)
+        tcp dport 22 accept
+
+        # Reverse SSH tunnel listening ports (2200 + last octet of each peer IP)
+        tcp dport 2200-2220 accept
+
+        # Allow DNS on WireGuard interface only
+        iifname "{{ wg_interface }}" tcp dport 53 accept
+        iifname "{{ wg_interface }}" udp dport 53 accept
+
+        # Allow HTTP/HTTPS for Caddy
+        tcp dport { 80, 443 } accept
+
+        # ICMP
+        ip protocol icmp accept
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        # Allow forwarding between WireGuard peers
+        iifname "{{ wg_interface }}" oifname "{{ wg_interface }}" accept
+
+        # Allow established/related forwarding
+        ct state established,related accept
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+    }
+}

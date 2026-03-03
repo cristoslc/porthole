@@ -1,0 +1,5 @@
+$ORIGIN {{ net.domain }}.
+@       IN SOA  hub.{{ net.domain }}. admin.{{ net.domain }}. ( {{ ansible_date_time.date | replace('-','') }}01 3600 900 604800 86400 )
+{% for peer in net.peers %}
+{{ peer.dns_name.ljust(16) }}IN A    {{ peer.ip }}
+{% endfor %}

@@ -1,5 +1,36 @@
 ---
-# TODO: Install and configure Caddy (TODO)
-- name: Install and configure Caddy (TODO)
-  ansible.builtin.debug:
-    msg: "Caddy role not yet implemented — placeholder only."
+- name: Add Caddy apt repository key
+  ansible.builtin.apt_key:
+    url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add Caddy apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [trusted=yes] https://apt.fury.io/caddy/ /"
+    state: present
+    filename: caddy
+  when: ansible_os_family == "Debian"
+
+- name: Install Caddy
+  ansible.builtin.apt:
+    name: caddy
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Render Caddyfile
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload Caddy
+
+- name: Enable and start Caddy
+  ansible.builtin.systemd:
+    name: caddy
+    enabled: true
+    state: started
+    daemon_reload: true

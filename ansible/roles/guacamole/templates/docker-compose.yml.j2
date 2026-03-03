@@ -1,0 +1,46 @@
+---
+# Guacamole stack — bound to the WireGuard interface so it is only accessible
+# from enrolled peers.
+# Managed by Ansible; do not edit manually.
+
+services:
+  guacd:
+    image: guacamole/guacd:latest
+    restart: unless-stopped
+    networks:
+      - guac_net
+
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       guacamole_db
+      POSTGRES_USER:     guacamole_user
+      POSTGRES_PASSWORD: "{{ guacamole_db_password | default('changeme_in_vault') }}"
+    volumes:
+      - guac_db:/var/lib/postgresql/data
+    networks:
+      - guac_net
+
+  guacamole:
+    image: guacamole/guacamole:latest
+    restart: unless-stopped
+    depends_on:
+      - guacd
+      - db
+    environment:
+      GUACD_HOSTNAME:     guacd
+      POSTGRESQL_HOSTNAME: db
+      POSTGRESQL_DATABASE: guacamole_db
+      POSTGRESQL_USERNAME: guacamole_user
+      POSTGRESQL_PASSWORD: "{{ guacamole_db_password | default('changeme_in_vault') }}"
+    ports:
+      - "{{ hub_peer.ip }}:8080:8080"
+    networks:
+      - guac_net
+
+volumes:
+  guac_db:
+
+networks:
+  guac_net:

@@ -1,5 +1,60 @@
 ---
-# TODO: Install and configure CoreDNS (TODO)
-- name: Install and configure CoreDNS (TODO)
-  ansible.builtin.debug:
-    msg: "CoreDNS role not yet implemented — placeholder only."
+- name: Check if coredns binary exists
+  ansible.builtin.stat:
+    path: /usr/local/bin/coredns
+  register: coredns_bin
+
+- name: Download CoreDNS binary
+  ansible.builtin.unarchive:
+    src: "https://github.com/coredns/coredns/releases/download/v{{ coredns_version }}/coredns_{{ coredns_version }}_linux_amd64.tgz"
+    dest: /usr/local/bin
+    remote_src: true
+    extra_opts: [coredns]
+  when: not coredns_bin.stat.exists
+
+- name: Ensure coredns binary is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/coredns
+    mode: "0755"
+
+- name: Ensure /etc/coredns exists
+  ansible.builtin.file:
+    path: /etc/coredns
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Render Corefile
+  ansible.builtin.template:
+    src: Corefile.j2
+    dest: /etc/coredns/Corefile
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart CoreDNS
+
+- name: Render wg.zone
+  ansible.builtin.template:
+    src: wg.zone.j2
+    dest: /etc/coredns/wg.zone
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload CoreDNS
+
+- name: Install CoreDNS systemd service
+  ansible.builtin.template:
+    src: coredns.service.j2
+    dest: /etc/systemd/system/coredns.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart CoreDNS
+
+- name: Enable and start CoreDNS
+  ansible.builtin.systemd:
+    name: coredns
+    enabled: true
+    state: started
+    daemon_reload: true

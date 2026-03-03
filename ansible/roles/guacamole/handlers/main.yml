@@ -1,0 +1,5 @@
+---
+- name: Restart Guacamole
+  ansible.builtin.command:
+    cmd: docker compose restart
+    chdir: /opt/guacamole
