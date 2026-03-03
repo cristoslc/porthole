@@ -2,10 +2,7 @@
 
 ## Draft
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-03 | 6297014 | Docker Compose stack, WireGuard-only binding, connection seeding |
-| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-03 | 6297014 | Watchdog + reverse SSH tunnel; MVP layers 1-2 from SPIKE-006 |
+_No specs in this phase._
 
 ## Review
 
@@ -20,6 +17,8 @@ _No specs in this phase._
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
 | SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-03 | d46e0d2 | wgmesh CLI implements all templates, state schema, modules |
+| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-03 | 068a4f5 | Docker Compose stack, Caddy TLS, seed-guac command |
+| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-03 | 068a4f5 | wg-watchdog, reverse SSH tunnel, gen-peer-scripts command |
 
 ## Deprecated
 

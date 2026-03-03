@@ -1,7 +1,7 @@
 ---
 artifact: SPEC-005
 title: Node Health & Recovery Agent
-status: Draft
+status: Implemented
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-03
@@ -15,19 +15,20 @@ depends-on:
 
 # SPEC-005: Node Health & Recovery Agent
 
-**Status:** Draft
+**Status:** Implemented
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Research:** [(SPIKE-006) WireGuard Fallback & Recovery](../../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md)
-**Depends on:** [SPEC-003](../Draft/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard network must exist)
+**Depends on:** [SPEC-003](../Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard network must exist)
 
 ### Lifecycle
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-03 | 6297014 | Initial creation; MVP scope is Layers 1-2 from SPIKE-006 |
+| Implemented | 2026-03-03 | 068a4f5 | wg-watchdog, reverse SSH tunnel, gen-peer-scripts command |
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 artifact: EPIC-002
 title: Provisioning CLI & Network State Management
-status: Active
+status: Complete
 author: cristos
 created: 2026-02-28
 last-updated: 2026-03-03
@@ -11,7 +11,7 @@ depends-on: []
 
 # EPIC-002: Provisioning CLI & Network State Management
 
-**Status:** Active
+**Status:** Complete
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-03-03
@@ -23,6 +23,7 @@ depends-on: []
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
 | Active | 2026-03-03 | faa1bcd | Ready for implementation; unblocks EPIC-003/004/005 |
+| Complete | 2026-03-03 | 068a4f5 | All 6 wgmesh commands, SOPS state, Jinja2 templates, 40 tests pass |
 
 ---
 

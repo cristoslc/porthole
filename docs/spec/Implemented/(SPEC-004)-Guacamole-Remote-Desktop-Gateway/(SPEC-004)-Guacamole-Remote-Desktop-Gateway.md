@@ -1,7 +1,7 @@
 ---
 artifact: SPEC-004
 title: Guacamole Remote Desktop Gateway
-status: Draft
+status: Implemented
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-03
@@ -17,20 +17,21 @@ depends-on:
 
 # SPEC-004: Guacamole Remote Desktop Gateway
 
-**Status:** Draft
+**Status:** Implemented
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Research:** [(SPIKE-004) Remote Desktop Agent Architecture](../../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md), [(SPIKE-005) Securing Guacamole on Hub](../../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)
 **ADR:** [(ADR-005) Remote Desktop Access Model](../../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md)
-**Depends on:** [SPEC-003](../Draft/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard network must exist)
+**Depends on:** [SPEC-003](../Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard network must exist)
 
 ### Lifecycle
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-03 | 6297014 | Initial creation |
+| Implemented | 2026-03-03 | 068a4f5 | Docker Compose stack, Caddy TLS, seed-guac command |
 
 ---
 

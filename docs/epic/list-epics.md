@@ -14,11 +14,12 @@
 | ID | Title | Created | Last Updated | Commit | Notes |
 |----|-------|---------|--------------|--------|-------|
 | EPIC-001 | Remote Fleet Management | 2026-02-28 | 2026-03-03 | 72c4790 | Research complete; 3 agent specs (SPEC-003/004/005) created |
-| EPIC-002 | Provisioning CLI & Network State Management | 2026-02-28 | 2026-03-03 | faa1bcd | `wgmesh` CLI: init, add, remove, sync, list, status. SOPS/age state. |
 
 ## Complete
 
-_None._
+| ID | Title | Created | Last Updated | Commit | Notes |
+|----|-------|---------|--------------|--------|-------|
+| EPIC-002 | Provisioning CLI & Network State Management | 2026-02-28 | 2026-03-03 | 068a4f5 | All 6 wgmesh commands, SOPS state, Jinja2 templates, 40 tests pass |
 
 ## Archived
 
