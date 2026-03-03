@@ -42,6 +42,9 @@ def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
         "wg-watchdog.plist": "wg-watchdog.plist.j2",
         f"ssh-tunnel-{peer_name}.service": "ssh-tunnel.service.j2",
         f"ssh-tunnel-{peer_name}.plist": "ssh-tunnel.plist.j2",
+        "wg-status-server.py": "wg-status-server.py.j2",
+        "wg-status-server.service": "wg-status-server.service.j2",
+        "wg-status-server.plist": "wg-status-server.plist.j2",
     }
 
     ctx = dict(
@@ -58,19 +61,23 @@ def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
         out_path.write_text(rendered)
         click.echo(f"  {out_path}")
 
-    # Make watchdog script executable
+    # Make scripts executable
     (out_dir / "wg-watchdog.sh").chmod(0o755)
+    (out_dir / "wg-status-server.py").chmod(0o755)
 
     click.echo(f"\nGenerated {len(files)} files in {out_dir}/")
     click.echo("\nInstall on Linux:")
-    click.echo(f"  sudo cp wg-watchdog.sh /usr/local/bin/")
+    click.echo(f"  sudo cp wg-watchdog.sh wg-status-server.py /usr/local/bin/")
     click.echo(f"  sudo cp wg-watchdog.service wg-watchdog.timer /etc/systemd/system/")
-    click.echo(f"  sudo cp ssh-tunnel-{peer_name}.service /etc/systemd/system/")
+    click.echo(f"  sudo cp ssh-tunnel-{peer_name}.service wg-status-server.service /etc/systemd/system/")
     click.echo(f"  sudo systemctl daemon-reload")
-    click.echo(f"  sudo systemctl enable --now wg-watchdog.timer ssh-tunnel-{peer_name}.service")
+    click.echo(f"  sudo systemctl enable --now wg-watchdog.timer ssh-tunnel-{peer_name}.service wg-status-server.service")
     click.echo(f"\nInstall on macOS:")
-    click.echo(f"  sudo cp wg-watchdog.sh /usr/local/bin/")
+    click.echo(f"  sudo cp wg-watchdog.sh wg-status-server.py /usr/local/bin/")
     click.echo(f"  sudo cp wg-watchdog.plist /Library/LaunchDaemons/")
     click.echo(f"  sudo cp ssh-tunnel-{peer_name}.plist /Library/LaunchDaemons/")
+    click.echo(f"  sudo cp wg-status-server.plist /Library/LaunchDaemons/")
     click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.watchdog.{peer_name}.plist")
     click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.tunnel.{peer_name}.plist")
+    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.status.{peer_name}.plist")
+    click.echo(f"\nStatus UI: http://<lan-ip>:8888/ (auto-starts on boot)")
