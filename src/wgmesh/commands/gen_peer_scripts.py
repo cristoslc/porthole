@@ -1,0 +1,76 @@
+"""Generate per-peer watchdog and tunnel service files."""
+from __future__ import annotations
+
+from pathlib import Path
+
+import click
+from jinja2 import Environment, FileSystemLoader
+
+from wgmesh import config, state
+from wgmesh.config import TEMPLATE_DIR
+
+
+def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
+    """Render watchdog and tunnel service templates for a specific peer."""
+    state_path = config.STATE_FILE
+    if not state_path.exists():
+        raise click.ClickException(f"State file not found: {state_path}")
+
+    network = state.load_state(state_path)
+
+    peer = next((p for p in network.peers if p.name == peer_name), None)
+    if peer is None:
+        raise click.ClickException(f"Peer '{peer_name}' not found")
+    if peer.role == "hub":
+        raise click.ClickException("Hub does not need client-side scripts")
+
+    hub_peer = next(p for p in network.peers if p.role == "hub")
+    hub_endpoint_host = network.hub.endpoint.split(":")[0]
+    hub_public_ip = hub_endpoint_host  # DNS name — tunnel connects directly
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    env = Environment(
+        loader=FileSystemLoader(str(TEMPLATE_DIR / "peer-scripts")),
+        keep_trailing_newline=True,
+    )
+
+    files = {
+        "wg-watchdog.sh": "wg-watchdog.sh.j2",
+        "wg-watchdog.service": "wg-watchdog.service.j2",
+        "wg-watchdog.timer": "wg-watchdog.timer.j2",
+        "wg-watchdog.plist": "wg-watchdog.plist.j2",
+        f"ssh-tunnel-{peer_name}.service": "ssh-tunnel.service.j2",
+        f"ssh-tunnel-{peer_name}.plist": "ssh-tunnel.plist.j2",
+    }
+
+    ctx = dict(
+        peer=peer,
+        hub=hub_peer,
+        hub_endpoint_host=hub_endpoint_host,
+        hub_public_ip=hub_public_ip,
+    )
+
+    for filename, template_name in files.items():
+        template = env.get_template(template_name)
+        rendered = template.render(**ctx)
+        out_path = out_dir / filename
+        out_path.write_text(rendered)
+        click.echo(f"  {out_path}")
+
+    # Make watchdog script executable
+    (out_dir / "wg-watchdog.sh").chmod(0o755)
+
+    click.echo(f"\nGenerated {len(files)} files in {out_dir}/")
+    click.echo("\nInstall on Linux:")
+    click.echo(f"  sudo cp wg-watchdog.sh /usr/local/bin/")
+    click.echo(f"  sudo cp wg-watchdog.service wg-watchdog.timer /etc/systemd/system/")
+    click.echo(f"  sudo cp ssh-tunnel-{peer_name}.service /etc/systemd/system/")
+    click.echo(f"  sudo systemctl daemon-reload")
+    click.echo(f"  sudo systemctl enable --now wg-watchdog.timer ssh-tunnel-{peer_name}.service")
+    click.echo(f"\nInstall on macOS:")
+    click.echo(f"  sudo cp wg-watchdog.sh /usr/local/bin/")
+    click.echo(f"  sudo cp wg-watchdog.plist /Library/LaunchDaemons/")
+    click.echo(f"  sudo cp ssh-tunnel-{peer_name}.plist /Library/LaunchDaemons/")
+    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.watchdog.{peer_name}.plist")
+    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.tunnel.{peer_name}.plist")

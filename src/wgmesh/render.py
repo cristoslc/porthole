@@ -42,3 +42,10 @@ def render_nftables(network: Network) -> str:
     env = _env()
     template = env.get_template("nftables.conf.j2")
     return template.render(network=network)
+
+
+def render_corefile(network: Network, hub_ip: str) -> str:
+    """Render the CoreDNS Corefile."""
+    env = _env()
+    template = env.get_template("coredns-Corefile.j2")
+    return template.render(network=network, hub_ip=hub_ip)

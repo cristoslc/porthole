@@ -1,0 +1,12 @@
+[Unit]
+Description=WireGuard watchdog timer (every 2 minutes + on-wake)
+After=wg-quick@wg0.service
+
+[Timer]
+OnBootSec=60
+OnUnitActiveSec=2min
+# Fire immediately after resume from sleep
+OnActiveSec=5
+
+[Install]
+WantedBy=timers.target

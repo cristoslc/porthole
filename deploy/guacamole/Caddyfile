@@ -1,0 +1,13 @@
+# Guacamole reverse proxy — WireGuard interface only
+# Binds to 10.100.0.1 (set via ports: in docker-compose.yml)
+
+guac.hub.wg {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+    reverse_proxy guacamole:8080 {
+        # Pass real client IP through WireGuard
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+    }
+}

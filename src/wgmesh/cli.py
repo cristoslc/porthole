@@ -57,6 +57,38 @@ def sync(dry_run):
     run_sync(dry_run)
 
 
+@cli.command("gen-peer-scripts")
+@click.argument("peer_name")
+@click.option("--out", "out_dir", type=click.Path(), default=None,
+              help="Output directory (default: peer-scripts/<name>/)")
+def gen_peer_scripts(peer_name, out_dir):
+    """Generate watchdog + tunnel service files for a peer."""
+    from pathlib import Path
+    from wgmesh.commands.gen_peer_scripts import run_gen_peer_scripts
+
+    directory = Path(out_dir) if out_dir else Path(f"peer-scripts/{peer_name}")
+    run_gen_peer_scripts(peer_name, directory)
+
+
+@cli.command("seed-guac")
+@click.option("--out", "out_file", type=click.File("w"), default=None,
+              help="Write SQL to file instead of stdout")
+def seed_guac(out_file):
+    """Generate Guacamole connection seed SQL from network state."""
+    from wgmesh.commands.seed_guac import run_seed_guac
+
+    run_seed_guac(out_file)
+
+
+@cli.command()
+@click.argument("hub_host")
+def bootstrap(hub_host):
+    """Bootstrap a fresh Ubuntu VPS to a functioning WireGuard hub."""
+    from wgmesh.commands.bootstrap import run_bootstrap
+
+    run_bootstrap(hub_host)
+
+
 @cli.command()
 def status():
     """Show live WireGuard peer status from the hub."""

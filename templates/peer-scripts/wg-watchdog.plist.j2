@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.wgmesh.watchdog.{{ peer.name }}</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/wg-watchdog.sh</string>
+    </array>
+
+    <!-- Run every 2 minutes -->
+    <key>StartInterval</key>
+    <integer>120</integer>
+
+    <!-- Run immediately after macOS wake -->
+    <key>WakeUp</key>
+    <true/>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/var/log/wg-watchdog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/var/log/wg-watchdog.log</string>
+</dict>
+</plist>

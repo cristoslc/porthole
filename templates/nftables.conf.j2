@@ -18,6 +18,12 @@ table inet filter {
         # Allow SSH from WireGuard subnet
         ip saddr {{ network.subnet }} tcp dport 22 accept
 
+        # Allow SSH from public internet (for initial access + reverse tunnel listening)
+        tcp dport 22 accept
+
+        # Reverse SSH tunnel listening ports (2200 + last octet of each peer IP)
+        tcp dport 2200-2220 accept
+
         # Allow DNS on WireGuard interface only
         iifname "wg0" tcp dport 53 accept
         iifname "wg0" udp dport 53 accept

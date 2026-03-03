@@ -1,0 +1,21 @@
+[Unit]
+Description=Reverse SSH tunnel for {{ peer.name }} → VPS port {{ peer.reverse_ssh_port }}
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ssh \
+    -N -T \
+    -o StrictHostKeyChecking=accept-new \
+    -o ServerAliveInterval=30 \
+    -o ServerAliveCountMax=3 \
+    -o ExitOnForwardFailure=yes \
+    -o BatchMode=yes \
+    -i /etc/wireguard/tunnel_id_ed25519 \
+    -R 0.0.0.0:{{ peer.reverse_ssh_port }}:localhost:22 \
+    tunnel@{{ hub_public_ip }}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
