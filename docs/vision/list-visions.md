@@ -8,7 +8,7 @@ _No visions in this phase._
 
 | ID | Title | Author | Created | Last Updated | Commit |
 |----|-------|--------|---------|--------------|--------|
-| VISION-001 | Remote Access for a Personal Fleet | cristos | 2026-02-27 | 2026-03-02 | aad1d3a |
+| VISION-001 | Remote Access for a Personal Fleet | cristos | 2026-02-27 | 2026-03-03 | 270fc1e |
 
 ## Sunset
 
