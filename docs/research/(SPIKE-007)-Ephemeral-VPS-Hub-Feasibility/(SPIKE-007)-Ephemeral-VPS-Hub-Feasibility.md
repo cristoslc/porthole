@@ -4,13 +4,19 @@
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** ADR-004 (WireGuard Hub-and-Spoke Relay)
+**Parent:** [ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md)
 **Question:** Is it operationally feasible to run the WireGuard hub as an ephemeral, on-demand VPS — destroyed when not in use — rather than as a persistent server?
 **Gate:** Pre-ADR
 **Risks addressed:**
   - 24/7 hub running as an internet-exposed surface even when no remote access is needed
   - Cost of always-on VPS for infrequent remote access
   - Complexity of a create/destroy lifecycle versus a simpler stop/start model
+
+### Lifecycle
+
+| Phase | Date | Commit | Notes |
+|-------|------|--------|-------|
+| Complete | 2026-02-28 | 3abdcad | Created directly in Complete phase; all findings resolved in single research session; informs ADR-004 |
 
 ---
 
@@ -361,9 +367,3 @@ The hybrid model is the fallback if ephemeral doesn't work in practice. Start wi
 | Best overall recommendation? | **Full ephemeral with DNS.** Fall back to hybrid (always-on WireGuard + on-demand Guacamole) if spin-up delay causes real problems. |
 
 ---
-
-## Lifecycle
-
-| Phase | Date | Commit | Notes |
-|-------|------|--------|-------|
-| Complete | 2026-02-28 | 3abdcad | Created directly in Complete phase; all findings resolved in single research session; informs ADR-004 |

@@ -4,8 +4,8 @@
 **Author:** cristos
 **Created:** 2026-02-27
 **Last Updated:** 2026-02-27
-**Parent Epic:** [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**Blocks:** [ADR-003](../../adr/Proposed/(ADR-003)-Network-Layer-for-Remote-Fleet.md)
+**Parent:** [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Blocks:** [ADR-003](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md)
 
 ### Lifecycle
 

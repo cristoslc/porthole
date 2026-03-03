@@ -4,7 +4,7 @@
 **Author:** Claude
 **Created:** 2026-02-27
 **Last Updated:** 2026-02-27
-**Parent Epic:** [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Parent:** [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 
 ### Lifecycle
 

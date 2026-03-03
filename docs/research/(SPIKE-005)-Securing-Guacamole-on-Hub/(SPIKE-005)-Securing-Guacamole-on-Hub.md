@@ -4,13 +4,19 @@
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** EPIC-007 (Hub Bootstrap & Disaster Recovery, proposed)
+**Parent:** [EPIC-005](../../epic/Proposed/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md)
 **Question:** How should Guacamole be secured on a VPS that also serves as the WireGuard hub, given that the hub must be fully fungible and rebuildable?
 **Gate:** Pre-MVP
 **Risks addressed:**
   - Guacamole exposed to the public internet creates an attack surface
   - Connection state stored only on the VPS violates fungibility
   - TLS configuration must work without public DNS for the WireGuard-internal address
+
+### Lifecycle
+
+| Phase | Date | Commit | Notes |
+|-------|------|--------|-------|
+| Complete | 2026-02-28 | a785ec8 | Research completed in conversation; informs EPIC-005 hub security design |
 
 ---
 
@@ -174,9 +180,3 @@ SPIKE-007 evaluates whether the hub can be destroyed when not in use and recreat
 - **Guacamole is not running 24/7.** The operator starts it with `docker compose up -d guacamole coredns` when remote desktop access is needed, and stops it afterward. The Guacamole attack surface (web application, Tomcat, PostgreSQL) exists only during active sessions.
 - **All other findings in this spike remain valid** — network binding, TLS, authentication, SQL seeding, firewall rules apply whenever Guacamole is running.
 - **The persistent attack surface reduces to WireGuard UDP only** — one of the narrowest possible surfaces for an internet-facing service.
-
-## Lifecycle
-
-| Phase | Date | Commit | Notes |
-|-------|------|--------|-------|
-| Complete | 2026-02-28 | a785ec8 | Research completed in conversation; informs EPIC-007 hub security design |

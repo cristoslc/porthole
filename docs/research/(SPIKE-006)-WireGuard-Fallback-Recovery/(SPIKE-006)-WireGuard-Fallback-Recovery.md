@@ -4,13 +4,19 @@
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** EPIC-008 (Node Agent, proposed)
+**Parent:** [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Question:** When WireGuard goes down on a remote node, how does the operator regain access to reinstall or reconfigure it?
 **Gate:** Pre-MVP
 **Risks addressed:**
   - WireGuard failure creates total access blackout (SSH, Guacamole, everything routes through the tunnel)
   - Family members at remote locations cannot troubleshoot networking issues
   - Auto-recovery cannot handle all failure modes — some require human intervention via an out-of-band channel
+
+### Lifecycle
+
+| Phase | Date | Commit | Notes |
+|-------|------|--------|-------|
+| Complete | 2026-02-28 | a785ec8 | Research completed in conversation; informs EPIC-001 node fallback design |
 
 ---
 
@@ -193,9 +199,3 @@ No fallback handles "node internet down" — that requires physical access regar
 **Layers 1 + 2 are MVP.** The watchdog handles transient failures automatically. The reverse SSH tunnel gives the operator a direct path to fix anything the watchdog cannot. These two cover the vast majority of real-world scenarios.
 
 Layers 3-5 are post-MVP hardening: Tailscale coexistence, desktop recovery scripts, and side-channel remote desktop can be added incrementally.
-
-## Lifecycle
-
-| Phase | Date | Commit | Notes |
-|-------|------|--------|-------|
-| Complete | 2026-02-28 | a785ec8 | Research completed in conversation; informs EPIC-008 node agent fallback design |

@@ -12,6 +12,12 @@
   - Agent-per-machine model may impose maintenance burden incompatible with R8 (low maintenance)
 **Blocks:** ADR-005 (Remote Desktop Access Model)
 
+### Lifecycle
+
+| Phase | Date | Commit | Notes |
+|-------|------|--------|-------|
+| Complete | 2026-02-28 | 6d1cb09 | Research completed in conversation; findings inform ADR-005 |
+
 ---
 
 ## Question
@@ -124,9 +130,3 @@ No single tool is best at everything. The natural split:
 - **RustDesk or NoMachine** only if Guacamole's VNC-to-macOS performance is unacceptable, and only on macOS targets where it matters.
 
 This eliminates the per-machine agent maintenance burden entirely for the common case.
-
-## Lifecycle
-
-| Phase | Date | Commit | Notes |
-|-------|------|--------|-------|
-| Complete | 2026-02-28 | 6d1cb09 | Research completed in conversation; findings inform ADR-005 |
