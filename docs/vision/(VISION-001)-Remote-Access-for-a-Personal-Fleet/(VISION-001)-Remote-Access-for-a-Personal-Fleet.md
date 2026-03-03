@@ -73,7 +73,7 @@ After the bootstrap: machines find each other automatically, connections travers
 | Epic | [EPIC-003](../../epic/Proposed/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md) | Client Node Web UI | Proposed |
 | Epic | [EPIC-004](../../epic/Proposed/(EPIC-004)-Operator-Dashboard/(EPIC-004)-Operator-Dashboard.md) | Operator Dashboard | Proposed |
 | Epic | [EPIC-005](../../epic/Proposed/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md) | VPS Bootstrap & Disaster Recovery | Proposed |
-| Epic | [EPIC-006](../../epic/Proposed/(EPIC-006)-Internal-DNS/(EPIC-006)-Internal-DNS.md) | Internal DNS Resolution | Proposed |
+| Epic | [EPIC-006](../../epic/Proposed/(EPIC-006)-Homelab-Service-Exposure/(EPIC-006)-Homelab-Service-Exposure.md) | Homelab Service Exposure | Proposed |
 | Spike | [SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Abandoned |
 
 ## Supporting documents

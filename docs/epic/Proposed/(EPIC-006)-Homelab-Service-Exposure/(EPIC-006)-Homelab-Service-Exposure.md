@@ -1,4 +1,4 @@
-# EPIC-006: Internal DNS Resolution
+# EPIC-006: Homelab Service Exposure
 
 **Status:** Proposed
 **Author:** cristos
