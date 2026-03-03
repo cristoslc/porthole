@@ -1,20 +1,20 @@
 ---
 artifact: EPIC-002
 title: Provisioning CLI & Network State Management
-status: Proposed
+status: Active
 author: cristos
 created: 2026-02-28
-last-updated: 2026-02-28
+last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on: []
 ---
 
 # EPIC-002: Provisioning CLI & Network State Management
 
-**Status:** Proposed
+**Status:** Active
 **Author:** cristos
 **Created:** 2026-02-28
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-03
 **Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
@@ -22,6 +22,7 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
+| Active | 2026-03-03 | c012d17 | Ready for implementation; unblocks EPIC-003/004/005 |
 
 ---
 
