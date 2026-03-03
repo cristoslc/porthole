@@ -1,0 +1,11 @@
+[Interface]
+Address = {{ peer.ip }}/24
+PrivateKey = {{ peer.private_key }}
+DNS = 10.100.0.1
+
+[Peer]
+# hub
+PublicKey = {{ hub.public_key }}
+Endpoint = {{ endpoint }}
+AllowedIPs = {{ subnet }}
+PersistentKeepalive = 25

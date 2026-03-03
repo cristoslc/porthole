@@ -1,0 +1,5 @@
+$ORIGIN {{ network.domain }}.
+@       IN SOA  hub.{{ network.domain }}. admin.{{ network.domain }}. ( {{ serial }} 3600 900 604800 86400 )
+{% for peer in network.peers %}
+{{ peer.dns_name.ljust(16) }}IN A    {{ peer.ip }}
+{% endfor %}

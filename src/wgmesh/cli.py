@@ -1,0 +1,65 @@
+import click
+
+from wgmesh import __version__
+
+
+@click.group()
+@click.version_option(version=__version__, prog_name="wgmesh")
+def cli():
+    """WireGuard hub-and-spoke mesh network manager."""
+
+
+@cli.command()
+@click.option("--endpoint", required=True, help="Hub endpoint (e.g. hub.example.com:51820)")
+@click.option("--age-key", required=True, help="Age public key for SOPS encryption")
+def init(endpoint, age_key):
+    """Initialize a new mesh network."""
+    from wgmesh.commands.init import run_init
+
+    run_init(endpoint, age_key)
+
+
+@cli.command()
+@click.argument("name")
+@click.option("--role", default="workstation", type=click.Choice(["workstation", "server", "family"]),
+              help="Peer role (default: workstation)")
+def add(name, role):
+    """Add a new peer to the mesh network."""
+    from wgmesh.commands.add import run_add
+
+    run_add(name, role)
+
+
+@cli.command()
+@click.argument("name")
+def remove(name):
+    """Remove a peer from the mesh network."""
+    from wgmesh.commands.remove import run_remove
+
+    run_remove(name)
+
+
+@cli.command(name="list")
+@click.option("--json", "as_json", is_flag=True, help="Output as JSON")
+def list_peers(as_json):
+    """List all peers in the mesh network."""
+    from wgmesh.commands.list_cmd import run_list
+
+    run_list(as_json)
+
+
+@cli.command()
+@click.option("--dry-run", is_flag=True, help="Print rendered configs without deploying")
+def sync(dry_run):
+    """Sync hub configuration to the VPS."""
+    from wgmesh.commands.sync import run_sync
+
+    run_sync(dry_run)
+
+
+@cli.command()
+def status():
+    """Show live WireGuard peer status from the hub."""
+    from wgmesh.commands.status import run_status
+
+    run_status()
