@@ -22,7 +22,7 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
-| Active | 2026-03-03 | c012d17 | Ready for implementation; unblocks EPIC-003/004/005 |
+| Active | 2026-03-03 | faa1bcd | Ready for implementation; unblocks EPIC-003/004/005 |
 
 ---
 
