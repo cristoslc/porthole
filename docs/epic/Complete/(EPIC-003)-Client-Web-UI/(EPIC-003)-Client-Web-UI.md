@@ -1,7 +1,7 @@
 ---
 artifact: EPIC-003
 title: Client Node Web UI
-status: Active
+status: Complete
 author: cristos
 created: 2026-02-28
 last-updated: 2026-03-03
@@ -12,7 +12,7 @@ depends-on:
 
 # EPIC-003: Client Node Web UI
 
-**Status:** Active
+**Status:** Complete
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
@@ -24,6 +24,7 @@ depends-on:
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
 | Active | 2026-03-03 | de7cdd1 | SPEC-006 created and implemented (status web server) |
+| Complete | 2026-03-03 | 83d50e0 | All success criteria met: wg-status-server.py generates via gen-peer-scripts |
 
 ---
 
