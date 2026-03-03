@@ -2,7 +2,10 @@
 
 ## Draft
 
-_No specs in this phase._
+| ID | Title | Author | Created | Last Updated | Commit | Notes |
+|----|-------|--------|---------|--------------|--------|-------|
+| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-03 | 2ec07f7 | Terraform for VPS lifecycle; Ansible for hub config (WireGuard, CoreDNS, nftables, Guacamole, Caddy) |
+| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-03 | 2ec07f7 | setup.sh → Textual app; prereqs, secrets, hub check, node enrollment |
 
 ## Review
 

@@ -95,6 +95,7 @@ infrastructure or manual per-machine network configuration.
 | Spec | [SPEC-004](../../spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md) | Guacamole Remote Desktop Gateway | Implemented | Docker Compose stack, Caddy TLS, seed-guac command |
 | Spec | [SPEC-005](../../spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md) | Node Health & Recovery Agent | Implemented | wg-watchdog, reverse SSH tunnel, gen-peer-scripts command |
 | PRD | [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | WireGuard mesh eliminates the need for a relay |
+| Epic | [EPIC-007](../../epic/Proposed/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap.md) | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | Proposed | Terraform + Ansible for hub IaC; Textual TUI for node enrollment |
 
 ## Key dependencies
 
@@ -108,13 +109,14 @@ infrastructure or manual per-machine network configuration.
 
 1. **Family machine onboarding model**: How do non-technical family members
    set up and maintain the WireGuard client on their machines?
-2. **Repo boundary**: Should the fleet agent (WireGuard + native protocol
-   enablement) live in a separate repo from the workstation bootstrapper? Not
-   every machine that needs remote access is a personal dev workstation —
-   family machines, lightweight non-coding boxes, and home servers need the
-   network layer without the full workstation stack.
 
 ## Key decisions resolved
+
+2. **Repo boundary** (settled by EPIC-007): The fleet agent (WireGuard +
+   service files) lives in this repo. The node bootstrap TUI (`setup.sh` →
+   Textual app) is the single entry point for all machine types — workstations,
+   servers, and family machines alike. It detects the platform and role, and
+   installs only what is appropriate. No separate repo is needed.
 
 3. **Guacamole deployment** (settled by [SPIKE-005](../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)):
    Guacamole runs on the VPS hub, bound to the WireGuard interface

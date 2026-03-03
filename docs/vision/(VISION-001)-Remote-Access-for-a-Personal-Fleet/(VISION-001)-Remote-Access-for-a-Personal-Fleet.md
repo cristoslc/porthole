@@ -47,7 +47,7 @@ After the bootstrap: machines find each other automatically, connections travers
 | R4 | NAT traversal without port forwarding | Machines are behind residential NATs, carrier-grade NAT, hotel WiFi |
 | R5 | Network isolation | The fleet network is access-only — nodes cannot reach other infrastructure (VMs, Docker, NAS) on the same physical network |
 | R6 | Family members passive after one-time setup | Zero ongoing technical steps for non-technical users |
-| R7 | Automated provisioning | `make apply` (or equivalent) on Linux/macOS. Documented manual steps for Windows |
+| R7 | Automated provisioning | `./setup.sh` (Textual TUI) on Linux Mint/macOS: installs prereqs, manages secrets, checks hub, enrolls node. Documented manual steps for Windows |
 | R8 | Low maintenance for ~10 machines | One person, spare time, not a job |
 | R9 | Reasonable cost | $0-20/mo, not enterprise pricing |
 | R10 | Silent background operation | All agents (VPN, remote desktop) run as background services — no foreground windows, no tray icons required, no user interaction to maintain connectivity |
@@ -83,7 +83,8 @@ After the bootstrap: machines find each other automatically, connections travers
 | Epic | [EPIC-003](../../epic/Proposed/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md) | Client Node Web UI | Proposed |
 | Epic | [EPIC-004](../../epic/Proposed/(EPIC-004)-Operator-Dashboard/(EPIC-004)-Operator-Dashboard.md) | Operator Dashboard | Proposed |
 | Epic | [EPIC-005](../../epic/Proposed/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md) | VPS Bootstrap & Disaster Recovery | Proposed |
-| Epic | [EPIC-006](../../epic/Proposed/(EPIC-006)-Homelab-Service-Exposure/(EPIC-006)-Homelab-Service-Exposure.md) | Homelab Service Exposure | Proposed |
+| Epic | [EPIC-006](../../epic/Proposed/(EPIC-006)-Homelab-Service-Exposure/(EPIC-006)-Homelab-Service-Exposure.md) | Homelab Service Exposure | Abandoned |
+| Epic | [EPIC-007](../../epic/Proposed/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap.md) | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | Proposed |
 | Spike | [SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Abandoned |
 
 ## Supporting documents
