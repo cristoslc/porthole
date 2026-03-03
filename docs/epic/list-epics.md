@@ -4,7 +4,6 @@
 
 | Epic | Title | Created | Last Updated | Commit | Notes |
 |------|-------|---------|--------------|--------|-------|
-| EPIC-001 | Remote Fleet Management | 2026-02-28 | 2026-02-28 | 616849b | Network layer + RustDesk config for ~10-machine fleet including remote family machines |
 | EPIC-002 | Provisioning CLI & Network State Management | 2026-02-28 | 2026-02-28 | 6405885 | `wgmesh` CLI: init, add, remove, sync, list, status. SOPS/age state. |
 | EPIC-003 | Client Node Web UI | 2026-02-28 | 2026-02-28 | 6405885 | Local web UI on each node showing tunnel status and restart action |
 | EPIC-004 | Operator Dashboard | 2026-02-28 | 2026-02-28 | 6405885 | Network-wide status view on operator homelab, on-demand VPS status pull |
@@ -13,7 +12,9 @@
 
 ## Active
 
-_None._
+| Epic | Title | Created | Last Updated | Commit | Notes |
+|------|-------|---------|--------------|--------|-------|
+| EPIC-001 | Remote Fleet Management | 2026-02-28 | 2026-03-03 | _pending_ | Research complete; 3 agent specs (SPEC-003/004/005) created |
 
 ## Complete
 

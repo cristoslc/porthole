@@ -1,9 +1,9 @@
 # EPIC-001: Remote Fleet Management
 
-**Status:** Proposed
+**Status:** Active
 **Author:** cristos
 **Created:** 2026-02-28
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-03
 **Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
@@ -11,6 +11,7 @@
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 616849b | Initial creation |
+| Active | 2026-03-03 | _pending_ | Research complete (7 spikes, 2 ADRs adopted); agent specs created |
 
 ---
 
@@ -34,10 +35,14 @@ infrastructure or manual per-machine network configuration.
 - Onboarding of remote family machines with minimal friction for non-technical
   family members.
 - Network isolation: the remote-access network should be segmented from
-  existing infrastructure (VMs, Docker containers) already on the node'# local network.
+  existing infrastructure (VMs, Docker containers) already on the node's local network.
 - **Windows machines:** Documented manual setup procedures for the network
   agent and RDP enablement. The fleet includes Windows machines (home and
   family); all chosen tools must have native Windows clients.
+- **CoreDNS `.wg` zone:** Internal DNS resolution for mesh peers
+  (`hostname.wg`). The `.wg` zone is mesh infrastructure — CoreDNS runs on
+  the VPS hub alongside WireGuard, with zone files generated from
+  `network.sops.yaml`.
 
 **Out of scope:**
 
@@ -59,9 +64,10 @@ infrastructure or manual per-machine network configuration.
 4. The remote-access network is isolated from existing infrastructure —
    remote machines cannot directly reach VMs, Docker containers, or other
    services on the existing local net.
-5. `make apply` on a managed Linux/macOS workstation configures the network
-   layer and RustDesk client automatically. Windows machines have a documented
-   manual setup procedure that can be completed in under 15 minutes.
+5. `make apply` on a managed Linux/macOS workstation configures the WireGuard
+   network layer and native remote desktop protocols (xrdp on Linux, Screen
+   Sharing on macOS) automatically. Windows machines have a documented manual
+   RDP + WireGuard setup procedure that can be completed in under 15 minutes.
 
 ## Child artifacts
 
@@ -70,11 +76,17 @@ infrastructure or manual per-machine network configuration.
 | Spike | [SPIKE-001](../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
 | Spike | [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
 | Spike | [SPIKE-004](../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md) | Remote Desktop Agent Architecture | Complete | RustDesk vs NoMachine vs Guacamole for R10 compliance |
+| Spike | [SPIKE-005](../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md) | Securing Guacamole on Hub | Complete | Guacamole hardening: WireGuard-only binding, TOTP, TLS via DNS-01 |
+| Spike | [SPIKE-006](../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md) | WireGuard Fallback & Recovery | Complete | Five-layer recovery model: watchdog, reverse SSH, SMS, RustDesk, OS-level |
+| Spike | [SPIKE-007](../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | Complete | Ephemeral vs always-on hub; DNS endpoint strategy; rebuild-from-repo model |
 | ADR | [ADR-001](../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Superseded | Superseded by ADR-005 (Guacamole gateway model) |
 | ADR | [ADR-003](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Abandoned | Evaluated Tailscale vs ZeroTier vs WireGuard; superseded by ADR-004 |
 | ADR | [ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Adopted | Self-hosted WireGuard via VPS; replaces ADR-003 |
 | ADR | [ADR-005](../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md) | Remote Desktop Access Model | Adopted | Guacamole gateway + native protocols; replaces ADR-001 |
 | Spec | [SPEC-002](../../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Deprecated | ADR-005 supersedes RustDesk with Guacamole + native protocols |
+| Spec | [SPEC-003](../../spec/Draft/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) | WireGuard Hub & Mesh Network | Draft | Foundation: hub config, state schema, CoreDNS, peer enrollment |
+| Spec | [SPEC-004](../../spec/Draft/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md) | Guacamole Remote Desktop Gateway | Draft | Docker Compose stack, WireGuard-only binding, connection seeding |
+| Spec | [SPEC-005](../../spec/Draft/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md) | Node Health & Recovery Agent | Draft | Watchdog + reverse SSH tunnel; MVP layers 1-2 from SPIKE-006 |
 | PRD | [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | WireGuard mesh eliminates the need for a relay |
 
 ## Key dependencies
@@ -83,10 +95,7 @@ infrastructure or manual per-machine network configuration.
   layer. ADR-003 (Tailscale ACLs recommendation) was abandoned in favor of
   self-hosted WireGuard for vendor independence and operational sovereignty.
 - **ADR-005 (Adopted):** Guacamole gateway + native protocols replaces RustDesk
-  as the remote desktop model. SPEC-002 (RustDesk install) needs to be
-  revisited to reflect this change.
-- PRD-004 (RustDesk relay) is Abandoned — the WireGuard mesh eliminates the
-  need for a self-hosted relay.
+  as the remote desktop model. SPEC-002 (RustDesk install) is now Deprecated.
 
 ## Key decisions pending
 
@@ -97,6 +106,11 @@ infrastructure or manual per-machine network configuration.
    every machine that needs remote access is a personal dev workstation —
    family machines, lightweight non-coding boxes, and home servers need the
    network layer without the full workstation stack.
-3. **Guacamole deployment**: Where does the Guacamole gateway run — on the
-   operator's homelab, on the VPS, or both? How does it integrate with the
-   WireGuard network?
+
+## Key decisions resolved
+
+3. **Guacamole deployment** (settled by [SPIKE-005](../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)):
+   Guacamole runs on the VPS hub, bound to the WireGuard interface
+   (10.100.0.1) so it is only reachable from within the mesh. TLS via DNS-01
+   (Cloudflare). Auth: database + TOTP, with TOTP bypass for the WireGuard
+   subnet.

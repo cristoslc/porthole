@@ -37,7 +37,7 @@ The network's source of truth is `network.sops.yaml` — a SOPS-encrypted YAML f
 
 ## Runtime model
 
-All agents on client nodes — WireGuard, remote desktop (RustDesk), and the status web UI — run as background services (systemd units on Linux, launchd daemons on macOS, Windows services). No foreground application window or tray icon is required to maintain connectivity. The system is invisible to non-operator users during normal operation.
+All agents on client nodes — WireGuard, native remote desktop services (xrdp on Linux, Screen Sharing on macOS, RDP on Windows), and the status web UI — run as background services (systemd units on Linux, launchd daemons on macOS, Windows services). Guacamole on the hub provides browser-based gateway access to these native protocols. No foreground application window or tray icon is required to maintain connectivity. The system is invisible to non-operator users during normal operation.
 
 ## Non-goals
 
