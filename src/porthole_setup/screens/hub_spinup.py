@@ -11,10 +11,20 @@ from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import ScrollableContainer, Vertical
 from textual.screen import Screen
-from textual.widgets import Button, Footer, Header, Input, Label, RichLog, Static
+from textual.widgets import Button, Footer, Header, Input, Label, RichLog, Select, Static
 
-TERRAFORM_DIR = Path("terraform")
+# Map provider slug → terraform directory
+PROVIDER_DIRS: dict[str, Path] = {
+    "hetzner":      Path("terraform-hetzner"),
+    "digitalocean": Path("terraform"),
+}
 ANSIBLE_DIR = Path("ansible")
+
+# (value, display label) pairs for the provider Select widget
+PROVIDER_OPTIONS = [
+    ("hetzner",      "Hetzner Cloud"),
+    ("digitalocean", "DigitalOcean"),
+]
 
 CSS = """
 HubSpinupScreen { background: $surface; }
@@ -23,6 +33,7 @@ HubSpinupScreen { background: $surface; }
 .status-ok  { color: $success; margin: 0 1; }
 .status-bad { color: $error;   margin: 0 1; }
 .field-row { height: 3; margin: 0 1; }
+#provider-select { margin: 0 1 1 1; }
 #log { height: 20; border: solid $primary; margin: 1; }
 #apply-btn { margin: 1; }
 #back-btn  { margin: 0 0 1 1; }
@@ -32,6 +43,11 @@ HubSpinupScreen { background: $surface; }
 def _tf_binary() -> str:
     """Return 'tofu' if available, else 'terraform'."""
     return "tofu" if shutil.which("tofu") else "terraform"
+
+
+def _token_env_var(provider: str) -> str:
+    """Return the TF_VAR_* environment variable name for the given provider."""
+    return "TF_VAR_hcloud_token" if provider == "hetzner" else "TF_VAR_do_token"
 
 
 class HubSpinupScreen(Screen):
@@ -50,29 +66,40 @@ class HubSpinupScreen(Screen):
         tf = _tf_binary()
         tf_ok = shutil.which(tf) is not None
         ansible_ok = shutil.which("ansible-playbook") is not None
-        tf_dir_ok = TERRAFORM_DIR.exists()
         ansible_dir_ok = ANSIBLE_DIR.exists()
 
-        # Detect any pre-set token from environment
-        env_token = os.environ.get("TF_VAR_do_token") or os.environ.get("TF_VAR_hcloud_token") or ""
+        # Detect pre-set token (hcloud preferred since that's the active provider)
+        env_token = (
+            os.environ.get("TF_VAR_hcloud_token")
+            or os.environ.get("TF_VAR_do_token")
+            or ""
+        )
         token_hint = "(pre-set from environment)" if env_token else ""
 
         yield Header()
         yield ScrollableContainer(
+            Label("Cloud provider", classes="section-title"),
+            Select(
+                [(label, value) for value, label in PROVIDER_OPTIONS],
+                value="hetzner",
+                id="provider-select",
+            ),
             Label("Tool availability", classes="section-title"),
             Static(
                 "\n".join([
                     f"{'[green]✓[/]' if tf_ok else '[red]✗[/]'}  {tf}",
                     f"{'[green]✓[/]' if ansible_ok else '[red]✗[/]'}  ansible-playbook",
-                    f"{'[green]✓[/]' if tf_dir_ok else '[red]✗[/]'}  terraform/ directory",
                     f"{'[green]✓[/]' if ansible_dir_ok else '[red]✗[/]'}  ansible/ directory",
                 ]),
                 markup=True,
                 classes="info",
+                id="tool-status",
             ),
+            Label("Terraform directory", classes="section-title"),
+            Label("", id="tf-dir-label", classes="info"),
             Label("Hub hostname", classes="section-title"),
             Label(
-                "Fully-qualified hostname for the hub (used for the DNS A record and Droplet name).",
+                "Fully-qualified hostname for the hub (e.g. hub.example.com).",
                 classes="info",
             ),
             Vertical(
@@ -83,18 +110,18 @@ class HubSpinupScreen(Screen):
                 ),
                 classes="field-row",
             ),
-            Label("Cloud provider token", classes="section-title"),
+            Label("API token", classes="section-title"),
             Label(
-                "Set TF_VAR_do_token (DigitalOcean) or TF_VAR_hcloud_token (Hetzner) in your "
-                "environment before running, or paste it below. "
-                "The token is passed directly to the terraform subprocess and is not saved to disk.",
+                "The provider API token is passed directly to the terraform subprocess "
+                "and is not saved to disk. Set TF_VAR_hcloud_token (Hetzner) or "
+                "TF_VAR_do_token (DigitalOcean) in your environment, or paste below.",
                 classes="info",
             ),
             Label(token_hint, id="token-hint", classes="info"),
             Vertical(
                 Input(
                     value=env_token,
-                    placeholder="paste token (or leave blank if TF_VAR_* env var is set)",
+                    placeholder="paste token (or leave blank if env var is set)",
                     password=True,
                     id="token-input",
                 ),
@@ -106,14 +133,33 @@ class HubSpinupScreen(Screen):
             f"Apply ({tf} + ansible-playbook)",
             id="apply-btn",
             variant="primary",
-            disabled=not (tf_ok and ansible_ok and tf_dir_ok and ansible_dir_ok),
+            disabled=not (tf_ok and ansible_ok and ansible_dir_ok),
         )
         yield Button("← Back", id="back-btn", variant="default")
         yield Footer()
 
+    def on_mount(self) -> None:
+        self._refresh_tf_dir_label("hetzner")
+
     # ------------------------------------------------------------------
     # Events
     # ------------------------------------------------------------------
+
+    @on(Select.Changed, "#provider-select")
+    def _provider_changed(self, event: Select.Changed) -> None:
+        provider = str(event.value)
+        self._refresh_tf_dir_label(provider)
+
+    def _refresh_tf_dir_label(self, provider: str) -> None:
+        tf_dir = PROVIDER_DIRS.get(provider, Path("terraform"))
+        exists = tf_dir.exists()
+        icon = "[green]✓[/]" if exists else "[red]✗[/]"
+        try:
+            self.query_one("#tf-dir-label", Label).update(
+                f"{icon}  {tf_dir}/", markup=True
+            )
+        except Exception:  # noqa: BLE001
+            pass
 
     @on(Button.Pressed, "#back-btn")
     def _back(self) -> None:
@@ -125,44 +171,50 @@ class HubSpinupScreen(Screen):
             return
         hostname = self.query_one("#hostname-input", Input).value.strip()
         token = self.query_one("#token-input", Input).value.strip()
+        provider_val = self.query_one("#provider-select", Select).value
+        provider = str(provider_val) if provider_val is not Select.BLANK else "hetzner"
+
         if not hostname:
             self._log("[bold red]✗ Hub hostname is required[/]")
             return
+        tf_dir = PROVIDER_DIRS.get(provider, Path("terraform"))
+        if not tf_dir.exists():
+            self._log(f"[bold red]✗ Terraform directory not found: {tf_dir}/[/]")
+            return
         self._running = True
         self.query_one("#apply-btn", Button).disabled = True
-        self._run_spinup(hostname, token)
+        self._run_spinup(hostname, token, provider, tf_dir)
 
     # ------------------------------------------------------------------
     # Spinup worker
     # ------------------------------------------------------------------
 
     @work(exclusive=True)
-    async def _run_spinup(self, hostname: str, token: str) -> None:
+    async def _run_spinup(
+        self, hostname: str, token: str, provider: str, tf_dir: Path
+    ) -> None:
         log = self.query_one("#log", RichLog)
         tf = _tf_binary()
 
         env = os.environ.copy()
         env["TF_VAR_hub_hostname"] = hostname
+        env["TF_IN_AUTOMATION"] = "1"
         if token:
-            # Pass token under both var names; Terraform ignores undeclared TF_VAR_* vars.
-            env["TF_VAR_do_token"] = token
-            env["TF_VAR_hcloud_token"] = token
-        env["TF_IN_AUTOMATION"] = "1"  # suppress interactive prompts
+            # Set the correct provider var; also set the other as a no-op
+            # (Terraform ignores undeclared TF_VAR_* vars)
+            env[_token_env_var(provider)] = token
 
         # --- terraform init ---
-        log.write(f"[bold]$ {tf} -chdir=terraform init[/]")
-        rc = await self._stream(log, [tf, "init"], cwd=str(TERRAFORM_DIR), env=env)
+        log.write(f"[bold]$ {tf} init   # in {tf_dir}/[/]")
+        rc = await self._stream(log, [tf, "init"], cwd=str(tf_dir), env=env)
         if rc != 0:
             self._finish(log, success=False, msg=f"{tf} init failed (exit {rc})")
             return
 
         # --- terraform apply ---
-        log.write(f"\n[bold]$ {tf} -chdir=terraform apply -auto-approve[/]")
+        log.write(f"\n[bold]$ {tf} apply -auto-approve[/]")
         rc = await self._stream(
-            log,
-            [tf, "apply", "-auto-approve"],
-            cwd=str(TERRAFORM_DIR),
-            env=env,
+            log, [tf, "apply", "-auto-approve"], cwd=str(tf_dir), env=env
         )
         if rc != 0:
             self._finish(log, success=False, msg=f"{tf} apply failed (exit {rc})")
@@ -173,7 +225,7 @@ class HubSpinupScreen(Screen):
             tf, "output", "-raw", "hub_ip",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
-            cwd=str(TERRAFORM_DIR),
+            cwd=str(tf_dir),
             env=env,
         )
         ip_bytes, err_bytes = await proc.communicate()
@@ -185,7 +237,7 @@ class HubSpinupScreen(Screen):
         log.write(f"\n[bold green]✓ Hub IP: {hub_ip}[/]")
 
         # --- ansible-playbook ---
-        log.write(f"\n[bold]$ ansible-playbook ansible/site.yml -e hub_ip={hub_ip}[/]")
+        log.write(f"\n[bold]$ ansible-playbook site.yml -e hub_ip={hub_ip}[/]")
         rc = await self._stream(
             log,
             ["ansible-playbook", "site.yml", "-e", f"hub_ip={hub_ip}"],
