@@ -10,6 +10,11 @@
 {"created_at":"2026-03-03T02:00:40Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-lc6","type":"parent"}
 {"created_at":"2026-03-03T02:00:34Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-ld4","type":"parent"}
 {"created_at":"2026-03-03T02:00:24Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-m1w","type":"parent"}
+{"created_at":"2026-03-03T07:56:26Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-nt9","issue_id":"iac-remote-desktop-node-nt9.1","type":"parent-child"}
+{"created_at":"2026-03-03T07:56:26Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-nt9","issue_id":"iac-remote-desktop-node-nt9.2","type":"parent-child"}
+{"created_at":"2026-03-03T07:56:26Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-nt9","issue_id":"iac-remote-desktop-node-nt9.3","type":"parent-child"}
+{"created_at":"2026-03-03T07:56:26Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-nt9","issue_id":"iac-remote-desktop-node-nt9.4","type":"parent-child"}
+{"created_at":"2026-03-03T07:56:26Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-nt9","issue_id":"iac-remote-desktop-node-nt9.5","type":"parent-child"}
 {"created_at":"2026-03-03T02:00:29Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-nzl","type":"parent"}
 {"created_at":"2026-03-03T02:00:45Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-p0v","type":"parent"}
 {"created_at":"2026-03-03T02:00:38Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-pqg","type":"parent"}
