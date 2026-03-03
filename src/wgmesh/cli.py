@@ -95,3 +95,12 @@ def status():
     from wgmesh.commands.status import run_status
 
     run_status()
+
+
+@cli.command()
+@click.option("--port", default=8080, show_default=True, help="Port to listen on")
+def dashboard(port):
+    """Run a local web dashboard showing fleet peer status."""
+    from wgmesh.commands.dashboard import run_dashboard
+
+    run_dashboard(port)

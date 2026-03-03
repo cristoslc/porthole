@@ -1,10 +1,10 @@
 ---
 artifact: EPIC-004
 title: Operator Dashboard
-status: Proposed
+status: Complete
 author: cristos
 created: 2026-02-28
-last-updated: 2026-02-28
+last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on:
   - EPIC-002
@@ -12,7 +12,7 @@ depends-on:
 
 # EPIC-004: Operator Dashboard
 
-**Status:** Proposed
+**Status:** Complete
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
@@ -23,6 +23,7 @@ depends-on:
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
+| Complete | 2026-03-03 | 6738203 | SPEC-007 implemented: wgmesh dashboard command on port 8080 |
 
 ---
 
@@ -55,7 +56,9 @@ Give the operator a single-pane view of the entire WireGuard mesh network withou
 
 ## Child artifacts
 
-_Updated as Agent Specs are created._
+| Type | ID | Title | Status | Notes |
+|------|----|-------|--------|-------|
+| Spec | [SPEC-007](../../spec/Implemented/(SPEC-007)-Operator-Dashboard/(SPEC-007)-Operator-Dashboard.md) | Operator Dashboard | Implemented | wgmesh dashboard command; Python stdlib HTTP server; /api/status JSON |
 
 ## Key dependencies
 

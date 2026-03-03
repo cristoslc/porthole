@@ -20,6 +20,7 @@ _No specs in this phase._
 | SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-03 | 068a4f5 | Docker Compose stack, Caddy TLS, seed-guac command |
 | SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-03 | 068a4f5 | wg-watchdog, reverse SSH tunnel, gen-peer-scripts command |
 | SPEC-006 | Client Node Status Web UI | cristos | 2026-03-03 | 2026-03-03 | de7cdd1 | Python stdlib HTTP server; wg status + restart button on port 8888 |
+| SPEC-007 | Operator Dashboard | cristos | 2026-03-03 | 2026-03-03 | 6738203 | wgmesh dashboard command; fleet status via SSH on port 8080 |
 
 ## Deprecated
 
