@@ -1,0 +1,5 @@
+---
+# TODO: Install and configure Caddy (TODO)
+- name: Install and configure Caddy (TODO)
+  ansible.builtin.debug:
+    msg: "Caddy role not yet implemented — placeholder only."

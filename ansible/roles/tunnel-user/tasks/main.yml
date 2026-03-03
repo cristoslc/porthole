@@ -1,0 +1,5 @@
+---
+# TODO: Create tunnel user and set authorized_keys (TODO)
+- name: Create tunnel user and set authorized_keys (TODO)
+  ansible.builtin.debug:
+    msg: "tunnel-user role not yet implemented — placeholder only."

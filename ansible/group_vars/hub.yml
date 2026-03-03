@@ -1,0 +1,7 @@
+---
+# Non-secret hub configuration
+wg_interface: wg0
+wg_port: 51820
+wg_subnet: "10.100.0.0/24"
+hub_dns_zone: wg
+caddy_email: ""  # Set to your email for Let's Encrypt

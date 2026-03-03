@@ -1,0 +1,5 @@
+---
+# TODO: Start Guacamole via Docker Compose (TODO)
+- name: Start Guacamole via Docker Compose (TODO)
+  ansible.builtin.debug:
+    msg: "Guacamole role not yet implemented — placeholder only."

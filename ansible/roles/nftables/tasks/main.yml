@@ -1,0 +1,5 @@
+---
+# TODO: Configure nftables isolation rules (TODO)
+- name: Configure nftables isolation rules (TODO)
+  ansible.builtin.debug:
+    msg: "nftables role not yet implemented — placeholder only."

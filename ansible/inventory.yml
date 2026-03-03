@@ -1,0 +1,14 @@
+---
+# Static inventory for the Porthole hub VPS.
+#
+# Fill in hub_ip from Terraform output before running the playbook:
+#   ansible-playbook -i inventory.yml site.yml -e hub_ip=$(terraform output -raw hub_ip)
+#
+# ansible_host is intentionally left as a variable placeholder so that the
+# operator can supply the IP at run time without editing this file.
+all:
+  children:
+    hub:
+      hosts:
+        hub_vps:
+          ansible_host: "{{ hub_ip }}"

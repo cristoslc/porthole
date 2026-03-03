@@ -1,0 +1,5 @@
+---
+# TODO: Install and configure CoreDNS (TODO)
+- name: Install and configure CoreDNS (TODO)
+  ansible.builtin.debug:
+    msg: "CoreDNS role not yet implemented — placeholder only."

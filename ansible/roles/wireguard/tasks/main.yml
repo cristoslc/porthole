@@ -1,0 +1,5 @@
+---
+# TODO: Install and configure WireGuard (TODO)
+- name: Install and configure WireGuard (TODO)
+  ansible.builtin.debug:
+    msg: "WireGuard role not yet implemented — placeholder only."

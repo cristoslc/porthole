@@ -1,0 +1,13 @@
+---
+# Hub playbook — provisions all services on the VPS hub.
+# Run with: ansible-playbook -i inventory.yml site.yml -e hub_ip=<IP>
+- name: Configure hub VPS
+  hosts: hub
+  become: true
+  roles:
+    - wireguard
+    - coredns
+    - nftables
+    - guacamole
+    - caddy
+    - tunnel-user
