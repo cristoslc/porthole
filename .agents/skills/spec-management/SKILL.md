@@ -56,7 +56,7 @@ Every artifact embeds a lifecycle table tracking phase transitions:
 | Active  | 2026-02-25 | def5678 | Dependency X satisfied |
 ```
 
-Commit hashes reference the repo state at the time of the transition, not the commit that writes the hash stamp itself. Commit first, then stamp the hash and amend — the pre-amend hash is the correct value.
+Commit hashes reference the repo state at the time of the transition, not the commit that writes the hash stamp itself. Commit the transition first, then stamp the resulting hash into the lifecycle table and index in a second commit. This keeps the stamped hash reachable in git history.
 
 ## Index maintenance
 
