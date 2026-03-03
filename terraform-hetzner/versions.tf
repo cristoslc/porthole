@@ -6,9 +6,15 @@ terraform {
       source  = "hetznercloud/hcloud"
       version = "~> 1.0"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = "~> 3.0"
+    # hetznerdns manages the Hetzner DNS public API (dns.hetzner.com).
+    # The correct registry source is timohirt/hetznerdns (v2.x).
+    # "hetzner-community/hetznerdns" does NOT exist in registry.terraform.io.
+    # "germanbrew/hetznerdns" is deprecated (Nov 2025); the official hcloud
+    # provider's new DNS resources target a different (beta) DNS system.
+    # Run this directory with the HashiCorp terraform binary, not tofu.
+    hetznerdns = {
+      source  = "timohirt/hetznerdns"
+      version = "~> 2.0"
     }
   }
 

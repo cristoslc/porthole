@@ -3,10 +3,18 @@
 #
 # Provider: Hetzner Cloud (hcloud)
 # Reference implementation: terraform/ (DigitalOcean)
+#
+# NOTE: Run with HashiCorp terraform (not tofu). The hetznerdns provider is
+# only available in the Terraform registry, not the OpenTofu registry.
+#   brew tap hashicorp/tap && brew install hashicorp/tap/terraform
 # ---------------------------------------------------------------------------
 
 provider "hcloud" {
   token = var.hcloud_token
+}
+
+provider "hetznerdns" {
+  apitoken = var.hcloud_token
 }
 
 # ---------------------------------------------------------------------------
@@ -22,19 +30,20 @@ resource "hcloud_ssh_key" "hub" {
 # Firewall
 #
 # Inbound rules:
-#   - TCP 22    — SSH management
-#   - UDP 51820 — WireGuard VPN
-#   - TCP 443   — HTTPS (Porthole web UI / API)
-#   - TCP 80    — HTTP (redirect to HTTPS / Let's Encrypt challenge)
+#   - TCP 22         — SSH management
+#   - UDP 51820      — WireGuard VPN
+#   - TCP 443        — HTTPS (Porthole web UI / API)
+#   - TCP 80         — HTTP (redirect to HTTPS / Let's Encrypt challenge)
+#   - TCP 2200-2220  — Reverse SSH tunnel ports (2200 + last octet of peer IP)
+#   - ICMP           — ping
 #
 # All other inbound traffic is denied by default.
-# All outbound traffic is permitted (Hetzner's default; no explicit rule needed).
+# All outbound traffic is permitted (Hetzner's default).
 # ---------------------------------------------------------------------------
 
 resource "hcloud_firewall" "hub" {
   name = "${var.hub_hostname}-fw"
 
-  # SSH
   rule {
     direction  = "in"
     protocol   = "tcp"
@@ -42,7 +51,6 @@ resource "hcloud_firewall" "hub" {
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 
-  # WireGuard
   rule {
     direction  = "in"
     protocol   = "udp"
@@ -50,7 +58,6 @@ resource "hcloud_firewall" "hub" {
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 
-  # HTTPS
   rule {
     direction  = "in"
     protocol   = "tcp"
@@ -58,7 +65,6 @@ resource "hcloud_firewall" "hub" {
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 
-  # HTTP (Let's Encrypt / redirect)
   rule {
     direction  = "in"
     protocol   = "tcp"
@@ -66,7 +72,6 @@ resource "hcloud_firewall" "hub" {
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 
-  # Reverse SSH tunnel ports (2200 + last octet of each peer IP)
   rule {
     direction  = "in"
     protocol   = "tcp"
@@ -74,7 +79,6 @@ resource "hcloud_firewall" "hub" {
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 
-  # ICMP (ping)
   rule {
     direction  = "in"
     protocol   = "icmp"

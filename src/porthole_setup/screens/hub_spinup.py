@@ -41,8 +41,12 @@ HubSpinupScreen { background: $surface; }
 
 
 def _tf_binary() -> str:
-    """Return 'tofu' if available, else 'terraform'."""
-    return "tofu" if shutil.which("tofu") else "terraform"
+    """Return 'terraform' if available, else 'tofu'.
+
+    HashiCorp Terraform is preferred because it has access to providers that
+    only exist in the Terraform registry (e.g. hetzner-community/hetznerdns).
+    """
+    return "terraform" if shutil.which("terraform") else "tofu"
 
 
 def _token_env_var(provider: str) -> str:
