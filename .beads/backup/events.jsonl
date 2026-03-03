@@ -59,3 +59,11 @@
 {"actor":"Cristos L-C","comment":null,"created_at":"2026-03-03T08:08:14Z","event_type":"closed","id":59,"issue_id":"iac-remote-desktop-node-hux","new_value":"MVP scope complete: SPEC-003/004/005 all implemented, EPIC-002 code done","old_value":""}
 {"actor":"Cristos L-C","comment":null,"created_at":"2026-03-03T08:08:16Z","event_type":"closed","id":60,"issue_id":"iac-remote-desktop-node-5la","new_value":"EPIC-002 wgmesh CLI fully implemented: all 6 commands, SOPS, templates, 40 tests passing","old_value":""}
 {"actor":"Cristos L-C","comment":null,"created_at":"2026-03-03T08:13:24Z","event_type":"created","id":61,"issue_id":"iac-remote-desktop-node-zy6","new_value":"","old_value":""}
+{"actor":"Cristos L-C","comment":null,"created_at":"2026-03-03T08:13:31Z","event_type":"created","id":62,"issue_id":"iac-remote-desktop-node-zy6.1","new_value":"","old_value":""}
+{"actor":"Cristos L-C","comment":"Added label: spec:SPEC-006","created_at":"2026-03-03T08:13:31Z","event_type":"label_added","id":63,"issue_id":"iac-remote-desktop-node-zy6.1","new_value":null,"old_value":null}
+{"actor":"Cristos L-C","comment":null,"created_at":"2026-03-03T08:13:37Z","event_type":"created","id":64,"issue_id":"iac-remote-desktop-node-aka","new_value":"","old_value":""}
+{"actor":"Cristos L-C","comment":"Added label: spec:SPEC-006","created_at":"2026-03-03T08:13:37Z","event_type":"label_added","id":65,"issue_id":"iac-remote-desktop-node-aka","new_value":null,"old_value":null}
+{"actor":"Cristos L-C","comment":null,"created_at":"2026-03-03T08:13:37Z","event_type":"created","id":66,"issue_id":"iac-remote-desktop-node-u5i","new_value":"","old_value":""}
+{"actor":"Cristos L-C","comment":"Added label: spec:SPEC-006","created_at":"2026-03-03T08:13:37Z","event_type":"label_added","id":67,"issue_id":"iac-remote-desktop-node-u5i","new_value":null,"old_value":null}
+{"actor":"Cristos L-C","comment":null,"created_at":"2026-03-03T08:13:37Z","event_type":"created","id":68,"issue_id":"iac-remote-desktop-node-4cm","new_value":"","old_value":""}
+{"actor":"Cristos L-C","comment":"Added label: spec:SPEC-006","created_at":"2026-03-03T08:13:37Z","event_type":"label_added","id":69,"issue_id":"iac-remote-desktop-node-4cm","new_value":null,"old_value":null}

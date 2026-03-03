@@ -20,3 +20,4 @@
 {"created_at":"2026-03-03T02:00:38Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-pqg","type":"parent"}
 {"created_at":"2026-03-03T02:00:31Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-w7t","type":"parent"}
 {"created_at":"2026-03-03T02:00:27Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-wnp","type":"parent"}
+{"created_at":"2026-03-03T08:13:31Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-zy6","issue_id":"iac-remote-desktop-node-zy6.1","type":"parent-child"}
