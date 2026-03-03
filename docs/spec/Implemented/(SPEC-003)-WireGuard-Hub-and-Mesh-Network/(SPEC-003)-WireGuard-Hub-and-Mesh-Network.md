@@ -1,7 +1,7 @@
 ---
 artifact: SPEC-003
 title: WireGuard Hub & Mesh Network
-status: Draft
+status: Implemented
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-03
@@ -15,7 +15,7 @@ depends-on: []
 
 # SPEC-003: WireGuard Hub & Mesh Network
 
-**Status:** Draft
+**Status:** Implemented
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
@@ -28,6 +28,7 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-03 | 6297014 | Initial creation |
+| Implemented | 2026-03-03 | TBD | wgmesh CLI (EPIC-002) implements all templates, state schema, subnet/key/sops/state/render/ssh modules |
 
 ---
 
