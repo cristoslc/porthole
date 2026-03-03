@@ -1,10 +1,10 @@
 ---
 artifact: EPIC-005
 title: VPS Bootstrap & Disaster Recovery
-status: Proposed
+status: Active
 author: cristos
 created: 2026-02-28
-last-updated: 2026-02-28
+last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on:
   - EPIC-002
@@ -12,7 +12,7 @@ depends-on:
 
 # EPIC-005: VPS Bootstrap & Disaster Recovery
 
-**Status:** Proposed
+**Status:** Active
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
@@ -23,6 +23,7 @@ depends-on:
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
+| Active | 2026-03-03 | 812ef39 | wgmesh bootstrap command implemented; VPS runtime testing pending |
 
 ---
 
