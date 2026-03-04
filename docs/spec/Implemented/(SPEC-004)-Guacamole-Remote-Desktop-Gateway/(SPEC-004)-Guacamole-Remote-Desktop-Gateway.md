@@ -4,7 +4,7 @@ title: Guacamole Remote Desktop Gateway
 status: Implemented
 author: cristos
 created: 2026-03-03
-last-updated: 2026-03-03
+last-updated: 2026-03-04
 parent-epic: EPIC-001
 linked-research:
   - SPIKE-004
@@ -13,6 +13,9 @@ linked-adrs:
   - ADR-005
 depends-on:
   - SPEC-003
+addresses:
+  - JOURNEY-002.PP-05
+  - JOURNEY-004.PP-04
 ---
 
 # SPEC-004: Guacamole Remote Desktop Gateway
@@ -83,6 +86,16 @@ After this spec is implemented:
 9. xrdp connection to a Linux peer succeeds via Guacamole.
 10. VNC connection to a macOS peer (Screen Sharing) succeeds via Guacamole.
 11. SSH connection to any peer succeeds via Guacamole.
+12. The default `guacadmin` password is **not** `guacadmin` after deployment —
+    it is set to the value stored in `network.sops.yaml` under
+    `guacamole_admin_password` (SOPS-encrypted). The Ansible `guacamole` role
+    applies this password via SQL on every deploy (idempotent UPDATE).
+13. Running `porthole seed-guac | porthole apply-guac` (or equivalent) applies
+    the seed SQL to the Guacamole PostgreSQL container without manual
+    `docker exec` steps. The `porthole apply-guac` command (or a `--apply`
+    flag on `seed-guac`) runs the SQL via `docker exec` on the hub.
+14. Re-running seed generation after adding new peers adds new connection
+    entries without removing existing ones (INSERT ... ON CONFLICT DO NOTHING).
 
 ## Scope & Constraints
 
@@ -103,11 +116,20 @@ After this spec is implemented:
   certificate issuance.
 - **Connection seeding**: SQL script generated from `network.sops.yaml` that
   populates Guacamole's database with connections for each workstation/family
-  peer. Protocol selection based on peer role and OS:
-  - Linux workstations: xrdp (RDP on port 3389) + SSH
-  - macOS workstations: VNC (Screen Sharing on port 5900) + SSH
-  - Windows workstations: RDP (port 3389) + SSH (if available)
-  - Servers: SSH only
+  peer. Protocol selection based on peer `platform` field (see SPEC-003):
+  - `platform: linux` (or role server): xrdp (RDP on port 3389) + SSH
+  - `platform: macos`: VNC / Screen Sharing (port 5900) + SSH
+  - `platform: windows`: RDP (port 3389) + SSH (if available)
+  - Servers (any platform): SSH only
+  Seed SQL is applied to the Guacamole PostgreSQL container via
+  `porthole seed-guac --apply` (runs `docker exec -i guacamole-postgres psql ...`
+  via SSH to the hub). Requires the hub to be reachable.
+- **Admin credential bootstrap**: The Guacamole admin password is stored
+  encrypted in `network.sops.yaml` under `guacamole_admin_password`. The
+  Ansible `guacamole` role runs an SQL `UPDATE` to set this password on every
+  deploy. On first deploy, if the field is absent from state, the Ansible role
+  generates a random password, stores it in state (re-encrypts with SOPS), and
+  applies it. This eliminates the `guacadmin/guacadmin` default credential.
 - **Authentication**: Database auth (local users) + TOTP extension. TOTP
   bypass for connections from the WireGuard subnet (`10.100.0.0/24`) —
   being on the mesh is sufficient proof of authorization.

@@ -4,13 +4,16 @@ title: WireGuard Hub & Mesh Network
 status: Implemented
 author: cristos
 created: 2026-03-03
-last-updated: 2026-03-03
+last-updated: 2026-03-04
 parent-epic: EPIC-001
 linked-research:
   - SPIKE-007
 linked-adrs:
   - ADR-004
 depends-on: []
+addresses:
+  - JOURNEY-003.PP-01
+  - JOURNEY-003.PP-05
 ---
 
 # SPEC-003: WireGuard Hub & Mesh Network
@@ -89,7 +92,9 @@ After this spec is implemented, the operator can:
 - **`network.sops.yaml` schema**: Canonical structure for defining peers,
   including: peer name, WireGuard public key, WireGuard private key
   (encrypted), assigned IP, DNS name, role (hub/workstation/server/family),
-  reverse SSH port (2200+N), and optional metadata.
+  platform (linux/macos/windows — optional, used by `seed-guac` to select
+  the correct remote desktop protocol), reverse SSH port (2200+N), and
+  optional metadata. See updated schema below.
 - **Jinja2 templates**:
   - `templates/hub-wg0.conf.j2` — hub WireGuard config with all peer stanzas
   - `templates/peer-wg0.conf.j2` — individual peer WireGuard config
@@ -109,6 +114,38 @@ After this spec is implemented, the operator can:
   Wormhole, enable and start the WireGuard service.
 - **SOPS/age encryption**: All private keys encrypted in repo. Age key on
   operator workstation and VPS only.
+
+### Porthole CLI extensions (gap fills)
+
+The following CLI commands extend the base porthole CLI to address gaps
+identified in JOURNEY-002 and JOURNEY-003:
+
+**`porthole add <name> --role <role> --platform <platform>`**
+- Adds `--platform` flag to the existing `add` command.
+- Stores the platform in the peer record in `network.sops.yaml`.
+- Valid values: `linux` (default), `macos`, `windows`.
+
+**`porthole peer-config <name>`**
+- Outputs the decrypted `wg0.conf` for a single named peer to stdout (or
+  `--out <file>`).
+- Prints a warning that the file contains the peer's WireGuard private key
+  in plaintext and recommends deleting it after transfer.
+- Addresses JOURNEY-003.PP-01: provides a dedicated command for extracting
+  the peer config needed for Windows enrollment without the full
+  `gen-peer-scripts` bundle.
+
+**`porthole install-peer <name>`**
+- Installs generated peer scripts (from `gen-peer-scripts`) into system
+  directories and enables services. Platform-aware:
+  - **Linux**: copies watchdog/tunnel/status scripts to `/usr/local/bin/`,
+    copies systemd units to `/etc/systemd/system/`, runs `daemon-reload`,
+    enables and starts each unit.
+  - **macOS**: copies plists to `/Library/LaunchDaemons/`, runs
+    `launchctl load -w` for each.
+- Requires sudo / elevated permissions.
+- Idempotent: re-running on an already-installed peer re-copies and
+  re-enables without error.
+- Addresses JOURNEY-002.PP-04.
 
 ### Out of scope
 
@@ -185,8 +222,29 @@ network:
       private_key: <SOPS-encrypted>
       dns_name: mom-imac
       role: family
+      platform: macos        # optional: linux | macos | windows
       reverse_ssh_port: 2210
+    - name: dad-pc
+      ip: 10.100.0.11
+      public_key: <cleartext>
+      private_key: <SOPS-encrypted>
+      dns_name: dad-pc
+      role: family
+      platform: windows      # controls RDP vs VNC vs xrdp in seed-guac
+      reverse_ssh_port: 2211
 ```
+
+**`platform` field** (optional):
+
+| Value | Default behavior in `seed-guac` |
+|-------|----------------------------------|
+| `linux` | xrdp (RDP on port 3389) + SSH |
+| `macos` | VNC / Screen Sharing (port 5900) + SSH |
+| `windows` | RDP (port 3389) + SSH |
+| *(absent)* | Inferred from peer `name` if it contains "windows" or "mac"; otherwise defaults to `linux` — **unreliable, use explicit field** |
+
+The `platform` field is set once at enrollment (`porthole add <name> --platform <value>`)
+and stored in `network.sops.yaml`. It is not a secret and is not SOPS-encrypted.
 
 ### CoreDNS configuration
 

@@ -4,13 +4,21 @@ artifact: SPEC-009
 status: Draft
 author: cristos
 created: 2026-03-03
-last-updated: 2026-03-03
+last-updated: 2026-03-04
 parent-epic: EPIC-007
 linked-research: []
 linked-adrs:
   - ADR-006
 depends-on:
   - SPEC-008
+addresses:
+  - JOURNEY-001.PP-01
+  - JOURNEY-001.PP-02
+  - JOURNEY-001.PP-03
+  - JOURNEY-002.PP-01
+  - JOURNEY-002.PP-02
+  - JOURNEY-002.PP-04
+  - JOURNEY-004.PP-02
 ---
 
 # SPEC-009: Node Bootstrap TUI
@@ -95,7 +103,7 @@ is adequate, the step is skipped and shown as complete.
 
 | Step | Logic |
 |------|-------|
-| Age key | Check `~/.config/sops/age/keys.txt`. If absent, generate with `age-keygen`. If present, show public key and offer to regenerate (with warning). |
+| Age key | Check `~/.config/sops/age/keys.txt`. If absent: offer two paths — (a) **Generate new key** (for first-time setup on this machine as operator), or (b) **Transfer key from another machine** — show the exact `scp` command the operator can run on an already-enrolled machine to copy their key to this one, then re-check (addresses JOURNEY-002.PP-01). If present, show public key and offer to regenerate (with warning). |
 | `.sops.yaml` | Check for `.sops.yaml` in repo root. If absent, write from age public key. |
 | `network.sops.yaml` | Check for state file. If absent, prompt for hub endpoint and run `porthole init`. If present, load and display summary (peer count, endpoint). Offer to re-initialize (destructive, requires confirmation). |
 
@@ -107,20 +115,64 @@ is adequate, the step is skipped and shown as complete.
 3. If hub is reachable: show status, skip to Flow 4.
 4. If hub is not reachable: display status and offer two options:
    - **Spin up hub** — runs Terraform + Ansible (requires cloud credentials;
-     TUI prompts for them or reads from environment).
+     TUI prompts for them or reads from environment). See Hub Spinup sub-flow.
    - **Skip** — continue without a hub (service files will be installed but
      WireGuard will not connect until the hub is available).
 
+**Hub Spinup sub-flow:**
+
+1. **Pre-flight summary**: Before showing the credentials form, display a
+   summary panel listing exactly which tokens and environment variables are
+   needed for the selected provider combination. This gives the operator a
+   chance to prepare before the form is shown (addresses JOURNEY-001.PP-01).
+2. **Provider selection**: Compute provider (Hetzner / DigitalOcean) and DNS
+   provider (None / Cloudflare / DigitalOcean / Hetzner DNS) are separate
+   selectors. Tokens for unselected providers are not required.
+3. **Token pre-fill**: If provider-specific env vars are already set
+   (e.g., `HCLOUD_TOKEN`, `CLOUDFLARE_API_TOKEN`), pre-fill the
+   corresponding fields and pre-select the matching providers.
+4. **Endpoint handling**: The hub hostname is pre-filled from
+   `network.sops.yaml`. If the operator has not yet run `porthole init`
+   (first-time setup), the TUI accepts a placeholder hostname and offers to
+   update the endpoint in `network.sops.yaml` after `terraform output hub_ip`
+   confirms the server is live (addresses JOURNEY-001.PP-02).
+5. **Execution sequence**: `terraform init` → `terraform apply -auto-approve`
+   → `terraform output -raw hub_ip` → `ansible-playbook site.yml -e hub_ip=…`.
+   All output streams live into the TUI RichLog.
+6. **Post-deploy sync**: After Ansible completes successfully, the TUI
+   automatically runs `porthole sync` to push the current peer configs to the
+   new hub. This ensures any peers already registered in state are enrolled on
+   the new hub immediately (addresses JOURNEY-001.PP-03 / JOURNEY-004.PP-02).
+7. On success, return to Hub Check. The re-check should show the hub as
+   reachable.
+
 #### Flow 4: Node enrollment
 
-1. Check if this node is already registered in `network.sops.yaml`.
-2. If not registered: prompt for node name and role, run `porthole add <name> --role <role>`, then `porthole sync`.
-3. If already registered: show registration details, offer to re-sync (`porthole sync`).
+1. Check if this node is already registered in `network.sops.yaml`
+   (by matching the current machine's hostname or a name the operator provides).
+2. If not registered: prompt for node name, role (workstation / server / family),
+   and platform (linux / macos / windows). Run `porthole add <name> --role <role>
+   --platform <platform>`, then `porthole sync`.
+3. If already registered: show registration details, offer to re-sync
+   (`porthole sync`).
 4. Run `porthole gen-peer-scripts <name> --out peer-scripts/<name>/`.
-5. Install service files:
-   - **Linux:** copy to `/etc/systemd/system/`, `systemctl daemon-reload`, `systemctl enable --now`.
-   - **macOS:** copy to `/Library/LaunchDaemons/`, `launchctl load -w`.
-6. Show final status: WireGuard interface up, hub ping result, status server URL.
+5. Install service files via `porthole install-peer <name>` (addresses
+   JOURNEY-002.PP-04 — this CLI command must exist; see SPEC-003 for its
+   definition):
+   - **Linux:** copies scripts to system paths, runs `systemctl daemon-reload`,
+     enables and starts watchdog timer, tunnel service, and status server.
+   - **macOS:** copies plists to `/Library/LaunchDaemons/`, runs
+     `launchctl load -w` for each.
+6. Apply the local WireGuard config and bring the interface up.
+7. Show final status: WireGuard interface up, hub ping result, status server URL.
+
+Notes:
+- This flow runs on the machine being enrolled. The operator must have write
+  access to `/etc/wireguard/` and `/etc/systemd/system/` (Linux) or
+  `/Library/LaunchDaemons/` (macOS) — `sudo` is required.
+- The TUI should handle `sudo` prompts gracefully (e.g., prompt for password
+  in the TUI itself, or show a pre-flight warning that the operator will be
+  prompted for their password).
 
 ### Idempotency
 
@@ -157,8 +209,22 @@ The TUI offers regeneration explicitly:
 
 - **Given** a machine where `network.sops.yaml` exists but the age key is absent,
   **when** `./setup.sh` is run,
-  **then** the TUI detects the mismatch, explains it, and offers recovery options
-  (provide key, generate new key + re-initialize state).
+  **then** the TUI detects the mismatch, explains it, and offers recovery options:
+  (a) transfer key from another machine (shows `scp` command), or
+  (b) generate new key + re-initialize state.
+
+- **Given** a hub that has just been spun up via the TUI (Terraform + Ansible
+  complete),
+  **when** the Ansible playbook finishes successfully,
+  **then** the TUI automatically runs `porthole sync` and shows its output before
+  returning to Hub Check.
+
+- **Given** a hub spinup where the compute and DNS providers require different API
+  tokens,
+  **when** the operator reaches the Hub Spinup screen,
+  **then** a pre-flight panel lists exactly which environment variables and tokens
+  are required for the selected provider combination, before the credentials form
+  is shown.
 
 - **Given** `./setup.sh --check` (non-interactive flag),
   **then** the TUI prints a status summary and exits 0 if all steps are complete,

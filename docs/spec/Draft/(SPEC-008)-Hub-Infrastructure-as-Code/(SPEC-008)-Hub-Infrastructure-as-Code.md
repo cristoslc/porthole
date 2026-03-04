@@ -4,13 +4,15 @@ artifact: SPEC-008
 status: Draft
 author: cristos
 created: 2026-03-03
-last-updated: 2026-03-03
+last-updated: 2026-03-04
 parent-epic: EPIC-007
 linked-research:
   - SPIKE-007
 linked-adrs:
   - ADR-006
 depends-on: []
+addresses:
+  - JOURNEY-004.PP-01
 ---
 
 # SPEC-008: Hub Infrastructure as Code
@@ -102,6 +104,11 @@ approach does not support this model.
   **when** the Ansible playbook runs against the hub, **then** the new peer's
   WireGuard config and CoreDNS entry are present on the hub.
 
+- **Given** the operator is working from a different machine than the one
+  originally used to provision the hub (e.g., the original workstation is
+  unavailable), **when** `terraform apply` is run, **then** Terraform retrieves
+  existing state from the remote backend and does not create duplicate resources.
+
 ## Scope & Constraints
 
 **In scope:**
@@ -110,8 +117,16 @@ approach does not support this model.
 - `ansible/` directory with a hub playbook covering all hub services.
 - Ansible reads porthole state (decrypted via SOPS) to populate WireGuard peers,
   CoreDNS zone, and tunnel `authorized_keys`.
-- Terraform remote state: at minimum, local state with a documented path; remote
-  backend (e.g., S3, Terraform Cloud) as a configurable option.
+- Terraform state backend: the `terraform/` and `terraform-hetzner/` directories
+  MUST include a `backend.tf` that configures a remote state backend. The
+  reference implementation uses Terraform Cloud (HCP) as the backend — it is
+  free for small teams and eliminates the risk of losing `terraform.tfstate`
+  when the operator's workstation is unavailable. A local backend with a clearly
+  documented backup path is acceptable as a fallback.
+  **Rationale**: without remote state, a hub rebuild from a different machine
+  (e.g., if the original workstation is also unavailable) leaves Terraform with
+  no record of existing resources, risking orphaned DNS records, firewall rules,
+  or duplicate server charges (addresses JOURNEY-004.PP-01).
 
 **Not in scope:**
 - Multi-region or multi-hub deployments.

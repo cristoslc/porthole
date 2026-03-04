@@ -108,6 +108,10 @@ attention from the operator and nothing from a family member.
 
 | Type | ID | Title | Status |
 |------|----|-------|--------|
+| Journey | [JOURNEY-001](../../journey/(JOURNEY-001)-Operator-Spins-Up-Hub/(JOURNEY-001)-Operator-Spins-Up-Hub.md) | Operator Spins Up a Fresh Hub | Draft |
+| Journey | [JOURNEY-002](../../journey/(JOURNEY-002)-Operator-Enrolls-a-Node/(JOURNEY-002)-Operator-Enrolls-a-Node.md) | Operator Enrolls a Linux or macOS Node | Draft |
+| Journey | [JOURNEY-003](../../journey/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine.md) | Operator Enrolls a Windows Family Machine | Draft |
+| Journey | [JOURNEY-004](../../journey/(JOURNEY-004)-Hub-Disaster-Recovery/(JOURNEY-004)-Hub-Disaster-Recovery.md) | Hub Disaster Recovery | Draft |
 | Epic | [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fleet Management | Active |
 | Epic | [EPIC-002](../../epic/Complete/(EPIC-002)-Provisioning-CLI/(EPIC-002)-Provisioning-CLI.md) | Provisioning CLI & Network State Management | Complete |
 | Epic | [EPIC-003](../../epic/Complete/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md) | Client Node Web UI | Complete |
