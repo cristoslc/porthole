@@ -171,5 +171,5 @@ class HubCheckScreen(Screen):
             row.remove_children()
             self._run_checks()
         elif bid == "continue-btn":
-            # Enrollment screen not yet implemented — placeholder
-            self.app.pop_screen()
+            from porthole_setup.screens.enrollment import EnrollmentScreen  # noqa: PLC0415
+            self.app.push_screen(EnrollmentScreen())
