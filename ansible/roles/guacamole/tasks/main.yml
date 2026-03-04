@@ -44,7 +44,7 @@
     group: root
     mode: "0640"
 
-- name: Enable and start Guacamole via Docker Compose
+- name: Enable and start Docker
   ansible.builtin.systemd:
     name: docker
     enabled: true
@@ -66,6 +66,41 @@
   retries: 15
   delay: 4
   changed_when: false
+
+# ---------------------------------------------------------------------------
+# Schema initialization — idempotent: only runs when schema is absent.
+# The guacamole/guacamole image ships initdb.sh to generate PostgreSQL DDL.
+# ---------------------------------------------------------------------------
+
+- name: Check if Guacamole schema is already initialized
+  ansible.builtin.command:
+    cmd: >
+      docker compose exec -T db psql -U guacamole_user -d guacamole_db
+      -tAc "SELECT 1 FROM information_schema.tables WHERE table_name='guacamole_user'"
+    chdir: /opt/guacamole
+  register: schema_check
+  changed_when: false
+  failed_when: false
+
+- name: Generate Guacamole schema SQL from image
+  ansible.builtin.shell:
+    cmd: >
+      docker run --rm guacamole/guacamole
+      /opt/guacamole/bin/initdb.sh --postgresql
+      > /opt/guacamole/initdb.sql
+  when: "'1' not in schema_check.stdout"
+
+- name: Apply Guacamole schema SQL
+  ansible.builtin.command:
+    cmd: >
+      docker compose exec -T db psql -U guacamole_user -d guacamole_db
+      -f /opt/guacamole/initdb.sql
+    chdir: /opt/guacamole
+  when: "'1' not in schema_check.stdout"
+
+# ---------------------------------------------------------------------------
+# Admin password bootstrap — runs every time (always sets password from state).
+# ---------------------------------------------------------------------------
 
 - name: Bootstrap Guacamole admin password
   ansible.builtin.shell: |
@@ -92,5 +127,17 @@
   args:
     chdir: /opt/guacamole
   no_log: true
-  changed_when: true
+  changed_when: false
   when: net.guacamole_admin_password is defined and net.guacamole_admin_password
+
+# ---------------------------------------------------------------------------
+# Seed connections — idempotent via ON CONFLICT DO NOTHING.
+# ---------------------------------------------------------------------------
+
+- name: Seed Guacamole connections from network state
+  ansible.builtin.command:
+    cmd: >
+      docker compose exec -T db psql -U guacamole_user -d guacamole_db
+      -f /opt/guacamole/seed-connections.sql
+    chdir: /opt/guacamole
+  changed_when: false

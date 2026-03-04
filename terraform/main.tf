@@ -81,6 +81,19 @@ resource "digitalocean_firewall" "hub" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  # Reverse SSH tunnel listening ports (2200 + last octet of each peer IP)
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "2200-2220"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # ICMP
+  inbound_rule {
+    protocol         = "icmp"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   # Allow all outbound traffic
   outbound_rule {
     protocol              = "tcp"

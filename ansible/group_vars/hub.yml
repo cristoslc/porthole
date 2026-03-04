@@ -6,3 +6,9 @@ wg_subnet: "10.100.0.0/24"
 hub_dns_zone: wg
 caddy_email: ""  # Set to your email for Let's Encrypt; empty = Caddy internal TLS
 coredns_version: "1.11.3"
+
+# Internal PostgreSQL password for the Guacamole database.
+# This is only used within the Docker bridge network (not exposed externally).
+# Change this to a strong random value before deploying. It does not need to
+# be stored in SOPS since it is not accessible outside the hub server itself.
+guacamole_db_password: "change_me_before_deploy"
