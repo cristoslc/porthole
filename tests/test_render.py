@@ -1,4 +1,4 @@
-from wgmesh.render import render_hub_config, render_peer_config, render_dns_zone, render_nftables
+from porthole.render import render_hub_config, render_peer_config, render_dns_zone, render_nftables
 
 
 class TestRenderHubConfig:

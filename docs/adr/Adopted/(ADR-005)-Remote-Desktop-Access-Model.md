@@ -117,7 +117,7 @@ The "remote desktop agent" component of EPIC-001 simplifies from "install and co
 
 ### For EPIC-002 (Provisioning CLI)
 
-The `wgmesh` CLI or bootstrap may include a step to enable native remote access services on provisioned nodes, rather than installing a third-party agent.
+The `porthole` CLI or bootstrap may include a step to enable native remote access services on provisioned nodes, rather than installing a third-party agent.
 
 ### For the operator dashboard (EPIC-004)
 

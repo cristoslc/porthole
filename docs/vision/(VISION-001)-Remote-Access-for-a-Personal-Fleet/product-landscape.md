@@ -245,7 +245,7 @@ Two architecture decisions changed both dimensions of this analysis:
 
 [ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) adopted self-hosted WireGuard hub-and-spoke via an ephemeral VPS. The decision prioritized operational sovereignty and zero SaaS dependency over Tailscale's convenience. Tailscale remains on the existing tailnet for infrastructure services but is not the networking layer for the family fleet.
 
-This changes the scoring for Dimension 2: Tailscale is no longer the networking bridge for fleet machines. Raw WireGuard — listed as "Disqualified" above because it requires a publicly routable endpoint and manual key management — is the adopted approach, with the VPS hub providing the routable endpoint and a CLI tool (`wgmesh`) automating key management.
+This changes the scoring for Dimension 2: Tailscale is no longer the networking bridge for fleet machines. Raw WireGuard — listed as "Disqualified" above because it requires a publicly routable endpoint and manual key management — is the adopted approach, with the VPS hub providing the routable endpoint and a CLI tool (`porthole`) automating key management.
 
 ### Desktop: Guacamole gateway + native protocols (ADR-005), not NoMachine/RustDesk
 

@@ -219,7 +219,7 @@ Port = `2200 + last octet of WireGuard IP`.
 | Risk | Impact | Mitigation |
 |------|--------|------------|
 | Watchdog restarts WireGuard during active session | Operator's remote desktop session interrupted | 3-strike threshold reduces false positives; restart is brief (~2s) |
-| Reverse SSH tunnel port conflicts on VPS | Two peers assigned same port | Deterministic allocation from state file; `wgmesh` (EPIC-002) validates uniqueness |
+| Reverse SSH tunnel port conflicts on VPS | Two peers assigned same port | Deterministic allocation from state file; `porthole` (EPIC-002) validates uniqueness |
 | SSH key management for tunnel user | Key sprawl, stale keys | Keys generated during peer enrollment; tracked in `network.sops.yaml` |
 | macOS sleep/wake detection unreliable | Tunnel stays down after laptop wake | Multiple detection methods: SleepWatcher, launchd wake events, fallback to timer-based detection |
 | Windows Task Scheduler permissions | Health script can't restart WireGuard tunnel | Task runs as SYSTEM; documented in Windows setup guide |

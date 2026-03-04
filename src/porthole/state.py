@@ -2,8 +2,8 @@ from pathlib import Path
 
 import yaml
 
-from wgmesh.models import Network
-from wgmesh.sops import decrypt_file, encrypt_file
+from porthole.models import Network
+from porthole.sops import decrypt_file, encrypt_file
 
 
 def load_state(path: Path) -> Network:

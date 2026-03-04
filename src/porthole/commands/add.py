@@ -1,13 +1,13 @@
 import click
 
-from wgmesh import config, keys, models, render, state, subnet
+from porthole import config, keys, models, render, state, subnet
 
 
 def run_add(name: str, role: str) -> None:
     """Add a new peer to the mesh network."""
     state_path = config.STATE_FILE
     if not state_path.exists():
-        raise click.ClickException(f"State file not found: {state_path} (run 'wgmesh init' first)")
+        raise click.ClickException(f"State file not found: {state_path} (run 'porthole init' first)")
 
     network = state.load_state(state_path)
 

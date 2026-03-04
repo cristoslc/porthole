@@ -84,7 +84,7 @@ browser instead of the operator SSHing in).
 
 ## 5. Family machine onboarding
 
-ADR-004 acknowledges manual key distribution: the operator runs `wgmesh add`
+ADR-004 acknowledges manual key distribution: the operator runs `porthole add`
 to generate a config, then delivers it to the target machine. For family
 machines operated by non-technical users, what does "deliver" mean?
 
@@ -153,7 +153,7 @@ Options:
 Given the decisions above, which epics constitute MVP? Check all that apply:
 
 - [ ] **EPIC-001** — Remote Fleet Management (umbrella epic)
-- [ ] **EPIC-002** — Provisioning CLI (`wgmesh` tool)
+- [ ] **EPIC-002** — Provisioning CLI (`porthole` tool)
 - [ ] **EPIC-003** — Client Node Web UI (per-node status page)
 - [ ] **EPIC-004** — Operator Dashboard (network-wide status view)
 - [ ] **EPIC-005** — VPS Bootstrap & Disaster Recovery

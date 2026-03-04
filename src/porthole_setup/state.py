@@ -1,4 +1,4 @@
-"""Read and parse wgmesh network state from network.sops.yaml."""
+"""Read and parse porthole network state from network.sops.yaml."""
 import json
 import subprocess
 from dataclasses import dataclass, field

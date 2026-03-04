@@ -6,7 +6,7 @@ Run a bootstrap on any Linux, macOS, or Windows machine and it joins a
 hub-and-spoke network — reachable from every other node in the fleet via SSH,
 remote desktop, or both, through NAT, without port forwarding.
 
-**Managed by:** `wgmesh` CLI
+**Managed by:** `porthole` CLI
 **Transport:** WireGuard (hub-and-spoke relay via VPS)
 **Hostnames:** CoreDNS (`alice.wg`, `homelab.wg`, …)
 **Remote desktop:** Apache Guacamole behind Caddy
@@ -38,7 +38,7 @@ uv pip install -e .
 Verify:
 
 ```bash
-wgmesh --version
+porthole --version
 ```
 
 ---
@@ -66,7 +66,7 @@ age-keygen -o key.txt
 ### 2. Initialize the network
 
 ```bash
-wgmesh init \
+porthole init \
   --endpoint hub.example.com:51820 \
   --age-key age1...
 ```
@@ -78,15 +78,15 @@ Creates `network.sops.yaml` and `.sops.yaml` in the current directory.
 Run once on a fresh Ubuntu VPS. Installs WireGuard, CoreDNS, nftables, and Docker.
 
 ```bash
-wgmesh bootstrap hub.example.com
+porthole bootstrap hub.example.com
 ```
 
 ### 4. Register nodes
 
 ```bash
-wgmesh add alice --role workstation
-wgmesh add homelab --role server
-wgmesh add moms-mac --role family
+porthole add alice --role workstation
+porthole add homelab --role server
+porthole add moms-mac --role family
 ```
 
 Each node gets a stable IP on `10.100.0.0/24` and a hostname (`alice.wg`, etc.).
@@ -94,7 +94,7 @@ Each node gets a stable IP on `10.100.0.0/24` and a hostname (`alice.wg`, etc.).
 ### 5. Push hub config
 
 ```bash
-wgmesh sync
+porthole sync
 ```
 
 Uploads the updated WireGuard, CoreDNS, and nftables configs to the hub.
@@ -103,7 +103,7 @@ Use `--dry-run` to preview rendered configs before deploying.
 ### 6. Generate per-node service files
 
 ```bash
-wgmesh gen-peer-scripts alice
+porthole gen-peer-scripts alice
 # Output: peer-scripts/alice/
 ```
 
@@ -121,16 +121,16 @@ Install by following the printed instructions (systemd on Linux, LaunchDaemons o
 
 | Command | Description |
 |---------|-------------|
-| `wgmesh init` | Initialize the network; create encrypted state file |
-| `wgmesh add <name>` | Register a node (`--role workstation\|server\|family`) |
-| `wgmesh remove <name>` | Remove a node from the network |
-| `wgmesh list` | List all registered nodes (`--json` for machine-readable output) |
-| `wgmesh sync` | Push hub configs (WireGuard, CoreDNS, nftables) to the VPS (`--dry-run` to preview) |
-| `wgmesh gen-peer-scripts <name>` | Render watchdog + tunnel + status service files for a node |
-| `wgmesh bootstrap <hub-host>` | One-time VPS bootstrap (packages, services, initial config) |
-| `wgmesh status` | Query live WireGuard peer status from the hub |
-| `wgmesh dashboard` | Run a local web dashboard showing fleet node status (`--port`, default 8080) |
-| `wgmesh seed-guac` | Generate Guacamole connection seed SQL from current node list |
+| `porthole init` | Initialize the network; create encrypted state file |
+| `porthole add <name>` | Register a node (`--role workstation\|server\|family`) |
+| `porthole remove <name>` | Remove a node from the network |
+| `porthole list` | List all registered nodes (`--json` for machine-readable output) |
+| `porthole sync` | Push hub configs (WireGuard, CoreDNS, nftables) to the VPS (`--dry-run` to preview) |
+| `porthole gen-peer-scripts <name>` | Render watchdog + tunnel + status service files for a node |
+| `porthole bootstrap <hub-host>` | One-time VPS bootstrap (packages, services, initial config) |
+| `porthole status` | Query live WireGuard peer status from the hub |
+| `porthole dashboard` | Run a local web dashboard showing fleet node status (`--port`, default 8080) |
+| `porthole seed-guac` | Generate Guacamole connection seed SQL from current node list |
 
 ---
 
@@ -160,7 +160,7 @@ Caddy terminates TLS; configure your domain in `Caddyfile`. Seed initial
 connections from the network state:
 
 ```bash
-wgmesh seed-guac | docker exec -i guacamole-db psql -U guacamole
+porthole seed-guac | docker exec -i guacamole-db psql -U guacamole
 ```
 
 ---
@@ -194,7 +194,7 @@ sops -d network.sops.yaml
 ```
 [Operator laptop]
        |
-       | wgmesh CLI  (reads network.sops.yaml)
+       | porthole CLI  (reads network.sops.yaml)
        |
        v
 [Hub VPS: hub.example.com]

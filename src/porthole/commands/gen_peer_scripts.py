@@ -6,8 +6,8 @@ from pathlib import Path
 import click
 from jinja2 import Environment, FileSystemLoader
 
-from wgmesh import config, state
-from wgmesh.config import TEMPLATE_DIR
+from porthole import config, state
+from porthole.config import TEMPLATE_DIR
 
 
 def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
@@ -77,7 +77,7 @@ def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
     click.echo(f"  sudo cp wg-watchdog.plist /Library/LaunchDaemons/")
     click.echo(f"  sudo cp ssh-tunnel-{peer_name}.plist /Library/LaunchDaemons/")
     click.echo(f"  sudo cp wg-status-server.plist /Library/LaunchDaemons/")
-    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.watchdog.{peer_name}.plist")
-    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.tunnel.{peer_name}.plist")
-    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.wgmesh.status.{peer_name}.plist")
+    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.porthole.watchdog.{peer_name}.plist")
+    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.porthole.tunnel.{peer_name}.plist")
+    click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.porthole.status.{peer_name}.plist")
     click.echo(f"\nStatus UI: http://<lan-ip>:8888/ (auto-starts on boot)")

@@ -8,10 +8,10 @@ Download from the Guacamole Docker image:
 docker run --rm guacamole/guacamole:1.5.5 /opt/guacamole/bin/initdb.sh --postgresql > 01-schema.sql
 ```
 
-Then generate peer connections via wgmesh:
+Then generate peer connections via porthole:
 
 ```bash
-wgmesh seed-guac > 02-connections.sql
+porthole seed-guac > 02-connections.sql
 ```
 
 Both files are auto-applied by PostgreSQL on first container start.

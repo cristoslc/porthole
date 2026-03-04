@@ -47,7 +47,7 @@ ADR-003 evaluated five options (Tailscale ACL segmentation, ZeroTier, WireGuard 
 
 **Adopt a self-hosted WireGuard hub-and-spoke relay via a VPS.**
 
-A single VPS runs WireGuard as a relay hub. All fleet nodes connect to the hub as spokes. Inter-node traffic routes through the hub. The network's source of truth is a SOPS/age-encrypted state file (`network.sops.yaml`) in the Git repo. A CLI tool (`wgmesh`) manages the full lifecycle: initialization, peer provisioning, peer removal, config rendering, and deployment.
+A single VPS runs WireGuard as a relay hub. All fleet nodes connect to the hub as spokes. Inter-node traffic routes through the hub. The network's source of truth is a SOPS/age-encrypted state file (`network.sops.yaml`) in the Git repo. A CLI tool (`porthole`) manages the full lifecycle: initialization, peer provisioning, peer removal, config rendering, and deployment.
 
 ### Key properties
 
@@ -73,7 +73,7 @@ SPIKE-007 confirmed the hub is operationally viable as an ephemeral, on-demand V
 - **All traffic relays through the VPS.** Latency is higher than a direct P2P connection. Acceptable for SSH and remote desktop at personal-fleet scale. SPIKE-007 confirmed that pure P2P WireGuard (without a hub) fails in 10-30% of residential NAT scenarios.
 - **Hub must be running for inter-node connectivity.** Under the ephemeral model, the hub is intentionally not running most of the time. Nodes operate independently when the hub is down. The operator spins up the hub when remote access or inter-node connectivity is needed.
 - **No automatic P2P hole-punching.** Two nodes on the same LAN still route through the VPS. Acceptable tradeoff for simplicity.
-- **Initial key distribution via Magic Wormhole.** The operator runs `wgmesh add`, transfers the config to the target node via Magic Wormhole (one short code, works over any network). Ongoing topology changes propagate via git-polling on the node agent.
+- **Initial key distribution via Magic Wormhole.** The operator runs `porthole add`, transfers the config to the target node via Magic Wormhole (one short code, works over any network). Ongoing topology changes propagate via git-polling on the node agent.
 
 ## Consequences
 
@@ -89,8 +89,8 @@ SPIKE-007 confirmed the hub is operationally viable as an ephemeral, on-demand V
 
 - **Higher latency than Tailscale.** Tailscale's DERP relay is a fallback; most connections are direct P2P via WireGuard. This architecture relays everything.
 - **Ongoing VPS cost.** ~$3-6/mo for a minimal VPS (1 vCPU, 1 GB RAM). Tailscale free tier has zero infrastructure cost.
-- **More operational surface.** The operator maintains WireGuard, CoreDNS, the VPS OS, and the `wgmesh` CLI. Tailscale is install-and-forget.
-- **No MagicDNS.** Tailscale's MagicDNS resolves hostnames automatically. This architecture requires CoreDNS configuration (automated by `wgmesh sync`, but still operator-maintained infrastructure).
+- **More operational surface.** The operator maintains WireGuard, CoreDNS, the VPS OS, and the `porthole` CLI. Tailscale is install-and-forget.
+- **No MagicDNS.** Tailscale's MagicDNS resolves hostnames automatically. This architecture requires CoreDNS configuration (automated by `porthole sync`, but still operator-maintained infrastructure).
 
 ## Alternatives considered
 

@@ -15,11 +15,11 @@ dependencies = [
 ]
 
 [project.scripts]
-wgmesh = "wgmesh.cli:cli"
+porthole = "porthole.cli:cli"
 porthole-setup = "porthole_setup.__main__:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/wgmesh", "src/porthole_setup"]
+packages = ["src/porthole", "src/porthole_setup"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

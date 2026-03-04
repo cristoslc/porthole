@@ -33,9 +33,9 @@ depends-on:
 
 Enrolling a new node in the fleet today requires the operator to:
 
-1. Know to run `wgmesh add`, `wgmesh sync`, and `wgmesh gen-peer-scripts`.
+1. Know to run `porthole add`, `porthole sync`, and `porthole gen-peer-scripts`.
 2. Manually install the generated service files on the correct paths.
-3. Install WireGuard, SOPS, age, and the wgmesh package beforehand.
+3. Install WireGuard, SOPS, age, and the porthole package beforehand.
 4. Have the age key and `network.sops.yaml` already in place.
 
 There is no single entry point. There is no guidance for what to do if the hub
@@ -84,7 +84,7 @@ Checks and installs:
 | `wireguard-tools` | `apt install wireguard` | `brew install wireguard-tools` |
 | `sops` | GitHub release download | `brew install sops` |
 | `age` | GitHub release download | `brew install age` |
-| `wgmesh` | `uv tool install <path or PyPI>` | Same |
+| `porthole` | `uv tool install <path or PyPI>` | Same |
 | `terraform` | HashiCorp APT repo | `brew install terraform` |
 | `ansible` | `pipx install ansible` via uv | Same |
 
@@ -97,7 +97,7 @@ is adequate, the step is skipped and shown as complete.
 |------|-------|
 | Age key | Check `~/.config/sops/age/keys.txt`. If absent, generate with `age-keygen`. If present, show public key and offer to regenerate (with warning). |
 | `.sops.yaml` | Check for `.sops.yaml` in repo root. If absent, write from age public key. |
-| `network.sops.yaml` | Check for state file. If absent, prompt for hub endpoint and run `wgmesh init`. If present, load and display summary (peer count, endpoint). Offer to re-initialize (destructive, requires confirmation). |
+| `network.sops.yaml` | Check for state file. If absent, prompt for hub endpoint and run `porthole init`. If present, load and display summary (peer count, endpoint). Offer to re-initialize (destructive, requires confirmation). |
 
 #### Flow 3: Hub check
 
@@ -114,9 +114,9 @@ is adequate, the step is skipped and shown as complete.
 #### Flow 4: Node enrollment
 
 1. Check if this node is already registered in `network.sops.yaml`.
-2. If not registered: prompt for node name and role, run `wgmesh add <name> --role <role>`, then `wgmesh sync`.
-3. If already registered: show registration details, offer to re-sync (`wgmesh sync`).
-4. Run `wgmesh gen-peer-scripts <name> --out peer-scripts/<name>/`.
+2. If not registered: prompt for node name and role, run `porthole add <name> --role <role>`, then `porthole sync`.
+3. If already registered: show registration details, offer to re-sync (`porthole sync`).
+4. Run `porthole gen-peer-scripts <name> --out peer-scripts/<name>/`.
 5. Install service files:
    - **Linux:** copy to `/etc/systemd/system/`, `systemctl daemon-reload`, `systemctl enable --now`.
    - **macOS:** copy to `/Library/LaunchDaemons/`, `launchctl load -w`.
@@ -177,7 +177,7 @@ The TUI offers regeneration explicitly:
 - Windows.
 - Unattended/fully non-interactive CI enrollment (a future concern).
 - Guacamole client configuration on the node (Guacamole runs on the hub, not nodes).
-- Node removal or de-enrollment via the TUI (use `wgmesh remove` directly).
+- Node removal or de-enrollment via the TUI (use `porthole remove` directly).
 
 ## Implementation Approach
 
@@ -191,7 +191,7 @@ src/porthole_setup/
     secrets.py               Age key + .sops.yaml + network.sops.yaml management
     hub_check.py             Ping hub; offer spin-up or skip
     hub_spinup.py            Prompt cloud creds; run terraform + ansible subprocess
-    enrollment.py            wgmesh add + sync + gen-peer-scripts
+    enrollment.py            porthole add + sync + gen-peer-scripts
     service_install.py       Install systemd (Linux) or LaunchDaemons (macOS) files
     summary.py               Final status: all green or list of issues
   platform.py                Detect Linux/macOS; dispatch installation commands

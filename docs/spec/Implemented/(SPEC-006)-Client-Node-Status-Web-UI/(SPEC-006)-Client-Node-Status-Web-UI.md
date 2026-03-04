@@ -61,11 +61,10 @@ After this spec is implemented:
 ## Implementation Approach
 
 - Single-file Python script using stdlib `http.server` — no dependencies.
-- Peer name and DNS name are embedded at generation time (from `wgmesh
-  gen-peer-scripts`); tunnel status is read live from `wg show wg0 dump`.
+- Peer name and DNS name are embedded at generation time (from `porthole gen-peer-scripts`); tunnel status is read live from `wg show wg0 dump`.
 - Server listens on `0.0.0.0:8888`. No authentication (LAN-only service).
 - The script is generated alongside the watchdog and tunnel service files by
-  `wgmesh gen-peer-scripts <name>`.
+  `porthole gen-peer-scripts <name>`.
 - Generates: `wg-status-server.py`, `wg-status-server.service`,
   `wg-status-server.plist`.
 
@@ -78,7 +77,7 @@ After this spec is implemented:
 
 ## Success Criteria
 
-- `wgmesh gen-peer-scripts <name>` produces `wg-status-server.py` and
+- `porthole gen-peer-scripts <name>` produces `wg-status-server.py` and
   service files.
 - Server starts via `systemctl start wg-status-server` and responds at
   `http://localhost:8888/`.

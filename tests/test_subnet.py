@@ -1,4 +1,4 @@
-from wgmesh.subnet import next_available_ip, reverse_ssh_port
+from porthole.subnet import next_available_ip, reverse_ssh_port
 
 
 class TestNextAvailableIP:

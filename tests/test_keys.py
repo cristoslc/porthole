@@ -1,11 +1,11 @@
 from unittest.mock import patch, MagicMock
 import subprocess
 
-from wgmesh.keys import generate_keypair
+from porthole.keys import generate_keypair
 
 
 class TestGenerateKeypair:
-    @patch("wgmesh.keys.subprocess.run")
+    @patch("porthole.keys.subprocess.run")
     def test_returns_keypair(self, mock_run):
         mock_run.side_effect = [
             MagicMock(stdout="cHJpdmF0ZWtleQ==\n"),  # genkey
@@ -17,7 +17,7 @@ class TestGenerateKeypair:
         assert private == "cHJpdmF0ZWtleQ=="
         assert public == "cHVibGlja2V5YQ=="
 
-    @patch("wgmesh.keys.subprocess.run")
+    @patch("porthole.keys.subprocess.run")
     def test_calls_wg_genkey_then_pubkey(self, mock_run):
         mock_run.side_effect = [
             MagicMock(stdout="privkey\n"),
@@ -31,7 +31,7 @@ class TestGenerateKeypair:
         assert mock_run.call_args_list[1][0][0] == ["wg", "pubkey"]
         assert mock_run.call_args_list[1][1]["input"] == "privkey"
 
-    @patch("wgmesh.keys.subprocess.run")
+    @patch("porthole.keys.subprocess.run")
     def test_raises_on_failure(self, mock_run):
         mock_run.side_effect = subprocess.CalledProcessError(1, "wg genkey")
 

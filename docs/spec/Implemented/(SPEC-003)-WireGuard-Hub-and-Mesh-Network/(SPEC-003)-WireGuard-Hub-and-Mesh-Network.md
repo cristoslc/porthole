@@ -28,7 +28,7 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-03 | 6297014 | Initial creation |
-| Implemented | 2026-03-03 | d46e0d2 | wgmesh CLI (EPIC-002) implements all templates, state schema, subnet/key/sops/state/render/ssh modules |
+| Implemented | 2026-03-03 | d46e0d2 | porthole CLI (EPIC-002) implements all templates, state schema, subnet/key/sops/state/render/ssh modules |
 
 ---
 
@@ -112,7 +112,7 @@ After this spec is implemented, the operator can:
 
 ### Out of scope
 
-- **Automation tooling**: The `wgmesh` CLI (EPIC-002) automates this spec's
+- **Automation tooling**: The `porthole` CLI (EPIC-002) automates this spec's
   manual procedures. This spec defines the target state, not the tooling.
 - **VPS provisioning**: Terraform modules and cloud-init (EPIC-005) provision
   the VPS to this spec's target state. This spec assumes a running VPS.
@@ -245,7 +245,7 @@ endpoint if the IP has changed. This enables:
 | Risk | Impact | Mitigation |
 |------|--------|------------|
 | VPS provider outage | All inter-peer connectivity lost | Reverse SSH fallback (SPEC-005 Layer 2); ephemeral model allows rapid provider switch |
-| SOPS key compromise | All WireGuard private keys exposed | Age key stored only on operator workstation and VPS; rotate keys via `wgmesh` when available |
+| SOPS key compromise | All WireGuard private keys exposed | Age key stored only on operator workstation and VPS; rotate keys via `porthole` when available |
 | DNS propagation delay | Peers cannot reconnect after hub IP change | Low TTL (60s) on Cloudflare A record; `reresolve-dns.sh` polls every 30s |
 | Subnet exhaustion (10.100.0.0/24) | Cannot add more than ~253 peers | Fleet is ~10 machines; /24 is sufficient for foreseeable scale |
 | CoreDNS misconfiguration | Hostname resolution fails within mesh | Zone file is generated from state file; acceptance test validates resolution |

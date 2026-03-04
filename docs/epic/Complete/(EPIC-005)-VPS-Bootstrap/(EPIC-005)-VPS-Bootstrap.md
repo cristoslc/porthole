@@ -23,8 +23,8 @@ depends-on:
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
-| Active | 2026-03-03 | 812ef39 | wgmesh bootstrap command implemented; VPS runtime testing pending |
-| Complete | 2026-03-03 | eaa69bf | wgmesh bootstrap: apt, CoreDNS, Docker, configs, services fully scripted |
+| Active | 2026-03-03 | 812ef39 | porthole bootstrap command implemented; VPS runtime testing pending |
+| Complete | 2026-03-03 | eaa69bf | porthole bootstrap: apt, CoreDNS, Docker, configs, services fully scripted |
 
 ---
 
@@ -34,7 +34,7 @@ Automate the full provisioning of a VPS from bare Ubuntu to functioning WireGuar
 
 ## Success criteria
 
-- `wgmesh sync --full` against a fresh Ubuntu VPS installs WireGuard, CoreDNS, enables IP forwarding, deploys all configs, and brings up the network.
+- `porthole sync --full` against a fresh Ubuntu VPS installs WireGuard, CoreDNS, enables IP forwarding, deploys all configs, and brings up the network.
 - Full rebuild from clone-to-connected takes under 10 minutes.
 - VPS runs no services beyond WireGuard, CoreDNS, SSH, and the status script.
 - The bootstrap process is idempotent — running it twice produces the same result.
@@ -43,7 +43,7 @@ Automate the full provisioning of a VPS from bare Ubuntu to functioning WireGuar
 
 **In scope:**
 
-- `wgmesh sync --full` command that performs complete VPS setup via SSH
+- `porthole sync --full` command that performs complete VPS setup via SSH
 - Install WireGuard, enable `net.ipv4.ip_forward`, configure firewall (UFW or iptables)
 - Install and configure CoreDNS with the `.wg` zone
 - Deploy the hub WireGuard config and enable `wg-quick@wg0`

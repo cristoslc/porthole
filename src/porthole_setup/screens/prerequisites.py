@@ -19,7 +19,7 @@ TOOLS: list[tuple[str, str, str]] = [
     ("wg",               "wireguard-tools", "wireguard-tools"),
     ("sops",             "sops",            "sops"),
     ("age",              "age",             "age"),
-    ("wgmesh",           "wgmesh",          "wgmesh"),
+    ("porthole",          "porthole",         "porthole"),
     ("terraform",        "terraform",       "terraform"),
     ("ansible-playbook", "ansible",         "ansible"),
 ]

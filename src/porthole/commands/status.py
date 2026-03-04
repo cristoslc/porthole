@@ -1,6 +1,6 @@
 import click
 
-from wgmesh import config, ssh, state
+from porthole import config, ssh, state
 
 
 def run_status() -> None:

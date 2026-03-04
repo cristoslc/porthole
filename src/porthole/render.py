@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 
 from jinja2 import Environment, FileSystemLoader
 
-from wgmesh.config import TEMPLATE_DIR
-from wgmesh.models import Network, Peer
+from porthole.config import TEMPLATE_DIR
+from porthole.models import Network, Peer
 
 
 def _env() -> Environment:

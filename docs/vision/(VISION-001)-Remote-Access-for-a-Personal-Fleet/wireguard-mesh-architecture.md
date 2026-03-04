@@ -17,7 +17,7 @@ All inter-peer traffic routes through a VPS relay hub running WireGuard and Core
 
 | Component | Role | Runs on |
 |-----------|------|---------|
-| `wgmesh` CLI | Provisioning, state management, deployment | Operator's workstation |
+| `porthole` CLI | Provisioning, state management, deployment | Operator's workstation |
 | WireGuard hub | Relay all inter-peer traffic | VPS |
 | CoreDNS | Internal `.wg` DNS resolution | VPS |
 | Status script | On-demand peer status as JSON | VPS |

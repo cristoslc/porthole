@@ -3,12 +3,12 @@ from unittest.mock import patch
 
 import yaml
 
-from wgmesh.models import HubConfig, Network, Peer
-from wgmesh.state import load_state, save_state
+from porthole.models import HubConfig, Network, Peer
+from porthole.state import load_state, save_state
 
 
 class TestSaveState:
-    @patch("wgmesh.state.encrypt_file")
+    @patch("porthole.state.encrypt_file")
     def test_writes_yaml_and_encrypts(self, mock_encrypt, tmp_path):
         state_path = tmp_path / "network.sops.yaml"
         network = Network(
@@ -35,7 +35,7 @@ class TestSaveState:
 
 
 class TestLoadState:
-    @patch("wgmesh.state.decrypt_file")
+    @patch("porthole.state.decrypt_file")
     def test_decrypts_and_parses(self, mock_decrypt):
         mock_decrypt.return_value = yaml.dump({
             "network": {

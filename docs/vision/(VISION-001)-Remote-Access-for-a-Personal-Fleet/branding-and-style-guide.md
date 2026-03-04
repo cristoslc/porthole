@@ -8,7 +8,7 @@ Supporting document for VISION-001: Remote Access for a Personal Fleet.
 
 **Porthole**
 
-The project is called **Porthole**. It is not called "wgmesh", "wg-mesh",
+The project is called **Porthole**. It is not called "wg-mesh",
 "remote-fleet", or any other name derived from its component tools.
 
 The name is lowercase when used as a command, package, or URL slug: `porthole`.
@@ -33,7 +33,7 @@ One sentence: **Private remote access for a personal fleet of machines.**
 |---------------|-----|---------------|
 | "a mesh network" | The network is hub-and-spoke, not a full mesh. All traffic relays through a VPS hub. | "a hub-and-spoke remote-access network" |
 | "a VPN" | WireGuard is the transport layer, not the product. The product is remote access. | "remote access over WireGuard" |
-| "wgmesh" | `wgmesh` is the CLI tool, not the project. | "Porthole" (project), `wgmesh` (CLI command) |
+| "wg-mesh" | Confuses the WireGuard transport with the product. | "Porthole" |
 | "a mesh VPN" | Same as above — there is no full mesh. | "a hub-and-spoke relay" |
 
 ---
@@ -44,13 +44,13 @@ Use these terms consistently in docs, code comments, and user-facing output.
 
 | Concept | Preferred term | Avoid |
 |---------|----------------|-------|
-| The overall system | Porthole | wgmesh, remote-fleet |
+| The overall system | Porthole | remote-fleet |
 | The VPS running WireGuard + Guacamole + CoreDNS | **hub** | server, master, gateway |
 | Any non-hub machine in the fleet | **node** or **peer** | client, slave, endpoint |
 | The network topology | **hub-and-spoke** | mesh, full mesh, p2p |
 | The WireGuard interface on the hub | **wg0** | (don't abstract this) |
 | The WireGuard interface on a node | **wg0** | (same) |
-| The management CLI | `wgmesh` | porthole (the CLI command is `wgmesh`) |
+| The management CLI | `porthole` | (no alias) |
 | The encrypted state file | `network.sops.yaml` | config file, state |
 | The reverse SSH tunnel | **tunnel** | reverse proxy, backdoor |
 | The watchdog process | **watchdog** | health-check, monitor |
@@ -87,7 +87,7 @@ Do not use trademarked names as verbs: say "connect via WireGuard," not "WireGua
 ## Writing style
 
 - **Direct and technical.** The audience is a single technical operator. Skip marketing hedges.
-- **Imperative for instructions.** "Run `wgmesh bootstrap`", not "You can run `wgmesh bootstrap`".
+- **Imperative for instructions.** "Run `porthole bootstrap`", not "You can run `porthole bootstrap`".
 - **Short sentences.** Each sentence should make one point.
 - **Nautical theme: light touch.** The name is nautical; the docs are not a theme park. One or two nautical metaphors across the whole README is enough. Do not force them.
 - **No "mesh".** Every occurrence of "mesh" referring to the network topology should be replaced with "hub-and-spoke" or simply removed.
@@ -100,16 +100,15 @@ Fleet nodes are reachable at `<name>.wg` within the fleet (resolved by CoreDNS).
 Examples: `alice.wg`, `homelab.wg`, `hub.wg`.
 
 The hub is always `hub.wg` on the internal network and its public endpoint is
-whatever the operator configured at `wgmesh init --endpoint`.
+whatever the operator configured at `porthole init --endpoint`.
 
 ---
 
 ## CLI vs. project name
 
-The management CLI command is **`wgmesh`**. This is a historical artifact — the
-command was named before the project was. Do not rename the CLI to avoid churn.
+The management CLI command is **`porthole`** — same as the project name.
 
 When referring to the project in prose, use **Porthole**.
-When referring to the command a user types, use **`wgmesh`**.
+When referring to the command a user types, use **`porthole`**.
 
-> Run `wgmesh add alice --role workstation` to register a new node in Porthole.
+> Run `porthole add alice --role workstation` to register a new node in Porthole.

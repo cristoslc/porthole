@@ -1,6 +1,6 @@
 from ipaddress import IPv4Address, IPv4Network
 
-from wgmesh.config import REVERSE_SSH_BASE
+from porthole.config import REVERSE_SSH_BASE
 
 
 def next_available_ip(subnet: str, allocated: list[str]) -> IPv4Address | None:

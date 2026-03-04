@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from wgmesh.config import DEFAULT_DOMAIN, DEFAULT_SUBNET
+from porthole.config import DEFAULT_DOMAIN, DEFAULT_SUBNET
 
 
 @dataclass

@@ -1,10 +1,10 @@
 from unittest.mock import patch, MagicMock, call
 
-from wgmesh.ssh import ssh_run, scp_to_host
+from porthole.ssh import ssh_run, scp_to_host
 
 
 class TestSSHRun:
-    @patch("wgmesh.ssh.subprocess.run")
+    @patch("porthole.ssh.subprocess.run")
     def test_runs_command_on_host(self, mock_run):
         mock_run.return_value = MagicMock(stdout="output\n")
         result = ssh_run("hub.example.com", "wg show")
@@ -16,7 +16,7 @@ class TestSSHRun:
         assert "StrictHostKeyChecking=accept-new" in " ".join(args)
         assert "ConnectTimeout=10" in " ".join(args)
 
-    @patch("wgmesh.ssh.subprocess.run")
+    @patch("porthole.ssh.subprocess.run")
     def test_custom_user(self, mock_run):
         mock_run.return_value = MagicMock(stdout="")
         ssh_run("host", "ls", user="admin")
@@ -25,7 +25,7 @@ class TestSSHRun:
 
 
 class TestSCPToHost:
-    @patch("wgmesh.ssh.subprocess.run")
+    @patch("porthole.ssh.subprocess.run")
     def test_scps_content_to_host(self, mock_run):
         scp_to_host("hub.example.com", "file content", "/etc/test.conf")
 

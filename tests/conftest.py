@@ -1,6 +1,6 @@
 import pytest
 
-from wgmesh.models import HubConfig, Network, Peer
+from porthole.models import HubConfig, Network, Peer
 
 
 @pytest.fixture

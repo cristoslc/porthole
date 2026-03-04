@@ -31,7 +31,7 @@ depends-on: []
 
 ## Problem Statement
 
-The current `wgmesh bootstrap` command provisions the hub by SSHing into the VPS
+The current `porthole bootstrap` command provisions the hub by SSHing into the VPS
 and running inline shell scripts. This works for first-time setup but:
 
 - Is not reproducible — scripts are not idempotent and have no state tracking.
@@ -52,7 +52,7 @@ approach does not support this model.
 |-------|--------|
 | Cloud provider credentials | Environment variables (provider-specific) |
 | Hub endpoint hostname | Terraform variable or `network.sops.yaml` |
-| `network.sops.yaml` | wgmesh state file; decrypted at Ansible runtime |
+| `network.sops.yaml` | porthole state file; decrypted at Ansible runtime |
 | Age private key | `~/.config/sops/age/keys.txt` (standard SOPS location) |
 
 ### Outputs
@@ -62,7 +62,7 @@ approach does not support this model.
 | Running VPS | Provisioned with public IP, SSH access, correct firewall |
 | DNS A record | Hub hostname resolves to VPS public IP |
 | WireGuard server | `wg0` up, all enrolled peers in config |
-| CoreDNS | `*.wg` zone resolving from wgmesh state |
+| CoreDNS | `*.wg` zone resolving from porthole state |
 | nftables | Isolation rules applied |
 | Guacamole | Running via Docker Compose, bound to WireGuard interface |
 | Caddy | TLS termination via DNS-01 challenge |
@@ -98,7 +98,7 @@ approach does not support this model.
   **when** the Ansible playbook runs, **then** existing enrolled nodes can
   re-establish WireGuard connections without any changes on the node side.
 
-- **Given** a new peer added via `wgmesh add <name> && wgmesh sync`,
+- **Given** a new peer added via `porthole add <name> && porthole sync`,
   **when** the Ansible playbook runs against the hub, **then** the new peer's
   WireGuard config and CoreDNS entry are present on the hub.
 
@@ -108,18 +108,18 @@ approach does not support this model.
 - `terraform/` directory with provider config, VPS resource, DNS record, and
   firewall/security group rules.
 - `ansible/` directory with a hub playbook covering all hub services.
-- Ansible reads wgmesh state (decrypted via SOPS) to populate WireGuard peers,
+- Ansible reads porthole state (decrypted via SOPS) to populate WireGuard peers,
   CoreDNS zone, and tunnel `authorized_keys`.
 - Terraform remote state: at minimum, local state with a documented path; remote
   backend (e.g., S3, Terraform Cloud) as a configurable option.
 
 **Not in scope:**
 - Multi-region or multi-hub deployments.
-- Ansible-based node configuration (nodes use wgmesh CLI + service file templates).
+- Ansible-based node configuration (nodes use porthole CLI + service file templates).
 - Windows support.
 - Terraform provider implementations beyond the reference (DigitalOcean).
 
-**`wgmesh bootstrap` disposition:** The command remains in place during the
+**`porthole bootstrap` disposition:** The command remains in place during the
 transition but is a candidate for deprecation once SPEC-008 is validated. The
 two approaches are not mutually exclusive in the interim.
 
@@ -149,4 +149,4 @@ ansible/
 
 State integration: a custom Ansible module or `lookup` plugin decrypts
 `network.sops.yaml` and exposes it as a variable dict for use in role templates.
-This replaces the per-role Jinja2 rendering currently done by the wgmesh CLI.
+This replaces the per-role Jinja2 rendering currently done by the porthole CLI.

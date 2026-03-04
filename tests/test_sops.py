@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from wgmesh.sops import create_sops_config, encrypt_file, decrypt_file
+from porthole.sops import create_sops_config, encrypt_file, decrypt_file
 
 
 class TestCreateSopsConfig:
@@ -24,7 +24,7 @@ class TestCreateSopsConfig:
 
 
 class TestEncryptFile:
-    @patch("wgmesh.sops.subprocess.run")
+    @patch("porthole.sops.subprocess.run")
     def test_calls_sops_encrypt(self, mock_run):
         encrypt_file(Path("test.yaml"))
         mock_run.assert_called_once_with(
@@ -34,7 +34,7 @@ class TestEncryptFile:
 
 
 class TestDecryptFile:
-    @patch("wgmesh.sops.subprocess.run")
+    @patch("porthole.sops.subprocess.run")
     def test_calls_sops_decrypt(self, mock_run):
         mock_run.return_value = MagicMock(stdout="decrypted content")
         result = decrypt_file(Path("test.sops.yaml"))

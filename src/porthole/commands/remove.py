@@ -1,6 +1,6 @@
 import click
 
-from wgmesh import config, state
+from porthole import config, state
 
 
 def run_remove(name: str) -> None:

@@ -4,8 +4,8 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 
-from wgmesh.cli import cli
-from wgmesh.models import HubConfig, Network, Peer
+from porthole.cli import cli
+from porthole.models import HubConfig, Network, Peer
 
 
 @pytest.fixture
@@ -29,9 +29,9 @@ def _make_network(*extra_peers):
 
 
 class TestInit:
-    @patch("wgmesh.commands.init.state.save_state")
-    @patch("wgmesh.commands.init.keys.generate_keypair", return_value=("priv=", "pub="))
-    @patch("wgmesh.commands.init.sops.create_sops_config")
+    @patch("porthole.commands.init.state.save_state")
+    @patch("porthole.commands.init.keys.generate_keypair", return_value=("priv=", "pub="))
+    @patch("porthole.commands.init.sops.create_sops_config")
     def test_init_creates_network(self, mock_sops, mock_keys, mock_save, runner):
         with runner.isolated_filesystem():
             result = runner.invoke(cli, ["init", "--endpoint", "hub.example.com:51820", "--age-key", "age1test"])
@@ -47,10 +47,10 @@ class TestInit:
 
 
 class TestAdd:
-    @patch("wgmesh.commands.add.render.render_peer_config", return_value="[Interface]\n...")
-    @patch("wgmesh.commands.add.state.save_state")
-    @patch("wgmesh.commands.add.state.load_state")
-    @patch("wgmesh.commands.add.keys.generate_keypair", return_value=("priv=", "pub="))
+    @patch("porthole.commands.add.render.render_peer_config", return_value="[Interface]\n...")
+    @patch("porthole.commands.add.state.save_state")
+    @patch("porthole.commands.add.state.load_state")
+    @patch("porthole.commands.add.keys.generate_keypair", return_value=("priv=", "pub="))
     def test_add_peer(self, mock_keys, mock_load, mock_save, mock_render, runner):
         mock_load.return_value = _make_network()
         with runner.isolated_filesystem():
@@ -59,7 +59,7 @@ class TestAdd:
             assert result.exit_code == 0
             assert "Added peer 'laptop'" in result.output
 
-    @patch("wgmesh.commands.add.state.load_state")
+    @patch("porthole.commands.add.state.load_state")
     def test_add_duplicate_fails(self, mock_load, runner):
         mock_load.return_value = _make_network()
         with runner.isolated_filesystem():
@@ -70,8 +70,8 @@ class TestAdd:
 
 
 class TestRemove:
-    @patch("wgmesh.commands.remove.state.save_state")
-    @patch("wgmesh.commands.remove.state.load_state")
+    @patch("porthole.commands.remove.state.save_state")
+    @patch("porthole.commands.remove.state.load_state")
     def test_remove_peer(self, mock_load, mock_save, runner):
         extra = Peer(
             name="laptop", ip="10.100.0.2",
@@ -86,7 +86,7 @@ class TestRemove:
             assert result.exit_code == 0
             assert "Removed peer 'laptop'" in result.output
 
-    @patch("wgmesh.commands.remove.state.load_state")
+    @patch("porthole.commands.remove.state.load_state")
     def test_remove_hub_fails(self, mock_load, runner):
         mock_load.return_value = _make_network()
         with runner.isolated_filesystem():
@@ -95,7 +95,7 @@ class TestRemove:
             assert result.exit_code != 0
             assert "Cannot remove the hub" in result.output
 
-    @patch("wgmesh.commands.remove.state.load_state")
+    @patch("porthole.commands.remove.state.load_state")
     def test_remove_nonexistent_fails(self, mock_load, runner):
         mock_load.return_value = _make_network()
         with runner.isolated_filesystem():
@@ -106,7 +106,7 @@ class TestRemove:
 
 
 class TestList:
-    @patch("wgmesh.commands.list_cmd.state.load_state")
+    @patch("porthole.commands.list_cmd.state.load_state")
     def test_list_table(self, mock_load, runner):
         extra = Peer(
             name="laptop", ip="10.100.0.2",
@@ -123,7 +123,7 @@ class TestList:
             assert "laptop" in result.output
             assert "10.100.0.2" in result.output
 
-    @patch("wgmesh.commands.list_cmd.state.load_state")
+    @patch("porthole.commands.list_cmd.state.load_state")
     def test_list_json(self, mock_load, runner):
         mock_load.return_value = _make_network()
         with runner.isolated_filesystem():
@@ -137,10 +137,10 @@ class TestList:
 
 
 class TestSync:
-    @patch("wgmesh.commands.sync.render.render_nftables", return_value="nft rules")
-    @patch("wgmesh.commands.sync.render.render_dns_zone", return_value="zone data")
-    @patch("wgmesh.commands.sync.render.render_hub_config", return_value="wg config")
-    @patch("wgmesh.commands.sync.state.load_state")
+    @patch("porthole.commands.sync.render.render_nftables", return_value="nft rules")
+    @patch("porthole.commands.sync.render.render_dns_zone", return_value="zone data")
+    @patch("porthole.commands.sync.render.render_hub_config", return_value="wg config")
+    @patch("porthole.commands.sync.state.load_state")
     def test_sync_dry_run(self, mock_load, mock_hub, mock_dns, mock_nft, runner):
         mock_load.return_value = _make_network()
         with runner.isolated_filesystem():

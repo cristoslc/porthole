@@ -23,7 +23,7 @@ depends-on: []
 |-------|------|--------|-------|
 | Proposed | 2026-02-28 | 6405885 | Initial creation, merged from external project |
 | Active | 2026-03-03 | faa1bcd | Ready for implementation; unblocks EPIC-003/004/005 |
-| Complete | 2026-03-03 | 068a4f5 | All 6 wgmesh commands, SOPS state, Jinja2 templates, 40 tests pass |
+| Complete | 2026-03-03 | 068a4f5 | All 6 porthole commands, SOPS state, Jinja2 templates, 40 tests pass |
 
 ---
 
@@ -33,12 +33,12 @@ Build the core CLI tool that manages the full lifecycle of a WireGuard relay net
 
 ## Success criteria
 
-- Operator can `wgmesh init` to bootstrap a new network with subnet, hub config, and SOPS-encrypted state file.
-- Operator can `wgmesh add <name>` to generate keys, assign IP, register DNS, and output a deployable client config.
-- Operator can `wgmesh remove <name>` to revoke a peer and regenerate hub config.
-- Operator can `wgmesh sync` to push current hub WireGuard config and DNS zone to VPS via SSH without downtime.
+- Operator can `porthole init` to bootstrap a new network with subnet, hub config, and SOPS-encrypted state file.
+- Operator can `porthole add <name>` to generate keys, assign IP, register DNS, and output a deployable client config.
+- Operator can `porthole remove <name>` to revoke a peer and regenerate hub config.
+- Operator can `porthole sync` to push current hub WireGuard config and DNS zone to VPS via SSH without downtime.
 - All private keys in `network.sops.yaml` are encrypted with age; public keys, IPs, and names may be cleartext or encrypted.
-- Project runs via `uv run wgmesh` with no pre-installed dependencies beyond uv itself.
+- Project runs via `uv run porthole` with no pre-installed dependencies beyond uv itself.
 
 ## Scope boundaries
 
@@ -52,7 +52,7 @@ Build the core CLI tool that manages the full lifecycle of a WireGuard relay net
 - `status` command: SSH to VPS, run `wg show`, format and display peer status
 - SOPS/age encryption of the state file
 - Jinja2 templating for WireGuard configs and DNS zones
-- Python project managed with uv, runnable as `uv run wgmesh`
+- Python project managed with uv, runnable as `uv run porthole`
 
 **Out of scope:**
 

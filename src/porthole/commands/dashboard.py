@@ -8,7 +8,7 @@ from typing import Any
 
 import click
 
-from wgmesh import config, ssh, state
+from porthole import config, ssh, state
 
 
 def _fetch_status(network) -> list[dict[str, Any]]:
@@ -74,7 +74,7 @@ _HTML = """\
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>wgmesh fleet dashboard</title>
+  <title>porthole fleet dashboard</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 2rem auto; padding: 0 1rem; color: #222; }
     h1   { font-size: 1.5rem; margin-bottom: 0.5rem; }
@@ -96,7 +96,7 @@ _HTML = """\
   </style>
 </head>
 <body>
-  <h1>wgmesh fleet dashboard</h1>
+  <h1>porthole fleet dashboard</h1>
   <div class="toolbar">
     <button onclick="refresh()">Refresh</button>
     <span id="timestamp">Loading…</span>
@@ -195,7 +195,7 @@ def run_dashboard(port: int) -> None:
                 self._send(404, "text/plain", b"Not Found")
 
     server = HTTPServer(("0.0.0.0", port), Handler)
-    click.echo(f"wgmesh dashboard running at http://localhost:{port}/")
+    click.echo(f"porthole dashboard running at http://localhost:{port}/")
     click.echo("Press Ctrl+C to stop.")
     try:
         server.serve_forever()

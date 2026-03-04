@@ -2,8 +2,8 @@
 import click
 from jinja2 import Environment, FileSystemLoader
 
-from wgmesh import config, state
-from wgmesh.config import TEMPLATE_DIR
+from porthole import config, state
+from porthole.config import TEMPLATE_DIR
 
 
 def run_seed_guac(out_file) -> None:

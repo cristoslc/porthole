@@ -1,6 +1,6 @@
 import click
 
-from wgmesh import config, render, ssh, state
+from porthole import config, render, ssh, state
 
 
 def run_sync(dry_run: bool) -> None:

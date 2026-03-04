@@ -1,6 +1,6 @@
 import click
 
-from wgmesh import config, keys, models, sops, state
+from porthole import config, keys, models, sops, state
 
 
 def run_init(endpoint: str, age_key: str) -> None:

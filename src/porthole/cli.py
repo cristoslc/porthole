@@ -1,10 +1,10 @@
 import click
 
-from wgmesh import __version__
+from porthole import __version__
 
 
 @click.group()
-@click.version_option(version=__version__, prog_name="wgmesh")
+@click.version_option(version=__version__, prog_name="porthole")
 def cli():
     """WireGuard hub-and-spoke mesh network manager."""
 
@@ -14,7 +14,7 @@ def cli():
 @click.option("--age-key", required=True, help="Age public key for SOPS encryption")
 def init(endpoint, age_key):
     """Initialize a new mesh network."""
-    from wgmesh.commands.init import run_init
+    from porthole.commands.init import run_init
 
     run_init(endpoint, age_key)
 
@@ -25,7 +25,7 @@ def init(endpoint, age_key):
               help="Peer role (default: workstation)")
 def add(name, role):
     """Add a new peer to the mesh network."""
-    from wgmesh.commands.add import run_add
+    from porthole.commands.add import run_add
 
     run_add(name, role)
 
@@ -34,7 +34,7 @@ def add(name, role):
 @click.argument("name")
 def remove(name):
     """Remove a peer from the mesh network."""
-    from wgmesh.commands.remove import run_remove
+    from porthole.commands.remove import run_remove
 
     run_remove(name)
 
@@ -43,7 +43,7 @@ def remove(name):
 @click.option("--json", "as_json", is_flag=True, help="Output as JSON")
 def list_peers(as_json):
     """List all peers in the mesh network."""
-    from wgmesh.commands.list_cmd import run_list
+    from porthole.commands.list_cmd import run_list
 
     run_list(as_json)
 
@@ -52,7 +52,7 @@ def list_peers(as_json):
 @click.option("--dry-run", is_flag=True, help="Print rendered configs without deploying")
 def sync(dry_run):
     """Sync hub configuration to the VPS."""
-    from wgmesh.commands.sync import run_sync
+    from porthole.commands.sync import run_sync
 
     run_sync(dry_run)
 
@@ -64,7 +64,7 @@ def sync(dry_run):
 def gen_peer_scripts(peer_name, out_dir):
     """Generate watchdog + tunnel service files for a peer."""
     from pathlib import Path
-    from wgmesh.commands.gen_peer_scripts import run_gen_peer_scripts
+    from porthole.commands.gen_peer_scripts import run_gen_peer_scripts
 
     directory = Path(out_dir) if out_dir else Path(f"peer-scripts/{peer_name}")
     run_gen_peer_scripts(peer_name, directory)
@@ -75,7 +75,7 @@ def gen_peer_scripts(peer_name, out_dir):
               help="Write SQL to file instead of stdout")
 def seed_guac(out_file):
     """Generate Guacamole connection seed SQL from network state."""
-    from wgmesh.commands.seed_guac import run_seed_guac
+    from porthole.commands.seed_guac import run_seed_guac
 
     run_seed_guac(out_file)
 
@@ -84,7 +84,7 @@ def seed_guac(out_file):
 @click.argument("hub_host")
 def bootstrap(hub_host):
     """Bootstrap a fresh Ubuntu VPS to a functioning WireGuard hub."""
-    from wgmesh.commands.bootstrap import run_bootstrap
+    from porthole.commands.bootstrap import run_bootstrap
 
     run_bootstrap(hub_host)
 
@@ -92,7 +92,7 @@ def bootstrap(hub_host):
 @cli.command()
 def status():
     """Show live WireGuard peer status from the hub."""
-    from wgmesh.commands.status import run_status
+    from porthole.commands.status import run_status
 
     run_status()
 
@@ -101,6 +101,6 @@ def status():
 @click.option("--port", default=8080, show_default=True, help="Port to listen on")
 def dashboard(port):
     """Run a local web dashboard showing fleet peer status."""
-    from wgmesh.commands.dashboard import run_dashboard
+    from porthole.commands.dashboard import run_dashboard
 
     run_dashboard(port)

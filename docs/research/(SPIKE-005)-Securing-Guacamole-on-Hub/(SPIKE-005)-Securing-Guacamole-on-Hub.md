@@ -116,7 +116,7 @@ Guacamole stores connections in PostgreSQL. For fungibility, the database is see
 2. Seed: `init/02-seed.sql` with INSERT statements for connections, generated from `network.sops.yaml`
 3. On `docker compose up`, PostgreSQL runs both SQL files from `/docker-entrypoint-initdb.d/`
 
-The `wgmesh hub deploy` command should regenerate `02-seed.sql` from the current network state before deploying.
+The `porthole hub deploy` command should regenerate `02-seed.sql` from the current network state before deploying.
 
 Alternative: Guacamole 1.6.0 supports batch import via JSON/YAML through the REST API, which could be used as a post-deploy step.
 

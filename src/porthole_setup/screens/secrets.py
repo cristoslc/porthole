@@ -322,15 +322,15 @@ class SecretsScreen(Screen):
     async def _init_state(self) -> None:
         log = self.query_one("#log", RichLog)
         log.add_class("visible")
-        log.write("[bold]Initializing network state via wgmesh init…[/]")
+        log.write("[bold]Initializing network state via porthole init…[/]")
         log.write("You will be prompted for the hub endpoint (e.g. hub.example.com).")
 
-        # wgmesh init is interactive; run it in the terminal.
+        # porthole init is interactive; run it in the terminal.
         # We can't stream its prompts through a Textual widget easily,
         # so we suspend the app, run it in the terminal, then resume.
         with self.app.suspend():
             import subprocess as sp  # noqa: PLC0415
-            result = sp.run(["wgmesh", "init"])
+            result = sp.run(["porthole", "init"])
 
         if STATE_PATH.exists():
             summary = _summarise_state()
@@ -340,7 +340,7 @@ class SecretsScreen(Screen):
             if summary:
                 log.write(f"  {summary}")
         else:
-            log.write("[bold red]✗ network.sops.yaml not found after wgmesh init[/]")
+            log.write("[bold red]✗ network.sops.yaml not found after porthole init[/]")
 
     @on(Button.Pressed, "#continue-btn")
     def _continue(self) -> None:

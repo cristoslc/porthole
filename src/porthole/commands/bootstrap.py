@@ -1,7 +1,7 @@
 """Bootstrap a fresh Ubuntu VPS to a functioning WireGuard hub."""
 import click
 
-from wgmesh import config, render, ssh, state
+from porthole import config, render, ssh, state
 
 COREDNS_VERSION = "1.11.3"
 COREDNS_ARCH = "amd64"
