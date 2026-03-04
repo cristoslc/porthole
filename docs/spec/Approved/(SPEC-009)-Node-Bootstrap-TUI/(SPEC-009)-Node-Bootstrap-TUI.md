@@ -1,7 +1,7 @@
 ---
 title: "Node Bootstrap TUI"
 artifact: SPEC-009
-status: Draft
+status: Approved
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-04
@@ -23,7 +23,7 @@ addresses:
 
 # SPEC-009: Node Bootstrap TUI
 
-**Status:** Draft
+**Status:** Approved
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
@@ -33,7 +33,8 @@ addresses:
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-03 | 2ec07f7 | Initial creation |
+| Draft    | 2026-03-03 | 2ec07f7 | Initial creation |
+| Approved | 2026-03-04 | 62f5522 | Enrollment, service_install, hub_check screens implemented; summary + --check pending |
 
 ---
 

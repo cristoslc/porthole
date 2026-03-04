@@ -5,7 +5,6 @@
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
 | SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | Terraform for VPS lifecycle; Ansible for hub config (WireGuard, CoreDNS, nftables, Guacamole, Caddy); addresses J-004.PP-01 remote state |
-| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | setup.sh → Textual app; prereqs, secrets, hub check, hub spinup + sync, node enrollment + install-peer |
 
 ## Review
 
@@ -13,7 +12,9 @@ _No specs in this phase._
 
 ## Approved
 
-_No specs in this phase._
+| ID | Title | Author | Created | Last Updated | Commit | Notes |
+|----|-------|--------|---------|--------------|--------|-------|
+| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 62f5522 | Enrollment, service_install, hub_check screens implemented; summary + --check pending |
 
 ## Implemented
 
