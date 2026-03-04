@@ -2,9 +2,7 @@
 
 ## Draft
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | Terraform for VPS lifecycle; Ansible for hub config (WireGuard, CoreDNS, nftables, Guacamole, Caddy); addresses J-004.PP-01 remote state |
+_No specs in this phase._
 
 ## Review
 
@@ -14,12 +12,13 @@ _No specs in this phase._
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
-| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 62f5522 | Enrollment, service_install, hub_check screens implemented; summary + --check pending |
+| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 79da21d | Enrollment, service_install, hub_check screens implemented; summary + --check pending |
 
 ## Implemented
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
+| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | eb16a5f | backend.tf (both providers), DO firewall ports, Guacamole schema init + seed exec + platform template, guacamole_db_password |
 | SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | porthole CLI implements all templates, state schema, modules; adds platform field, peer-config, install-peer |
 | SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | Docker Compose stack, Caddy TLS, seed-guac command; adds admin password in state, --apply flag |
 | SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | wg-watchdog, reverse SSH tunnel, gen-peer-scripts; notes Windows watchdog code gap; adds reconnect event logging |

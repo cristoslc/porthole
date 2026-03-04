@@ -1,7 +1,7 @@
 ---
 title: "Hub Infrastructure as Code"
 artifact: SPEC-008
-status: Approved
+status: Implemented
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-04
@@ -17,7 +17,7 @@ addresses:
 
 # SPEC-008: Hub Infrastructure as Code
 
-**Status:** Approved
+**Status:** Implemented
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
@@ -27,7 +27,9 @@ addresses:
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-03 | 2ec07f7 | Initial creation |
+| Draft    | 2026-03-03 | 2ec07f7 | Initial creation |
+| Approved     | 2026-03-04 | 79b2e76 | 7 gaps identified; implementation plan created in bd |
+| Implemented  | 2026-03-04 | eb16a5f | backend.tf (both providers), DO firewall ports, Guacamole schema init + seed execution + platform-aware template, guacamole_db_password in group_vars |
 
 ---
 
