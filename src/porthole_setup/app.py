@@ -8,6 +8,7 @@ from porthole_setup.screens.hub_spinup import HubSpinupScreen
 from porthole_setup.screens.prerequisites import PrerequisitesScreen
 from porthole_setup.screens.secrets import SecretsScreen
 from porthole_setup.screens.service_install import ServiceInstallScreen
+from porthole_setup.screens.summary import SummaryScreen
 
 
 class PortholeApp(App):
@@ -22,6 +23,7 @@ class PortholeApp(App):
         "hub_spinup": HubSpinupScreen,
         "enrollment": EnrollmentScreen,
         "service_install": ServiceInstallScreen,
+        "summary": SummaryScreen,
     }
 
     def on_mount(self) -> None:
