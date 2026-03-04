@@ -5,5 +5,17 @@
 {"issue_id":"iac-remote-desktop-node-nt9.3","label":"spec:EPIC-005"}
 {"issue_id":"iac-remote-desktop-node-nt9.4","label":"spec:SPEC-004"}
 {"issue_id":"iac-remote-desktop-node-nt9.5","label":"spec:SPEC-005"}
+{"issue_id":"iac-remote-desktop-node-o8i.1","label":"spec:SPEC-008"}
+{"issue_id":"iac-remote-desktop-node-o8i.1","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-o8i.2","label":"spec:SPEC-008"}
+{"issue_id":"iac-remote-desktop-node-o8i.2","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-o8i.3","label":"spec:SPEC-008"}
+{"issue_id":"iac-remote-desktop-node-o8i.3","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-o8i.4","label":"spec:SPEC-008"}
+{"issue_id":"iac-remote-desktop-node-o8i.4","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-o8i.5","label":"spec:SPEC-008"}
+{"issue_id":"iac-remote-desktop-node-o8i.5","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-o8i.6","label":"spec:SPEC-009"}
+{"issue_id":"iac-remote-desktop-node-o8i.6","label":"story:STORY-001"}
 {"issue_id":"iac-remote-desktop-node-u5i","label":"spec:SPEC-006"}
 {"issue_id":"iac-remote-desktop-node-zy6.1","label":"spec:SPEC-006"}
