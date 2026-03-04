@@ -10,14 +10,13 @@ _No specs in this phase._
 
 ## Approved
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 79da21d | Enrollment, service_install, hub_check screens implemented; summary + --check pending |
+_No specs in this phase._
 
 ## Implemented
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
+| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 32f5763 | All 5 screens + --check flag complete |
 | SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | e56f0ee | backend.tf (both providers), DO firewall ports, Guacamole schema init + seed exec + platform template, guacamole_db_password |
 | SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | porthole CLI implements all templates, state schema, modules; adds platform field, peer-config, install-peer |
 | SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | Docker Compose stack, Caddy TLS, seed-guac command; adds admin password in state, --apply flag |
