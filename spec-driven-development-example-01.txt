@@ -1,0 +1,1229 @@
+
+ ▐▛███▜▌   Claude Code v2.1.63
+▝▜█████▛▘  Opus 4.6 · Claude Max
+  ▘▘ ▝▝    ~/Documents/code/iac-remote-desktop-node
+
+❯ /clear 
+  ⎿  (no content)
+
+❯ /rename porthole 
+  ⎿  Session renamed to: porthole
+
+❯ look at our journeys. do we have enough coverage to walk through the      
+  code/process and see if we left any gaps?                                 
+
+⏺ Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+⏺ No journey/ directory yet — journeys haven't been created for this project.
+  Let me review what we do have to understand the landscape before assessing
+  coverage.
+
+⏺ Searched for 1 pattern, read 3 files (ctrl+o to expand)
+
+⏺ Let me also look at the actual code structure to understand what's implemented
+   vs. documented.
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Here's the picture:
+
+  You have zero journeys. The docs/journey/ directory doesn't exist. This is the
+   core gap.
+
+  ---
+  What's missing
+
+  Based on the vision, epics, and code, there are at least 4 distinct journeys
+  that would give meaningful coverage — and would help surface gaps between the
+  spec and the actual code:
+
+  Journey: JOURNEY-001: Operator spins up a fresh hub
+  Persona: Operator
+  Scope: terraform apply → Ansible → working hub with WireGuard, CoreDNS,
+    Guacamole, Caddy
+  ────────────────────────────────────────
+  Journey: JOURNEY-002: Operator enrolls a new node
+  Persona: Operator
+  Scope: ./setup.sh → TUI → prereqs → secrets → hub check → porthole add →
+    service files installed → node reachable via name.wg
+  ────────────────────────────────────────
+  Journey: JOURNEY-003: Operator supports a family member
+  Persona: Operator + Family member
+  Scope: Operator visits (physically or remotely), runs setup.sh on family
+    machine, enrolls it, verifies remote desktop works — family member does
+    nothing afterward
+  ────────────────────────────────────────
+  Journey: JOURNEY-004: Hub disaster recovery
+  Persona: Operator
+  Scope: Hub VPS destroyed → clone repo → terraform apply && ansible-playbook 
+    site.yml → fleet reconnects with zero re-enrollment
+
+  There's also a day-to-day access journey (operator opens browser/SSH to reach
+  a node) but that's thin enough it might just live inside JOURNEY-002 as a
+  "post-enrollment" step.
+
+  ---
+  Why this matters for gap-finding
+
+  The journeys would let you walk through the code and ask "at this step in the
+  journey, does the code actually do this?" For example:
+
+  - JOURNEY-002 would expose whether the TUI (SPEC-009, still Draft) handles the
+   hub-not-found case and chains into hub spin-up — EPIC-007 says this is
+  required but SPEC-009 may not have it fully spec'd yet.
+  - JOURNEY-004 would expose whether network.sops.yaml is the only persistent
+  state, or if there are things that live on the hub that would be lost on
+  destroy.
+
+  Want me to draft one or more of these journeys? I'd suggest starting with
+  JOURNEY-002 (node enrollment) since that's the most active work surface right
+  now.
+
+✻ Brewed for 41s
+
+❯ add o rrefine the necessary journeys, then do a walkthrough to check      
+  coverage and add or refine specs where gaps exist                         
+
+⏺ Explore(Deep codebase exploration for Porthole)
+  ⎿  Done (63 tool uses · 97.3k tokens · 2m 1s)
+  (ctrl+o to expand)
+
+⏺ Good — I have a thorough picture of the codebase. Now invoking spec-management
+   to create the journeys.
+
+⏺ Skill(spec-management)
+  ⎿  Successfully loaded skill · 6 tools allowed
+
+⏺ Let me do the pre-flight checks and read the journey reference files in
+  parallel.
+
+⏺ Read 2 files (ctrl+o to expand)
+
+⏺ Specwatch log is clean (just a header). Now let me get the git state and
+  create all 4 journeys.
+
+⏺ Bash(git rev-parse --short HEAD)
+  ⎿  fb02218
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Bash(mkdir -p
+      /Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey)
+  ⎿  Done
+
+⏺ Bash(mkdir -p \
+        "/Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOU
+      RNEY-001)-Operator-Spins-Up-Hub" \…)
+  ⎿  Done
+
+⏺ Write(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-001)-Operator-Spins-Up-Hub/(JOURNEY-001)-Operator-Spins-Up-Hub.mddocs/journey/(JOURNEY-001)-Operator-Spins-Up-Hub/(JOURNEY-001)-Operator-
+       ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-001)-Operator-Spins-Up-Hub/(JOURNEY-001)-Operator-Spins-Up-Hub.mdSpins-Up-Hub.md)
+  ⎿  Wrote 180 lines to docs/journey/(JOURNEY-001)-Operator-Spins-Up-Hub/(J
+     OURNEY-001)-Operator-Spins-Up-Hub.md
+       1 ---
+       2 title: "Operator Spins Up a Fresh Hub"
+       3 artifact: JOURNEY-001
+       4 status: Draft
+       5 author: cristos
+       6 created: 2026-03-04
+       7 last-updated: 2026-03-04
+       8 parent-vision: VISION-001
+       9 linked-personas: []
+      10 depends-on: []
+     … +170 lines (ctrl+o to expand)
+
+⏺ Write(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-002)-Operator-Enrolls-a-Node/(JOURNEY-002)-Operator-Enrolls-a-Node.mddocs/journey/(JOURNEY-002)-Operator-Enrolls-a-Node/(JOURNEY-002)-Operato
+       ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-002)-Operator-Enrolls-a-Node/(JOURNEY-002)-Operator-Enrolls-a-Node.mdr-Enrolls-a-Node.md)
+  ⎿  Wrote 228 lines to docs/journey/(JOURNEY-002)-Operator-Enrolls-a-Node/
+     (JOURNEY-002)-Operator-Enrolls-a-Node.md
+       1 ---
+       2 title: "Operator Enrolls a Linux or macOS Node"
+       3 artifact: JOURNEY-002
+       4 status: Draft
+       5 author: cristos
+       6 created: 2026-03-04
+       7 last-updated: 2026-03-04
+       8 parent-vision: VISION-001
+       9 linked-personas: []
+      10 depends-on: []
+     … +218 lines (ctrl+o to expand)
+
+⏺ Write(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine.mddocs/journey/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine/(JO
+       ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine.mdURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine.md)
+  ⎿  Wrote 227 lines to
+     docs/journey/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine/(
+     JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine.md
+       1 ---
+       2 title: "Operator Enrolls a Windows Family Machine"
+       3 artifact: JOURNEY-003
+       4 status: Draft
+       5 author: cristos
+       6 created: 2026-03-04
+       7 last-updated: 2026-03-04
+       8 parent-vision: VISION-001
+       9 linked-personas: []
+      10 depends-on: []
+     … +217 lines (ctrl+o to expand)
+
+⏺ Write(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-004)-Hub-Disaster-Recovery/(JOURNEY-004)-Hub-Disaster-Recovery.mddocs/journey/(JOURNEY-004)-Hub-Disaster-Recovery/(JOURNEY-004)-Hub-Disas
+       ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/journey/(JOURNEY-004)-Hub-Disaster-Recovery/(JOURNEY-004)-Hub-Disaster-Recovery.mdter-Recovery.md)
+  ⎿  Wrote 209 lines to docs/journey/(JOURNEY-004)-Hub-Disaster-Recovery/(J
+     OURNEY-004)-Hub-Disaster-Recovery.md
+       1 ---
+       2 title: "Hub Disaster Recovery"
+       3 artifact: JOURNEY-004
+       4 status: Draft
+       5 author: cristos
+       6 created: 2026-03-04
+       7 last-updated: 2026-03-04
+       8 parent-vision: VISION-001
+       9 linked-personas: []
+      10 depends-on: []
+     … +199 lines (ctrl+o to expand)
+
+⏺ Now create the README and index for the journey directory, and update
+  VISION-001's child artifacts table.
+
+⏺ Write(docs/journey/README.md)
+  ⎿  Wrote 20 lines to docs/journey/README.md
+      1 # User Journeys
+      2 
+      3 End-to-end experience maps showing how personas accomplish goals 
+        across the Porthole system. Each journey identifies stages, actio
+        ns, satisfaction scores, and pain points that inform which Epics 
+        and Specs to create.
+      4 
+      5 See `list-journeys.md` for the full index.
+      6 
+      7 ## Artifact format
+      8 
+      9 Each journey lives in its own folder:
+     … +10 lines (ctrl+o to expand)
+
+⏺ Write(docs/journey/list-journeys.md)
+  ⎿  Wrote 10 lines to docs/journey/list-journeys.md
+       1 # Journey Index
+       2 
+       3 ## Draft
+       4 
+       5 | ID | Title | Parent Vision | Last Updated | Commit |
+       6 |----|-------|--------------|--------------|--------|
+       7 | [JOURNEY-001](./\(JOURNEY-001\)-Operator-Spins-Up-Hub/\(JOURNE
+         Y-001\)-Operator-Spins-Up-Hub.md) | Operator Spins Up a Fresh Hu
+         b | VISION-001 | 2026-03-04 | fb02218 |
+       8 | [JOURNEY-002](./\(JOURNEY-002\)-Operator-Enrolls-a-Node/\(JOUR
+         NEY-002\)-Operator-Enrolls-a-Node.md) | Operator Enrolls a Linux
+          or macOS Node | VISION-001 | 2026-03-04 | fb02218 |
+       9 | [JOURNEY-003](./\(JOURNEY-003\)-Operator-Enrolls-a-Windows-Fam
+         ily-Machine/\(JOURNEY-003\)-Operator-Enrolls-a-Windows-Family-Ma
+         chine.md) | Operator Enrolls a Windows Family Machine | VISION-0
+         01 | 2026-03-04 | fb02218 |
+      10 | [JOURNEY-004](./\(JOURNEY-004\)-Hub-Disaster-Recovery/\(JOURNE
+         Y-004\)-Hub-Disaster-Recovery.md) | Hub Disaster Recovery | VISI
+         ON-001 | 2026-03-04 | fb02218 |
+
+⏺ Now update VISION-001 to list the journeys as child artifacts.
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.mddocs/vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)-Remote-Access-for-a-Personal-Fleet.md)
+  ⎿  Added 4 lines
+      108  
+      109  | Type | ID | Title | Status |
+      110  |------|----|-------|--------|
+      111 +| Journey | [JOURNEY-001](../../journey/(JOURNEY-001)-Operator
+          +-Spins-Up-Hub/(JOURNEY-001)-Operator-Spins-Up-Hub.md) | Operat
+          +or Spins Up a Fresh Hub | Draft |                             
+      112 +| Journey | [JOURNEY-002](../../journey/(JOURNEY-002)-Operator
+          +-Enrolls-a-Node/(JOURNEY-002)-Operator-Enrolls-a-Node.md) | Op
+          +erator Enrolls a Linux or macOS Node | Draft |                
+      113 +| Journey | [JOURNEY-003](../../journey/(JOURNEY-003)-Operator
+          +-Enrolls-a-Windows-Family-Machine/(JOURNEY-003)-Operator-Enrol
+          +ls-a-Windows-Family-Machine.md) | Operator Enrolls a Windows F
+          +amily Machine | Draft |                                       
+      114 +| Journey | [JOURNEY-004](../../journey/(JOURNEY-004)-Hub-Disa
+          +ster-Recovery/(JOURNEY-004)-Hub-Disaster-Recovery.md) | Hub Di
+          +saster Recovery | Draft |                                     
+      115  | Epic | [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-
+           Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fle
+           et Management | Active |
+      116  | Epic | [EPIC-002](../../epic/Complete/(EPIC-002)-Provisionin
+           g-CLI/(EPIC-002)-Provisioning-CLI.md) | Provisioning CLI & Net
+           work State Management | Complete |
+      117  | Epic | [EPIC-003](../../epic/Complete/(EPIC-003)-Client-Web-
+           UI/(EPIC-003)-Client-Web-UI.md) | Client Node Web UI | Complet
+           e |
+
+⏺ Bash(bash .claude/skills/spec-management/scripts/specwatch.sh touch
+      2>/dev/null; echo "done")
+  ⎿  specwatch: sentinel refreshed.
+     done
+
+⏺ Good. Now the walkthrough — comparing each journey's pain points against
+  existing specs to find what's covered vs. what's missing.
+
+  Consolidated gap table from all 4 journeys:
+
+  ┌────────────────────────┬─────────┬───────┬──────────────────────────────┐
+  │       Pain Point       │ Journey │ Score │   Existing spec coverage?    │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-01: No pre-flight   │         │       │ SPEC-009 (Node Bootstrap     │
+  │ token checklist in TUI │ J-001   │ 2     │ TUI) — Draft, hub spinup     │
+  │                        │         │       │ screen section               │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-02: porthole init   │         │       │                              │
+  │ requires FQDN before   │ J-001   │ 2     │ SPEC-009 — not addressed     │
+  │ server exists          │         │       │                              │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-03: No porthole     │         │       │ SPEC-009 — not addressed;    │
+  │ sync after hub rebuild │ J-001   │ 2     │ also J-004.PP-02             │
+  │  in TUI                │         │       │                              │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-01: Age key         │         │       │ SPEC-009 — Secrets screen;   │
+  │ transfer not guided by │ J-002   │ 2     │ partially addressed but no   │
+  │  TUI                   │         │       │ transfer guidance            │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-02: TUI ends at Hub │         │       │ SPEC-009 — explicitly the    │
+  │  Check; no enrollment  │ J-002   │ 1     │ main gap; spec is Draft but  │
+  │ screen                 │         │       │ this flow isn't written      │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-03: No enrollment   │ J-002   │ 2     │ No runbook exists            │
+  │ runbook                │         │       │                              │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-04: No porthole     │         │       │ SPEC-003 (WireGuard Hub) —   │
+  │ install-peer command   │ J-002   │ 2     │ doesn't cover this; no spec  │
+  │                        │         │       │ covers it                    │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-05: Guacamole seed  │         │       │ SPEC-004 (Guacamole) —       │
+  │ not applied; default   │ J-002   │ 2     │ Implemented, but first-run   │
+  │ creds                  │         │       │ setup missing                │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-01: No porthole     │ J-003   │ 2     │ No spec covers Windows-only  │
+  │ peer-config command    │         │       │ config extraction            │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-02: No secure key   │ J-003   │ 1     │ No runbook                   │
+  │ transfer guidance      │         │       │                              │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-03: No Windows      │ J-003   │ 1     │ No runbook                   │
+  │ enrollment runbook     │         │       │                              │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-04: No Windows      │ J-003   │ 2     │ SPEC-005 (Node Health) —     │
+  │ watchdog               │         │       │ Linux/macOS only             │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-05: os_hint fragile │         │       │ SPEC-003 (Peer model) — Peer │
+  │  (peer name) not       │ J-003   │ 2     │  lacks platform field        │
+  │ structured field       │         │       │                              │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-01: Terraform state │ J-004   │ 2     │ No spec; ADR-006 doesn't     │
+  │  not committed         │         │       │ address state persistence    │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-02: No porthole     │ J-004   │ 2     │ Same as J-001.PP-03 →        │
+  │ sync after hub rebuild │         │       │ SPEC-009 gap                 │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-03: No reconnection │         │       │ SPEC-005 (Watchdog) —        │
+  │  notification          │ J-004   │ 2     │ Implemented, but             │
+  │                        │         │       │ notification missing         │
+  ├────────────────────────┼─────────┼───────┼──────────────────────────────┤
+  │ PP-04: Guacamole admin │         │       │                              │
+  │  password not          │ J-004   │ 2     │ SPEC-004 — not addressed     │
+  │ persisted              │         │       │                              │
+  └────────────────────────┴─────────┴───────┴──────────────────────────────┘
+
+  Let me read the existing draft specs to know exactly what they say before
+  writing gaps.
+
+⏺ Searched for 1 pattern, read 8 files (ctrl+o to expand)
+
+⏺ Walkthrough complete. Here's what I found:
+
+  ┌─────────────────────────┬───────────────┬───────────────┬──────────────┐
+  │           Gap           │ Spec coverage │ Code coverage │    Action    │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-001.PP-01: No         │ SPEC-009:     │               │ Refine       │
+  │ pre-flight token        │ missing       │ missing       │ SPEC-009     │
+  │ checklist               │               │               │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-001.PP-02: FQDN       │ SPEC-009:     │ missing       │ Refine       │
+  │ before server exists    │ missing       │               │ SPEC-009     │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-001/004.PP-03: No     │ SPEC-009:     │ missing       │ Refine       │
+  │ sync after hub rebuild  │ missing       │               │ SPEC-009     │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-002.PP-01: Age key    │ SPEC-009:     │ missing       │ Refine       │
+  │ transfer not guided     │ partial       │               │ SPEC-009     │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-002.PP-02: TUI ends   │ SPEC-009:     │ code gap      │ Note code    │
+  │ at Hub Check            │ Flow 4 exists │ (screens not  │ gap          │
+  │                         │  in spec      │ built)        │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-002.PP-03/04: No      │               │               │ RUNBOOK-001  │
+  │ enrollment runbook or   │ none          │ none          │ + SPEC-009   │
+  │ install-peer            │               │               │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-002/004.PP-05:        │ SPEC-004:     │               │ Refine       │
+  │ Guacamole default creds │ partial       │ missing       │ SPEC-004     │
+  │  + seed not applied     │               │               │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-003.PP-01: No         │ none          │ none          │ Refine       │
+  │ peer-config command     │               │               │ SPEC-003     │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-003.PP-02/03: Windows │               │               │              │
+  │  secure transfer +      │ none          │ none          │ RUNBOOK-002  │
+  │ runbook                 │               │               │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │                         │ SPEC-005:     │               │              │
+  │ J-003.PP-04: No Windows │ Windows in    │ code gap (no  │ Note code    │
+  │  watchdog templates     │ scope in      │ templates)    │ gap          │
+  │                         │ spec!         │               │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-003.PP-05: os_hint    │ SPEC-003: no  │               │ Refine       │
+  │ fragile name matching   │ platform      │ fragile       │ SPEC-003     │
+  │                         │ field         │               │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │                         │ SPEC-008:     │               │              │
+  │ J-004.PP-01: Terraform  │ "remote       │ no backend.tf │ Refine       │
+  │ state not committed     │ state"        │               │ SPEC-008     │
+  │                         │ mentioned     │               │              │
+  ├─────────────────────────┼───────────────┼───────────────┼──────────────┤
+  │ J-004.PP-03: No         │ SPEC-005: not │               │ Refine       │
+  │ reconnection            │  mentioned    │ missing       │ SPEC-005     │
+  │ notification            │               │               │              │
+  └─────────────────────────┴───────────────┴───────────────┴──────────────┘
+
+  Now making all the spec updates and creating the runbooks.
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.mddocs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.md-TUI.md)
+  ⎿  Added 9 lines, removed 1 line
+       4  status: Draft
+       5  author: cristos
+       6  created: 2026-03-03
+       7 -last-updated: 2026-03-03                                       
+       7 +last-updated: 2026-03-04                                       
+       8  parent-epic: EPIC-007
+       9  linked-research: []
+      10  linked-adrs:
+      11    - ADR-006
+      12  depends-on:
+      13    - SPEC-008
+      14 +addresses:                                                     
+      15 +  - JOURNEY-001.PP-01                                          
+      16 +  - JOURNEY-001.PP-02                                          
+      17 +  - JOURNEY-001.PP-03                                          
+      18 +  - JOURNEY-002.PP-01                                          
+      19 +  - JOURNEY-002.PP-02                                          
+      20 +  - JOURNEY-002.PP-04                                          
+      21 +  - JOURNEY-004.PP-02                                          
+      22  ---
+      23  
+      24  # SPEC-009: Node Bootstrap TUI
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.mddocs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.md-TUI.md)
+  ⎿  Added 28 lines, removed 1 line
+      115  3. If hub is reachable: show status, skip to Flow 4.
+      116  4. If hub is not reachable: display status and offer two optio
+           ns:
+      117     - **Spin up hub** — runs Terraform + Ansible (requires clou
+           d credentials;
+      118 -     TUI prompts for them or reads from environment).         
+      118 +     TUI prompts for them or reads from environment). See Hub 
+          +Spinup sub-flow.                                              
+      119     - **Skip** — continue without a hub (service files will be 
+           installed but
+      120       WireGuard will not connect until the hub is available).
+      121  
+      122 +**Hub Spinup sub-flow:**                                      
+      123 +                                                              
+      124 +1. **Pre-flight summary**: Before showing the credentials form
+          +, display a                                                   
+      125 +   summary panel listing exactly which tokens and environment 
+          +variables are                                                 
+      126 +   needed for the selected provider combination. This gives th
+          +e operator a                                                  
+      127 +   chance to prepare before the form is shown (addresses JOURN
+          +EY-001.PP-01).                                                
+      128 +2. **Provider selection**: Compute provider (Hetzner / Digital
+          +Ocean) and DNS                                                
+      129 +   provider (None / Cloudflare / DigitalOcean / Hetzner DNS) a
+          +re separate                                                   
+      130 +   selectors. Tokens for unselected providers are not required
+          +.                                                             
+      131 +3. **Token pre-fill**: If provider-specific env vars are alrea
+          +dy set                                                        
+      132 +   (e.g., `HCLOUD_TOKEN`, `CLOUDFLARE_API_TOKEN`), pre-fill th
+          +e                                                             
+      133 +   corresponding fields and pre-select the matching providers.
+      134 +4. **Endpoint handling**: The hub hostname is pre-filled from 
+      135 +   `network.sops.yaml`. If the operator has not yet run `porth
+          +ole init`                                                     
+      136 +   (first-time setup), the TUI accepts a placeholder hostname 
+          +and offers to                                                 
+      137 +   update the endpoint in `network.sops.yaml` after `terraform
+          + output hub_ip`                                               
+      138 +   confirms the server is live (addresses JOURNEY-001.PP-02). 
+      139 +5. **Execution sequence**: `terraform init` → `terraform apply
+          + -auto-approve`                                               
+      140 +   → `terraform output -raw hub_ip` → `ansible-playbook site.y
+          +ml -e hub_ip=…`.                                              
+      141 +   All output streams live into the TUI RichLog.              
+      142 +6. **Post-deploy sync**: After Ansible completes successfully,
+          + the TUI                                                      
+      143 +   automatically runs `porthole sync` to push the current peer
+          + configs to the                                               
+      144 +   new hub. This ensures any peers already registered in state
+          + are enrolled on                                              
+      145 +   the new hub immediately (addresses JOURNEY-001.PP-03 / JOUR
+          +NEY-004.PP-02).                                               
+      146 +7. On success, return to Hub Check. The re-check should show t
+          +he hub as                                                     
+      147 +   reachable.                                                 
+      148 +                                                              
+      149  #### Flow 4: Node enrollment
+      150  
+      151  1. Check if this node is already registered in `network.sops.y
+           aml`.
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.mddocs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.md-TUI.md)
+  ⎿  Added 1 line, removed 1 line
+      103  
+      104  | Step | Logic |
+      105  |------|-------|
+      106 -| Age key | Check `~/.config/sops/age/keys.txt`. If absent, ge
+          -nerate with `age-keygen`. If present, show public key and offe
+          -r to regenerate (with warning). |                             
+      106 +| Age key | Check `~/.config/sops/age/keys.txt`. If absent: of
+          +fer two paths — (a) **Generate new key** (for first-time setup
+          + on this machine as operator), or (b) **Transfer key from anot
+          +her machine** — show the exact `scp` command the operator can 
+          +run on an already-enrolled machine to copy their key to this o
+          +ne, then re-check (addresses JOURNEY-002.PP-01). If present, s
+          +how public key and offer to regenerate (with warning). |      
+      107  | `.sops.yaml` | Check for `.sops.yaml` in repo root. If absen
+           t, write from age public key. |
+      108  | `network.sops.yaml` | Check for state file. If absent, promp
+           t for hub endpoint and run `porthole init`. If present, load a
+           nd display summary (peer count, endpoint). Offer to re-initial
+           ize (destructive, requires confirmation). |
+      109  
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.mddocs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.md-TUI.md)
+  ⎿  Added 24 lines, removed 7 lines
+      148  
+      149  #### Flow 4: Node enrollment
+      150  
+      151 -1. Check if this node is already registered in `network.sops.y
+          -aml`.                                                         
+      152 -2. If not registered: prompt for node name and role, run `port
+          -hole add <name> --role <role>`, then `porthole sync`.         
+      153 -3. If already registered: show registration details, offer to 
+          -re-sync (`porthole sync`).                                    
+      151 +1. Check if this node is already registered in `network.sops.y
+          +aml`                                                          
+      152 +   (by matching the current machine's hostname or a name the o
+          +perator provides).                                            
+      153 +2. If not registered: prompt for node name, role (workstation 
+          +/ server / family),                                           
+      154 +   and platform (linux / macos / windows). Run `porthole add <
+          +name> --role <role>                                           
+      155 +   --platform <platform>`, then `porthole sync`.              
+      156 +3. If already registered: show registration details, offer to 
+          +re-sync                                                       
+      157 +   (`porthole sync`).                                         
+      158  4. Run `porthole gen-peer-scripts <name> --out peer-scripts/<n
+           ame>/`.
+      155 -5. Install service files:                                     
+      156 -   - **Linux:** copy to `/etc/systemd/system/`, `systemctl dae
+          -mon-reload`, `systemctl enable --now`.                        
+      157 -   - **macOS:** copy to `/Library/LaunchDaemons/`, `launchctl 
+          -load -w`.                                                     
+      158 -6. Show final status: WireGuard interface up, hub ping result,
+          - status server URL.                                           
+      159 +5. Install service files via `porthole install-peer <name>` (a
+          +ddresses                                                      
+      160 +   JOURNEY-002.PP-04 — this CLI command must exist; see SPEC-0
+          +03 for its                                                    
+      161 +   definition):                                               
+      162 +   - **Linux:** copies scripts to system paths, runs `systemct
+          +l daemon-reload`,                                             
+      163 +     enables and starts watchdog timer, tunnel service, and st
+          +atus server.                                                  
+      164 +   - **macOS:** copies plists to `/Library/LaunchDaemons/`, ru
+          +ns                                                            
+      165 +     `launchctl load -w` for each.                            
+      166 +6. Apply the local WireGuard config and bring the interface up
+          +.                                                             
+      167 +7. Show final status: WireGuard interface up, hub ping result,
+          + status server URL.                                           
+      168  
+      169 +Notes:                                                        
+      170 +- This flow runs on the machine being enrolled. The operator m
+          +ust have write                                                
+      171 +  access to `/etc/wireguard/` and `/etc/systemd/system/` (Linu
+          +x) or                                                         
+      172 +  `/Library/LaunchDaemons/` (macOS) — `sudo` is required.     
+      173 +- The TUI should handle `sudo` prompts gracefully (e.g., promp
+          +t for password                                                
+      174 +  in the TUI itself, or show a pre-flight warning that the ope
+          +rator will be                                                 
+      175 +  prompted for their password).                               
+      176 +                                                              
+      177  ### Idempotency
+      178  
+      179  Every step checks current state before acting. Running `./setu
+           p.sh` on a
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.mddocs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.md-TUI.md)
+  ⎿  Added 16 lines, removed 2 lines
+      209  
+      210  - **Given** a machine where `network.sops.yaml` exists but the
+            age key is absent,
+      211    **when** `./setup.sh` is run,
+      212 -  **then** the TUI detects the mismatch, explains it, and offe
+          -rs recovery options                                           
+      213 -  (provide key, generate new key + re-initialize state).      
+      212 +  **then** the TUI detects the mismatch, explains it, and offe
+          +rs recovery options:                                          
+      213 +  (a) transfer key from another machine (shows `scp` command),
+          + or                                                           
+      214 +  (b) generate new key + re-initialize state.                 
+      215  
+      216 +- **Given** a hub that has just been spun up via the TUI (Terr
+          +aform + Ansible                                               
+      217 +  complete),                                                  
+      218 +  **when** the Ansible playbook finishes successfully,        
+      219 +  **then** the TUI automatically runs `porthole sync` and show
+          +s its output before                                           
+      220 +  returning to Hub Check.                                     
+      221 +                                                              
+      222 +- **Given** a hub spinup where the compute and DNS providers r
+          +equire different API                                          
+      223 +  tokens,                                                     
+      224 +  **when** the operator reaches the Hub Spinup screen,        
+      225 +  **then** a pre-flight panel lists exactly which environment 
+          +variables and tokens                                          
+      226 +  are required for the selected provider combination, before t
+          +he credentials form                                           
+      227 +  is shown.                                                   
+      228 +                                                              
+      229  - **Given** `./setup.sh --check` (non-interactive flag),
+      230    **then** the TUI prints a status summary and exits 0 if all 
+           steps are complete,
+      231    or exits 1 with a list of incomplete steps.
+
+⏺ Now update SPEC-003 to add the platform field and porthole install-peer
+  command.
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.mddocs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-0
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md03)-WireGuard-Hub-and-Mesh-Network.md)
+  ⎿  Added 4 lines, removed 1 line
+       4  status: Implemented
+       5  author: cristos
+       6  created: 2026-03-03
+       7 -last-updated: 2026-03-03                                       
+       7 +last-updated: 2026-03-04                                       
+       8  parent-epic: EPIC-001
+       9  linked-research:
+      10    - SPIKE-007
+      11  linked-adrs:
+      12    - ADR-004
+      13  depends-on: []
+      14 +addresses:                                                     
+      15 +  - JOURNEY-003.PP-01                                          
+      16 +  - JOURNEY-003.PP-05                                          
+      17  ---
+      18  
+      19  # SPEC-003: WireGuard Hub & Mesh Network
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.mddocs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-0
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md03)-WireGuard-Hub-and-Mesh-Network.md)
+  ⎿  Added 3 lines, removed 1 line
+       92  - **`network.sops.yaml` schema**: Canonical structure for defi
+           ning peers,
+       93    including: peer name, WireGuard public key, WireGuard privat
+           e key
+       94    (encrypted), assigned IP, DNS name, role (hub/workstation/se
+           rver/family),
+       95 -  reverse SSH port (2200+N), and optional metadata.           
+       95 +  platform (linux/macos/windows — optional, used by `seed-guac
+          +` to select                                                   
+       96 +  the correct remote desktop protocol), reverse SSH port (2200
+          ++N), and                                                      
+       97 +  optional metadata. See updated schema below.                
+       98  - **Jinja2 templates**:
+       99    - `templates/hub-wg0.conf.j2` — hub WireGuard config with al
+           l peer stanzas
+      100    - `templates/peer-wg0.conf.j2` — individual peer WireGuard c
+           onfig
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.mddocs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-0
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md03)-WireGuard-Hub-and-Mesh-Network.md)
+  ⎿  Added 21 lines
+      190        private_key: <SOPS-encrypted>
+      191        dns_name: mom-imac
+      192        role: family
+      193 +      platform: macos        # optional: linux | macos | windo
+          +ws                                                            
+      194        reverse_ssh_port: 2210
+      195 +    - name: dad-pc                                            
+      196 +      ip: 10.100.0.11                                         
+      197 +      public_key: <cleartext>                                 
+      198 +      private_key: <SOPS-encrypted>                           
+      199 +      dns_name: dad-pc                                        
+      200 +      role: family                                            
+      201 +      platform: windows      # controls RDP vs VNC vs xrdp in 
+          +seed-guac                                                     
+      202 +      reverse_ssh_port: 2211                                  
+      203  ```
+      204  
+      205 +**`platform` field** (optional):                              
+      206 +                                                              
+      207 +| Value | Default behavior in `seed-guac` |                   
+      208 +|-------|----------------------------------|                  
+      209 +| `linux` | xrdp (RDP on port 3389) + SSH |                   
+      210 +| `macos` | VNC / Screen Sharing (port 5900) + SSH |          
+      211 +| `windows` | RDP (port 3389) + SSH |                         
+      212 +| *(absent)* | Inferred from peer `name` if it contains "windo
+          +ws" or "mac"; otherwise defaults to `linux` — **unreliable, us
+          +e explicit field** |                                          
+      213 +                                                              
+      214 +The `platform` field is set once at enrollment (`porthole add 
+          +<name> --platform <value>`)                                   
+      215 +and stored in `network.sops.yaml`. It is not a secret and is n
+          +ot SOPS-encrypted.                                            
+      216 +                                                              
+      217  ### CoreDNS configuration
+      218  
+      219  CoreDNS listens on `10.100.0.1:53` (WireGuard interface only).
+            The `.wg`
+
+⏺ Now add the porthole install-peer command to SPEC-003's scope and acceptance
+  criteria:
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.mddocs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-0
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md03)-WireGuard-Hub-and-Mesh-Network.md)
+  ⎿  Added 32 lines
+      115  - **SOPS/age encryption**: All private keys encrypted in repo.
+            Age key on
+      116    operator workstation and VPS only.
+      117  
+      118 +### Porthole CLI extensions (gap fills)                       
+      119 +                                                              
+      120 +The following CLI commands extend the base porthole CLI to add
+          +ress gaps                                                     
+      121 +identified in JOURNEY-002 and JOURNEY-003:                    
+      122 +                                                              
+      123 +**`porthole add <name> --role <role> --platform <platform>`** 
+      124 +- Adds `--platform` flag to the existing `add` command.       
+      125 +- Stores the platform in the peer record in `network.sops.yaml
+          +`.                                                            
+      126 +- Valid values: `linux` (default), `macos`, `windows`.        
+      127 +                                                              
+      128 +**`porthole peer-config <name>`**                             
+      129 +- Outputs the decrypted `wg0.conf` for a single named peer to 
+          +stdout (or                                                    
+      130 +  `--out <file>`).                                            
+      131 +- Prints a warning that the file contains the peer's WireGuard
+          + private key                                                  
+      132 +  in plaintext and recommends deleting it after transfer.     
+      133 +- Addresses JOURNEY-003.PP-01: provides a dedicated command fo
+          +r extracting                                                  
+      134 +  the peer config needed for Windows enrollment without the fu
+          +ll                                                            
+      135 +  `gen-peer-scripts` bundle.                                  
+      136 +                                                              
+      137 +**`porthole install-peer <name>`**                            
+      138 +- Installs generated peer scripts (from `gen-peer-scripts`) in
+          +to system                                                     
+      139 +  directories and enables services. Platform-aware:           
+      140 +  - **Linux**: copies watchdog/tunnel/status scripts to `/usr/
+          +local/bin/`,                                                  
+      141 +    copies systemd units to `/etc/systemd/system/`, runs `daem
+          +on-reload`,                                                   
+      142 +    enables and starts each unit.                             
+      143 +  - **macOS**: copies plists to `/Library/LaunchDaemons/`, run
+          +s                                                             
+      144 +    `launchctl load -w` for each.                             
+      145 +- Requires sudo / elevated permissions.                       
+      146 +- Idempotent: re-running on an already-installed peer re-copie
+          +s and                                                         
+      147 +  re-enables without error.                                   
+      148 +- Addresses JOURNEY-002.PP-04.                                
+      149 +                                                              
+      150  ### Out of scope
+      151  
+      152  - **Automation tooling**: The `porthole` CLI (EPIC-002) automa
+           tes this spec's
+
+⏺ Now update SPEC-004 for the Guacamole first-run and admin password gaps:
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.mddocs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md-004)-Guacamole-Remote-Desktop-Gateway.md)
+  ⎿  Added 4 lines, removed 1 line
+       4  status: Implemented
+       5  author: cristos
+       6  created: 2026-03-03
+       7 -last-updated: 2026-03-03                                       
+       7 +last-updated: 2026-03-04                                       
+       8  parent-epic: EPIC-001
+       9  linked-research:
+      10    - SPIKE-004
+     ...
+      13    - ADR-005
+      14  depends-on:
+      15    - SPEC-003
+      16 +addresses:                                                     
+      17 +  - JOURNEY-002.PP-05                                          
+      18 +  - JOURNEY-004.PP-04                                          
+      19  ---
+      20  
+      21  # SPEC-004: Guacamole Remote Desktop Gateway
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.mddocs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md-004)-Guacamole-Remote-Desktop-Gateway.md)
+  ⎿  Added 10 lines
+       86  9. xrdp connection to a Linux peer succeeds via Guacamole.
+       87  10. VNC connection to a macOS peer (Screen Sharing) succeeds v
+           ia Guacamole.
+       88  11. SSH connection to any peer succeeds via Guacamole.
+       89 +12. The default `guacadmin` password is **not** `guacadmin` af
+          +ter deployment —                                              
+       90 +    it is set to the value stored in `network.sops.yaml` under
+       91 +    `guacamole_admin_password` (SOPS-encrypted). The Ansible `
+          +guacamole` role                                               
+       92 +    applies this password via SQL on every deploy (idempotent 
+          +UPDATE).                                                      
+       93 +13. Running `porthole seed-guac | porthole apply-guac` (or equ
+          +ivalent) applies                                              
+       94 +    the seed SQL to the Guacamole PostgreSQL container without
+          + manual                                                       
+       95 +    `docker exec` steps. The `porthole apply-guac` command (or
+          + a `--apply`                                                  
+       96 +    flag on `seed-guac`) runs the SQL via `docker exec` on the
+          + hub.                                                         
+       97 +14. Re-running seed generation after adding new peers adds new
+          + connection                                                   
+       98 +    entries without removing existing ones (INSERT ... ON CONF
+          +LICT DO NOTHING).                                             
+       99  
+      100  ## Scope & Constraints
+      101  
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.mddocs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md-004)-Guacamole-Remote-Desktop-Gateway.md)
+  ⎿  Added 14 lines, removed 5 lines
+      116    certificate issuance.
+      117  - **Connection seeding**: SQL script generated from `network.s
+           ops.yaml` that
+      118    populates Guacamole's database with connections for each wor
+           kstation/family
+      119 -  peer. Protocol selection based on peer role and OS:         
+      120 -  - Linux workstations: xrdp (RDP on port 3389) + SSH         
+      121 -  - macOS workstations: VNC (Screen Sharing on port 5900) + SS
+          -H                                                             
+      122 -  - Windows workstations: RDP (port 3389) + SSH (if available)
+      123 -  - Servers: SSH only                                         
+      119 +  peer. Protocol selection based on peer `platform` field (see
+          + SPEC-003):                                                   
+      120 +  - `platform: linux` (or role server): xrdp (RDP on port 3389
+          +) + SSH                                                       
+      121 +  - `platform: macos`: VNC / Screen Sharing (port 5900) + SSH 
+      122 +  - `platform: windows`: RDP (port 3389) + SSH (if available) 
+      123 +  - Servers (any platform): SSH only                          
+      124 +  Seed SQL is applied to the Guacamole PostgreSQL container vi
+          +a                                                             
+      125 +  `porthole seed-guac --apply` (runs `docker exec -i guacamole
+          +-postgres psql ...`                                           
+      126 +  via SSH to the hub). Requires the hub to be reachable.      
+      127 +- **Admin credential bootstrap**: The Guacamole admin password
+          + is stored                                                    
+      128 +  encrypted in `network.sops.yaml` under `guacamole_admin_pass
+          +word`. The                                                    
+      129 +  Ansible `guacamole` role runs an SQL `UPDATE` to set this pa
+          +ssword on every                                               
+      130 +  deploy. On first deploy, if the field is absent from state, 
+          +the Ansible role                                              
+      131 +  generates a random password, stores it in state (re-encrypts
+          + with SOPS), and                                              
+      132 +  applies it. This eliminates the `guacadmin/guacadmin` defaul
+          +t credential.                                                 
+      133  - **Authentication**: Database auth (local users) + TOTP exten
+           sion. TOTP
+      134    bypass for connections from the WireGuard subnet (`10.100.0.
+           0/24`) —
+      135    being on the mesh is sufficient proof of authorization.
+
+⏺ Now update SPEC-005 for the Windows watchdog code gap and add reconnect
+  notification:
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.mddocs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-0
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md05)-Node-Health-and-Recovery-Agent.md)
+  ⎿  Added 4 lines, removed 1 line
+       4  status: Implemented
+       5  author: cristos
+       6  created: 2026-03-03
+       7 -last-updated: 2026-03-03                                       
+       7 +last-updated: 2026-03-04                                       
+       8  parent-epic: EPIC-001
+       9  linked-research:
+      10    - SPIKE-006
+      11  linked-adrs: []
+      12  depends-on:
+      13    - SPEC-003
+      14 +addresses:                                                     
+      15 +  - JOURNEY-003.PP-04                                          
+      16 +  - JOURNEY-004.PP-03                                          
+      17  ---
+      18  
+      19  # SPEC-005: Node Health & Recovery Agent
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.mddocs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-0
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md05)-Node-Health-and-Recovery-Agent.md)
+  ⎿  Added 6 lines
+      82     fires immediately rather than waiting for the next timer int
+          erval.
+      83  6. Watchdog logs to syslog/journald (Linux), system log (macOS)
+          , or Event
+      84     Log (Windows) with sufficient detail for debugging.
+      85 +7. When the watchdog **successfully reconnects** a tunnel (Wire
+         +Guard restart                                                  
+      86 +   succeeded and hub ping passes), it logs a structured reconne
+         +ct event:                                                      
+      87 +   `porthole-watchdog: reconnected peer=<name> after=<N>s`. Thi
+         +s enables                                                      
+      88 +   `porthole status` to display "reconnected N minutes ago" alo
+         +ngside the                                                     
+      89 +   handshake timestamp, giving the operator visibility into rec
+         +overy events                                                   
+      90 +   (addresses JOURNEY-004.PP-03).                              
+      91  
+      92  ### Layer 2: Reverse SSH Tunnel
+      93  
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.mddocs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-0
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md05)-Node-Health-and-Recovery-Agent.md)
+  ⎿  Added 6 lines, removed 1 line
+      121    script adapted for macOS (`wg-quick` path, `scutil` for DNS,
+            wake
+      122    notification via `com.apple.wake` or `SleepWatcher`).
+      123  - **Windows**: Task Scheduler task with 2-minute repeat trigge
+           r. PowerShell
+      124 -  health-check script. Wake trigger for post-sleep recovery.  
+      124 +  health-check script (`wg-watchdog.ps1`). Wake trigger for po
+          +st-sleep                                                      
+      125 +  recovery. Generated by `porthole gen-peer-scripts` alongside
+          + the Linux/macOS                                              
+      126 +  scripts. **Note:** Windows watchdog templates are not yet im
+          +plemented in                                                  
+      127 +  `gen-peer-scripts` — this is a known code gap vs. this spec.
+          + The template                                                 
+      128 +  `templates/peer-scripts/wg-watchdog.ps1.j2` and its Task Sch
+          +eduler XML                                                    
+      129 +  export need to be added (addresses JOURNEY-003.PP-04).      
+      130  - **`reresolve-dns.sh`**: Resolves `hub.yourdomain.com`, compa
+           res to current
+      131    WireGuard endpoint, updates via `wg set` if changed.
+      132  
+
+⏺ Now update SPEC-008 for the Terraform state backend gap:
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-Infrastructure-as-Code.mddocs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-In
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-Infrastructure-as-Code.mdfrastructure-as-Code.md)
+  ⎿  Added 3 lines, removed 1 line
+       4  status: Draft
+       5  author: cristos
+       6  created: 2026-03-03
+       7 -last-updated: 2026-03-03                                       
+       7 +last-updated: 2026-03-04                                       
+       8  parent-epic: EPIC-007
+       9  linked-research:
+      10    - SPIKE-007
+      11  linked-adrs:
+      12    - ADR-006
+      13  depends-on: []
+      14 +addresses:                                                     
+      15 +  - JOURNEY-004.PP-01                                          
+      16  ---
+      17  
+      18  # SPEC-008: Hub Infrastructure as Code
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-Infrastructure-as-Code.mddocs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-In
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-Infrastructure-as-Code.mdfrastructure-as-Code.md)
+  ⎿  Added 10 lines, removed 2 lines
+      112  - `ansible/` directory with a hub playbook covering all hub se
+           rvices.
+      113  - Ansible reads porthole state (decrypted via SOPS) to populat
+           e WireGuard peers,
+      114    CoreDNS zone, and tunnel `authorized_keys`.
+      115 -- Terraform remote state: at minimum, local state with a docum
+          -ented path; remote                                            
+      116 -  backend (e.g., S3, Terraform Cloud) as a configurable option
+          -.                                                             
+      115 +- Terraform state backend: the `terraform/` and `terraform-het
+          +zner/` directories                                            
+      116 +  MUST include a `backend.tf` that configures a remote state b
+          +ackend. The                                                   
+      117 +  reference implementation uses Terraform Cloud (HCP) as the b
+          +ackend — it is                                                
+      118 +  free for small teams and eliminates the risk of losing `terr
+          +aform.tfstate`                                                
+      119 +  when the operator's workstation is unavailable. A local back
+          +end with a clearly                                            
+      120 +  documented backup path is acceptable as a fallback.         
+      121 +  **Rationale**: without remote state, a hub rebuild from a di
+          +fferent machine                                               
+      122 +  (e.g., if the original workstation is also unavailable) leav
+          +es Terraform with                                             
+      123 +  no record of existing resources, risking orphaned DNS record
+          +s, firewall rules,                                            
+      124 +  or duplicate server charges (addresses JOURNEY-004.PP-01).  
+      125  
+      126  **Not in scope:**
+      127  - Multi-region or multi-hub deployments.
+
+⏺ Update(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-Infrastructure-as-Code.mddocs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-In
+        ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/spec/Draft/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-Infrastructure-as-Code.mdfrastructure-as-Code.md)
+  ⎿  Added 5 lines
+      104    **when** the Ansible playbook runs against the hub, **then**
+            the new peer's
+      105    WireGuard config and CoreDNS entry are present on the hub.
+      106  
+      107 +- **Given** the operator is working from a different machine t
+          +han the one                                                   
+      108 +  originally used to provision the hub (e.g., the original wor
+          +kstation is                                                   
+      109 +  unavailable), **when** `terraform apply` is run, **then** Te
+          +rraform retrieves                                             
+      110 +  existing state from the remote backend and does not create d
+          +uplicate resources.                                           
+      111 +                                                              
+      112  ## Scope & Constraints
+      113  
+      114  **In scope:**
+
+⏺ Now create the two runbooks. First let me set up the runbook directory:
+
+⏺ Bash(mkdir -p \
+        "/Users/cristos/Documents/code/iac-remote-desktop-node/docs/runbook/(RUN
+      BOOK-001)-Linux-macOS-Node-Enrollment" \…)
+  ⎿  Done
+
+⏺ Write(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/runbook/(RUNBOOK-001)-Linux-macOS-Node-Enrollment/(RUNBOOK-001)-Linux-macOS-Node-Enrollment.mddocs/runbook/(RUNBOOK-001)-Linux-macOS-Node-Enrollment/(RUNBOOK-001)-Lin
+       ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/runbook/(RUNBOOK-001)-Linux-macOS-Node-Enrollment/(RUNBOOK-001)-Linux-macOS-Node-Enrollment.mdux-macOS-Node-Enrollment.md)
+  ⎿  Wrote 255 lines to docs/runbook/(RUNBOOK-001)-Linux-macOS-Node-Enrollm
+     ent/(RUNBOOK-001)-Linux-macOS-Node-Enrollment.md
+       1 ---
+       2 title: "Linux/macOS Node Enrollment"
+       3 artifact: RUNBOOK-001
+       4 status: Draft
+       5 mode: manual
+       6 trigger: on-demand
+       7 author: cristos
+       8 created: 2026-03-04
+       9 last-updated: 2026-03-04
+      10 validates:
+     … +245 lines (ctrl+o to expand)
+
+⏺ Write(ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/runbook/(RUNBOOK-002)-Windows-Family-Machine-Enrollment/(RUNBOOK-002)-Windows-Family-Machine-Enrollment.mddocs/runbook/(RUNBOOK-002)-Windows-Family-Machine-Enrollment/(RUNBOOK-00
+       ile:///Users/cristos/Documents/code/iac-remote-desktop-node/docs/runbook/(RUNBOOK-002)-Windows-Family-Machine-Enrollment/(RUNBOOK-002)-Windows-Family-Machine-Enrollment.md2)-Windows-Family-Machine-Enrollment.md)
+  ⎿  Wrote 287 lines to docs/runbook/(RUNBOOK-002)-Windows-Family-Machine-E
+     nrollment/(RUNBOOK-002)-Windows-Family-Machine-Enrollment.md
+       1 ---
+       2 title: "Windows Family Machine Enrollment"
+       3 artifact: RUNBOOK-002
+       4 status: Draft
+       5 mode: manual
+       6 trigger: on-demand
+       7 author: cristos
+       8 created: 2026-03-04
+       9 last-updated: 2026-03-04
+      10 validates:
+     … +277 lines (ctrl+o to expand)
+
+⏺ Now create the runbook README and index, and refresh all affected indexes.
+
+⏺ Write(docs/runbook/README.md)
+  ⎿  Wrote 25 lines to docs/runbook/README.md
+      1 # Runbooks
+      2 
+      3 Executable validation and operational procedures for the Porthole
+         system. Runbooks bridge the gap between declarative specs ("did 
+        we build the right thing?") and operational confidence ("does the
+         thing work when exercised?").
+      4 
+      5 See `list-runbooks.md` for the full index.
+      6 
+      7 ## Artifact format
+      8 
+      9 Each runbook lives in its own folder:
+     … +15 lines (ctrl+o to expand)
+
+⏺ Write(docs/runbook/list-runbooks.md)
+  ⎿  Wrote 8 lines to docs/runbook/list-runbooks.md
+      1 # Runbook Index
+      2 
+      3 ## Draft
+      4 
+      5 | ID | Title | Mode | Validates | Last Updated | Commit |
+      6 |----|-------|------|-----------|--------------|--------|
+      7 | [RUNBOOK-001](./\(RUNBOOK-001\)-Linux-macOS-Node-Enrollment/\(R
+        UNBOOK-001\)-Linux-macOS-Node-Enrollment.md) | Linux/macOS Node E
+        nrollment | manual | SPEC-009, SPEC-003, SPEC-005 | 2026-03-04 | 
+        fb02218 |
+      8 | [RUNBOOK-002](./\(RUNBOOK-002\)-Windows-Family-Machine-Enrollme
+        nt/\(RUNBOOK-002\)-Windows-Family-Machine-Enrollment.md) | Window
+        s Family Machine Enrollment | manual | SPEC-003, SPEC-004, SPEC-0
+        05 | 2026-03-04 | fb02218 |
+
+⏺ Now refresh the spec list index to reflect the updated last-updated dates:
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(docs/spec/list-specs.md)
+  ⎿  Added 2 lines, removed 2 lines
+       4  
+       5  | ID | Title | Author | Created | Last Updated | Commit | Notes
+           |
+       6  |----|-------|--------|---------|--------------|--------|------
+          -|
+       7 -| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 
+         -| 2026-03-03 | 2ec07f7 | Terraform for VPS lifecycle; Ansible f
+         -or hub config (WireGuard, CoreDNS, nftables, Guacamole, Caddy) 
+         -|                                                              
+       8 -| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-0
+         -3-03 | 2ec07f7 | setup.sh → Textual app; prereqs, secrets, hub 
+         -check, node enrollment |                                       
+       7 +| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 
+         +| 2026-03-04 | fb02218 | Terraform for VPS lifecycle; Ansible f
+         +or hub config (WireGuard, CoreDNS, nftables, Guacamole, Caddy);
+         + addresses J-004.PP-01 remote state |                          
+       8 +| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-0
+         +3-04 | fb02218 | setup.sh → Textual app; prereqs, secrets, hub 
+         +check, hub spinup + sync, node enrollment + install-peer |     
+       9  
+      10  ## Review
+      11  
+
+⏺ Update(docs/spec/list-specs.md)
+  ⎿  Added 3 lines, removed 3 lines
+      19  
+      20  | ID | Title | Author | Created | Last Updated | Commit | Notes
+           |
+      21  |----|-------|--------|---------|--------------|--------|------
+          -|
+      22 -| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-0
+         -3 | 2026-03-03 | d46e0d2 | porthole CLI implements all template
+         -s, state schema, modules |                                     
+      23 -| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-
+         -03-03 | 2026-03-03 | 068a4f5 | Docker Compose stack, Caddy TLS,
+         - seed-guac command |                                           
+      24 -| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-0
+         -3 | 2026-03-03 | 068a4f5 | wg-watchdog, reverse SSH tunnel, gen
+         --peer-scripts command |                                        
+      22 +| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-0
+         +3 | 2026-03-04 | fb02218 | porthole CLI implements all template
+         +s, state schema, modules; adds platform field, peer-config, ins
+         +tall-peer |                                                    
+      23 +| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-
+         +03-03 | 2026-03-04 | fb02218 | Docker Compose stack, Caddy TLS,
+         + seed-guac command; adds admin password in state, --apply flag 
+         +|                                                              
+      24 +| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-0
+         +3 | 2026-03-04 | fb02218 | wg-watchdog, reverse SSH tunnel, gen
+         +-peer-scripts; notes Windows watchdog code gap; adds reconnect 
+         +event logging |                                                
+      25  | SPEC-006 | Client Node Status Web UI | cristos | 2026-03-03 |
+           2026-03-03 | de7cdd1 | Python stdlib HTTP server; wg status + 
+          restart button on port 8888 |
+      26  | SPEC-007 | Operator Dashboard | cristos | 2026-03-03 | 2026-0
+          3-03 | 6738203 | porthole dashboard command; fleet status via S
+          SH on port 8080 |
+      27  
+
+⏺ Bash(bash .claude/skills/spec-management/scripts/specwatch.sh touch
+      2>/dev/null; echo done)
+  ⎿  specwatch: sentinel refreshed.
+     done
+
+⏺ Now commit everything via the push agent:
+
+⏺ Agent(Commit and push journey and spec work)
+  ⎿  Done (37 tool uses · 65.2k tokens · 2m 10s)
+  (ctrl+o to expand)
+
+⏺ All pushed and hash-stamped. Here's a summary of what was done:
+
+  ---
+  What was created
+
+  4 Journey maps (docs/journey/)
+
+  ┌─────────────┬──────────────────────┬────────────────────────────────────┐
+  │     ID      │       Journey        │          Key pain points           │
+  ├─────────────┼──────────────────────┼────────────────────────────────────┤
+  │             │ Operator Spins Up a  │ Pre-flight token checklist, FQDN   │
+  │ JOURNEY-001 │ Fresh Hub            │ before server exists, no sync      │
+  │             │                      │ after rebuild                      │
+  ├─────────────┼──────────────────────┼────────────────────────────────────┤
+  │             │ Operator Enrolls a   │ Age key transfer, TUI ends at Hub  │
+  │ JOURNEY-002 │ Linux/macOS Node     │ Check (no enrollment screen), no   │
+  │             │                      │ install-peer command               │
+  ├─────────────┼──────────────────────┼────────────────────────────────────┤
+  │             │ Operator Enrolls a   │ No peer-config command, no secure  │
+  │ JOURNEY-003 │ Windows Family       │ transfer guidance, no Windows      │
+  │             │ Machine              │ watchdog                           │
+  ├─────────────┼──────────────────────┼────────────────────────────────────┤
+  │             │ Hub Disaster         │ Terraform state loss, no auto-sync │
+  │ JOURNEY-004 │ Recovery             │  after rebuild, no reconnect       │
+  │             │                      │ notification                       │
+  └─────────────┴──────────────────────┴────────────────────────────────────┘
+
+  2 Runbooks (docs/runbook/)
+  - RUNBOOK-001: Linux/macOS Node Enrollment — step-by-step manual enrollment
+  until SPEC-009 Flow 4 ships
+  - RUNBOOK-002: Windows Family Machine Enrollment — full operator procedure
+  including WireGuard import, RDP setup, and Guacamole verification
+
+  ---
+  Spec gaps found and addressed
+
+  Spec: SPEC-009 (Draft)
+  What changed: Added Hub Spinup sub-flow with pre-flight token summary,
+    placeholder FQDN handling, post-deploy auto-sync; refined Secrets screen
+    age-key-transfer path; added porthole install-peer to Flow 4; added 3 new
+    acceptance criteria
+  ────────────────────────────────────────
+  Spec: SPEC-003 (Implemented)
+  What changed: Added platform field to Peer schema (linux/macos/windows); added
+
+    porthole peer-config, porthole add --platform, and porthole install-peer
+    commands to scope
+  ────────────────────────────────────────
+  Spec: SPEC-004 (Implemented)
+  What changed: Added Guacamole admin password stored in state (eliminates
+    guacadmin/guacadmin default); added seed-guac --apply command to auto-apply
+    SQL; updated protocol selection to use platform field
+  ────────────────────────────────────────
+  Spec: SPEC-005 (Implemented)
+  What changed: Noted Windows watchdog templates as a known code gap; added
+    structured reconnect event logging to watchdog
+  ────────────────────────────────────────
+  Spec: SPEC-008 (Draft)
+  What changed: Made Terraform remote state backend explicit in scope with
+    rationale; added acceptance criterion for cross-machine rebuild
+
+  ---
+  Notable code gaps (spec says it, code doesn't do it yet)
+
+  - SPEC-005: Windows watchdog PowerShell template + Task Scheduler XML — spec
+  has been in scope since creation but gen-peer-scripts never generated them
+  - SPEC-004: seed-guac --apply and admin password bootstrap — not yet in the
+  CLI or Ansible
+  - SPEC-003: porthole peer-config, porthole add --platform, porthole 
+  install-peer — new commands not yet implemented
+  - SPEC-009: Enrollment screen (Flow 4) — spec is complete, code has the 4
+  existing screens but not enrollment.py / service_install.py
+
+✻ Baked for 17m 8s
