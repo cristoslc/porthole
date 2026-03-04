@@ -1,7 +1,7 @@
 ---
 title: "Hub Infrastructure as Code"
 artifact: SPEC-008
-status: Draft
+status: Approved
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-04
@@ -17,7 +17,7 @@ addresses:
 
 # SPEC-008: Hub Infrastructure as Code
 
-**Status:** Draft
+**Status:** Approved
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
