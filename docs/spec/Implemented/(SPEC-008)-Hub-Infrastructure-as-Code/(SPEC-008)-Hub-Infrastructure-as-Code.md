@@ -29,7 +29,7 @@ addresses:
 |-------|------|--------|-------|
 | Draft    | 2026-03-03 | 2ec07f7 | Initial creation |
 | Approved     | 2026-03-04 | 79b2e76 | 7 gaps identified; implementation plan created in bd |
-| Implemented  | 2026-03-04 | eb16a5f | backend.tf (both providers), DO firewall ports, Guacamole schema init + seed execution + platform-aware template, guacamole_db_password in group_vars |
+| Implemented  | 2026-03-04 | e56f0ee | backend.tf (both providers), DO firewall ports, Guacamole schema init + seed execution + platform-aware template, guacamole_db_password in group_vars |
 
 ---
 
