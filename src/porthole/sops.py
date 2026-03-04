@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import subprocess
 from pathlib import Path
 
 SOPS_CONFIG_TEMPLATE = """\
 creation_rules:
   - path_regex: network\\.sops\\.yaml$
-    encrypted_regex: "^private_key$"
+    encrypted_regex: "^(private_key|guacamole_admin_password)$"
     age: "{age_key}"
 """
 

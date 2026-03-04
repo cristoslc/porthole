@@ -56,3 +56,41 @@
     chdir: /opt/guacamole
   register: compose_up
   changed_when: "'Started' in compose_up.stdout or 'Created' in compose_up.stdout"
+
+- name: Wait for Guacamole database to accept connections
+  ansible.builtin.command:
+    cmd: docker compose exec -T db pg_isready -U guacamole_user -d guacamole_db
+    chdir: /opt/guacamole
+  register: pg_ready
+  until: pg_ready.rc == 0
+  retries: 15
+  delay: 4
+  changed_when: false
+
+- name: Bootstrap Guacamole admin password
+  ansible.builtin.shell: |
+    python3 -c "
+    import hashlib, secrets, subprocess, os
+    pw = os.environ['GUAC_ADMIN_PW'].encode()
+    salt = secrets.token_bytes(32)
+    h = hashlib.sha256(pw + salt).digest()
+    sql = (
+        \"UPDATE guacamole_user SET \"
+        \"password_hash = DECODE('\" + h.hex() + \"', 'hex'), \"
+        \"password_salt = DECODE('\" + salt.hex() + \"', 'hex'), \"
+        \"password_date = NOW() \"
+        \"WHERE entity_id = (SELECT entity_id FROM guacamole_entity WHERE name = 'guacadmin');\"
+    )
+    subprocess.run(
+        ['docker', 'compose', 'exec', '-T', 'db', 'psql',
+         '-U', 'guacamole_user', '-d', 'guacamole_db', '-c', sql],
+        check=True, cwd='/opt/guacamole'
+    )
+    "
+  environment:
+    GUAC_ADMIN_PW: "{{ net.guacamole_admin_password }}"
+  args:
+    chdir: /opt/guacamole
+  no_log: true
+  changed_when: true
+  when: net.guacamole_admin_password is defined and net.guacamole_admin_password

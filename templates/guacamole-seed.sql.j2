@@ -21,7 +21,7 @@ FROM guacamole_connection c,
 WHERE c.connection_name = '{{ peer.name }}-ssh'
 ON CONFLICT DO NOTHING;
 
-{% elif peer.os_hint == "windows" %}
+{% elif peer.platform == "windows" %}
 -- RDP
 INSERT INTO guacamole_connection (connection_name, protocol)
   VALUES ('{{ peer.name }}-rdp', 'rdp')
@@ -39,7 +39,7 @@ FROM guacamole_connection c,
 WHERE c.connection_name = '{{ peer.name }}-rdp'
 ON CONFLICT DO NOTHING;
 
-{% elif peer.os_hint == "macos" %}
+{% elif peer.platform == "macos" %}
 -- VNC (Screen Sharing)
 INSERT INTO guacamole_connection (connection_name, protocol)
   VALUES ('{{ peer.name }}-vnc', 'vnc')

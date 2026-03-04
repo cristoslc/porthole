@@ -1,3 +1,5 @@
+import secrets
+
 import click
 
 from porthole import config, keys, models, sops, state
@@ -15,6 +17,8 @@ def run_init(endpoint: str, age_key: str) -> None:
     private_key, public_key = keys.generate_keypair()
     click.echo("Generated hub keypair")
 
+    guacamole_admin_password = secrets.token_urlsafe(24)
+
     hub_peer = models.Peer(
         name="hub",
         ip=str(config.HUB_IP),
@@ -29,7 +33,9 @@ def run_init(endpoint: str, age_key: str) -> None:
     network = models.Network(
         hub=hub_config,
         peers=[hub_peer],
+        guacamole_admin_password=guacamole_admin_password,
     )
 
     state.save_state(network, state_path)
     click.echo(f"Initialized network state: {state_path}")
+    click.echo("Guacamole admin password generated and stored (encrypted in state)")

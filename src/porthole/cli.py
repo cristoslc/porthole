@@ -23,11 +23,13 @@ def init(endpoint, age_key):
 @click.argument("name")
 @click.option("--role", default="workstation", type=click.Choice(["workstation", "server", "family"]),
               help="Peer role (default: workstation)")
-def add(name, role):
+@click.option("--platform", default=None, type=click.Choice(["linux", "macos", "windows"]),
+              help="OS platform — controls Guacamole protocol (linux=xrdp, macos=vnc, windows=rdp)")
+def add(name, role, platform):
     """Add a new peer to the mesh network."""
     from porthole.commands.add import run_add
 
-    run_add(name, role)
+    run_add(name, role, platform)
 
 
 @cli.command()
@@ -73,11 +75,35 @@ def gen_peer_scripts(peer_name, out_dir):
 @cli.command("seed-guac")
 @click.option("--out", "out_file", type=click.File("w"), default=None,
               help="Write SQL to file instead of stdout")
-def seed_guac(out_file):
+@click.option("--apply", is_flag=True, help="Apply SQL directly to the hub's Guacamole database via SSH")
+def seed_guac(out_file, apply):
     """Generate Guacamole connection seed SQL from network state."""
     from porthole.commands.seed_guac import run_seed_guac
 
-    run_seed_guac(out_file)
+    run_seed_guac(out_file, apply)
+
+
+@cli.command("peer-config")
+@click.argument("name")
+@click.option("--out", "out_path", type=click.Path(), default=None,
+              help="Write config to file (chmod 600)")
+def peer_config(name, out_path):
+    """Output the WireGuard config for a peer."""
+    from pathlib import Path
+    from porthole.commands.peer_config import run_peer_config
+
+    run_peer_config(name, Path(out_path) if out_path else None)
+
+
+@cli.command("install-peer")
+@click.argument("name")
+@click.option("--host", default=None,
+              help="SSH target host/IP (default: peer's WireGuard IP for linux peers)")
+def install_peer(name, host):
+    """Generate and optionally install peer scripts via SSH."""
+    from porthole.commands.install_peer import run_install_peer
+
+    run_install_peer(name, host)
 
 
 @cli.command()

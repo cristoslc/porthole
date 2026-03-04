@@ -6,7 +6,7 @@ from porthole import config, state
 from porthole.config import TEMPLATE_DIR
 
 
-def run_seed_guac(out_file) -> None:
+def run_seed_guac(out_file, apply: bool = False) -> None:
     """Generate SQL to seed Guacamole connections from network.sops.yaml."""
     state_path = config.STATE_FILE
     if not state_path.exists():
@@ -22,7 +22,19 @@ def run_seed_guac(out_file) -> None:
     template = env.get_template("guacamole-seed.sql.j2")
     sql = template.render(peers=spoke_peers)
 
-    if out_file:
+    if apply:
+        from porthole import ssh as ssh_mod
+        hub_host = network.hub.endpoint.split(":")[0]
+        ssh_mod.scp_to_host(hub_host, sql, "/tmp/guac-seed.sql")
+        try:
+            ssh_mod.ssh_run(
+                hub_host,
+                "cd /opt/guacamole && cat /tmp/guac-seed.sql | docker compose exec -T db psql -U guacamole_user -d guacamole_db",
+            )
+            click.echo("Applied Guacamole connection seed SQL.")
+        finally:
+            ssh_mod.ssh_run(hub_host, "rm -f /tmp/guac-seed.sql")
+    elif out_file:
         out_file.write(sql)
     else:
         click.echo(sql)

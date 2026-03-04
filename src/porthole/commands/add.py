@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import click
 
 from porthole import config, keys, models, render, state, subnet
 
 
-def run_add(name: str, role: str) -> None:
+def run_add(name: str, role: str, platform: str | None = None) -> None:
     """Add a new peer to the mesh network."""
     state_path = config.STATE_FILE
     if not state_path.exists():
@@ -31,6 +33,7 @@ def run_add(name: str, role: str) -> None:
         dns_name=name,
         role=role,
         reverse_ssh_port=reverse_port,
+        platform=platform,
     )
     network.peers.append(peer)
     state.save_state(network, state_path)
