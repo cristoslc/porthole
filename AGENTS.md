@@ -86,7 +86,7 @@ This project uses **bd (beads)** for all issue tracking. Do NOT use markdown TOD
 4. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
    git pull --rebase
-   bd sync
+   bd dolt push
    git push
    git status  # MUST show "up to date with origin"
    ```
