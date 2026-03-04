@@ -35,7 +35,10 @@ def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
         keep_trailing_newline=True,
     )
 
-    files = {
+    is_windows = getattr(peer, "platform", None) == "windows"
+
+    # Files rendered for all platforms
+    files: dict[str, str] = {
         "wg-watchdog.sh": "wg-watchdog.sh.j2",
         "wg-watchdog.service": "wg-watchdog.service.j2",
         "wg-watchdog.timer": "wg-watchdog.timer.j2",
@@ -46,6 +49,11 @@ def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
         "wg-status-server.service": "wg-status-server.service.j2",
         "wg-status-server.plist": "wg-status-server.plist.j2",
     }
+
+    # Windows-specific files
+    if is_windows:
+        files["wg-watchdog.ps1"] = "wg-watchdog.ps1.j2"
+        files[f"wg-watchdog-task-{peer_name}.xml"] = "wg-watchdog-task.xml.j2"
 
     ctx = dict(
         peer=peer,
@@ -61,7 +69,7 @@ def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
         out_path.write_text(rendered)
         click.echo(f"  {out_path}")
 
-    # Make scripts executable
+    # Make scripts executable (Linux/macOS only)
     (out_dir / "wg-watchdog.sh").chmod(0o755)
     (out_dir / "wg-status-server.py").chmod(0o755)
 
@@ -80,4 +88,9 @@ def run_gen_peer_scripts(peer_name: str, out_dir: Path) -> None:
     click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.porthole.watchdog.{peer_name}.plist")
     click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.porthole.tunnel.{peer_name}.plist")
     click.echo(f"  sudo launchctl load -w /Library/LaunchDaemons/com.porthole.status.{peer_name}.plist")
+    if is_windows:
+        click.echo(f"\nInstall on Windows (run PowerShell as Administrator):")
+        click.echo(f"  New-Item -ItemType Directory -Force -Path C:\\ProgramData\\Porthole")
+        click.echo(f"  Copy-Item wg-watchdog.ps1 C:\\ProgramData\\Porthole\\wg-watchdog.ps1")
+        click.echo(f"  schtasks /Create /TN \"Porthole\\wg-watchdog-{peer_name}\" /XML wg-watchdog-task-{peer_name}.xml /F")
     click.echo(f"\nStatus UI: http://<lan-ip>:8888/ (auto-starts on boot)")
