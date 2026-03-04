@@ -225,4 +225,4 @@ journey
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-04 | fb02218 | Initial creation — Linux/macOS node enrollment via TUI then CLI |
+| Draft | 2026-03-04 | 031aaaa | Initial creation — Linux/macOS node enrollment via TUI then CLI |

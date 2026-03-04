@@ -4,8 +4,8 @@
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
-| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | fb02218 | Terraform for VPS lifecycle; Ansible for hub config (WireGuard, CoreDNS, nftables, Guacamole, Caddy); addresses J-004.PP-01 remote state |
-| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | fb02218 | setup.sh → Textual app; prereqs, secrets, hub check, hub spinup + sync, node enrollment + install-peer |
+| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | Terraform for VPS lifecycle; Ansible for hub config (WireGuard, CoreDNS, nftables, Guacamole, Caddy); addresses J-004.PP-01 remote state |
+| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | setup.sh → Textual app; prereqs, secrets, hub check, hub spinup + sync, node enrollment + install-peer |
 
 ## Review
 
@@ -19,9 +19,9 @@ _No specs in this phase._
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
-| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-04 | fb02218 | porthole CLI implements all templates, state schema, modules; adds platform field, peer-config, install-peer |
-| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-04 | fb02218 | Docker Compose stack, Caddy TLS, seed-guac command; adds admin password in state, --apply flag |
-| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-04 | fb02218 | wg-watchdog, reverse SSH tunnel, gen-peer-scripts; notes Windows watchdog code gap; adds reconnect event logging |
+| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | porthole CLI implements all templates, state schema, modules; adds platform field, peer-config, install-peer |
+| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | Docker Compose stack, Caddy TLS, seed-guac command; adds admin password in state, --apply flag |
+| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | wg-watchdog, reverse SSH tunnel, gen-peer-scripts; notes Windows watchdog code gap; adds reconnect event logging |
 | SPEC-006 | Client Node Status Web UI | cristos | 2026-03-03 | 2026-03-03 | de7cdd1 | Python stdlib HTTP server; wg status + restart button on port 8888 |
 | SPEC-007 | Operator Dashboard | cristos | 2026-03-03 | 2026-03-03 | 6738203 | porthole dashboard command; fleet status via SSH on port 8080 |
 

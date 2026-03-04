@@ -177,4 +177,4 @@ journey
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-04 | fb02218 | Initial creation — first-time hub spinup via TUI |
+| Draft | 2026-03-04 | 031aaaa | Initial creation — first-time hub spinup via TUI |

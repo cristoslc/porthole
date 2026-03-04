@@ -284,4 +284,4 @@ To remove the Windows peer from the fleet:
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-04 | fb02218 | Initial creation — Windows family machine enrollment |
+| Draft | 2026-03-04 | 031aaaa | Initial creation — Windows family machine enrollment |

@@ -252,4 +252,4 @@ the fleet, run `porthole remove <node-name>` on the operator's machine and
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-04 | fb02218 | Initial creation — covers manual enrollment until SPEC-009 Flow 4 is implemented |
+| Draft | 2026-03-04 | 031aaaa | Initial creation — covers manual enrollment until SPEC-009 Flow 4 is implemented |
