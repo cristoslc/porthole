@@ -1,6 +1,6 @@
 ---
 name: spec-management
-description: Create, validate, and transition documentation artifacts (Vision, Journey, Epic, Story, Agent Spec, Spike, ADR, Persona, Runbook) and their supporting docs (architecture overviews, journey maps, competitive analyses) through their lifecycle phases. Use when the user wants to write a spec, plan a feature, create an epic, add a user story, draft an ADR, start a research spike, define a persona, create a user persona, create a runbook, define a validation procedure, update the architecture overview, document the system architecture, move an artifact to a new phase, seed an implementation plan, or validate cross-references between artifacts. When a SPEC transitions to implementation, always chain into the execution-tracking skill to create a tracked plan before any code is written. Covers any request to create, update, review, or transition spec artifacts and supporting docs.
+description: Create, validate, and transition documentation artifacts (Vision, Journey, Epic, Story, Agent Spec, Spike, ADR, Persona, Runbook, Bug) and their supporting docs (architecture overviews, journey maps, competitive analyses) through their lifecycle phases. Use when the user wants to write a spec, plan a feature, create an epic, add a user story, draft an ADR, start a research spike, define a persona, create a user persona, create a runbook, define a validation procedure, file a bug, report a defect, update the architecture overview, document the system architecture, move an artifact to a new phase, seed an implementation plan, or validate cross-references between artifacts. When a SPEC transitions to implementation, always chain into the execution-tracking skill to create a tracked plan before any code is written. Covers any request to create, update, review, or transition spec artifacts and supporting docs.
 license: UNLICENSED
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 metadata:
@@ -11,7 +11,86 @@ metadata:
 
 # Spec Management
 
-Create, transition, and validate documentation artifacts defined in AGENTS.md. The authoritative list of artifact types, phases, and hierarchy lives in AGENTS.md — this skill provides the operational procedures.
+Create, transition, and validate documentation artifacts. This skill defines the canonical artifact types, phases, and hierarchy — the ER diagram below is the summary; detailed definitions live in `references/`. If the host repo has an AGENTS.md, keep its artifact sections in sync with the skill's reference data.
+
+## Artifact relationship model
+
+```mermaid
+erDiagram
+    VISION ||--o{ EPIC : "parent-vision"
+    VISION ||--o{ JOURNEY : "parent-vision"
+    EPIC ||--o{ SPEC : "parent-epic"
+    EPIC ||--o{ STORY : "parent-epic"
+    JOURNEY ||--|{ PAIN_POINT : "PP-NN"
+    PAIN_POINT }o--o{ EPIC : "addresses"
+    PAIN_POINT }o--o{ SPEC : "addresses"
+    PAIN_POINT }o--o{ STORY : "addresses"
+    PERSONA }o--o{ JOURNEY : "linked-personas"
+    PERSONA }o--o{ STORY : "linked-stories"
+    ADR }o--o{ SPEC : "linked-adrs"
+    ADR }o--o{ EPIC : "linked-epics"
+    SPEC }o--o{ SPIKE : "linked-research"
+    SPEC ||--o| IMPL_PLAN : "seeds"
+    RUNBOOK }o--o{ EPIC : "validates"
+    RUNBOOK }o--o{ SPEC : "validates"
+    BUG }o--o{ SPEC : "affected-artifacts"
+    BUG }o--o{ EPIC : "affected-artifacts"
+    BUG ||--o| IMPL_PLAN : "fix-ref"
+    SPIKE }o--o{ ADR : "linked-research"
+    SPIKE }o--o{ EPIC : "linked-research"
+    SPIKE }o--o{ BUG : "linked-research"
+
+    EPIC {
+        string parent_vision FK
+        list success_criteria "required"
+        list depends_on "optional"
+    }
+    JOURNEY {
+        string parent_vision FK
+        list linked_personas "optional"
+    }
+    SPEC {
+        string parent_epic FK
+        list linked_research "optional"
+        list linked_adrs "optional"
+        list addresses "optional"
+    }
+    STORY {
+        string parent_epic FK
+        list addresses "optional"
+    }
+    ADR {
+        list linked_epics "optional"
+        list linked_specs "optional"
+    }
+    PERSONA {
+        list linked_journeys "optional"
+        list linked_stories "optional"
+    }
+    RUNBOOK {
+        list validates "required"
+        string parent_epic "optional"
+        string mode "agentic or manual"
+        string trigger "required"
+    }
+    BUG {
+        string severity "critical/high/medium/low"
+        list affected_artifacts "optional"
+        string discovered_in "required"
+        string fix_ref "optional"
+    }
+    SPIKE {
+        string question "required"
+        string gate "required"
+        list depends_on "optional"
+    }
+    IMPL_PLAN {
+        string origin_ref "SPEC-NNN"
+        list spec_tags "mutable"
+    }
+```
+
+**Key:** Solid lines (`||--o{`) = mandatory hierarchy. Diamond lines (`}o--o{`) = informational cross-references. SPIKE can attach to any artifact type, not just SPEC. Any artifact can declare `depends-on:` blocking dependencies on any other artifact.
 
 ## Stale reference watcher
 
@@ -29,7 +108,7 @@ The `specwatch.sh` script monitors `docs/` for file moves, renames, and deletes,
 | `status` | Show watcher status and log summary |
 | `touch` | Refresh the sentinel keepalive timer |
 
-**Log format:** When stale references are found, they are written to `.agents/specwatch.log` (gitignored) in a structured format:
+**Log format:** When stale references are found, they are written to `.agents/specwatch.log` in a structured format. This file is a runtime artifact — add `specwatch.log` to your `.gitignore` if it isn't already.
 ```
 STALE <source-file>:<line>
   broken: <relative-path-as-written>
@@ -37,24 +116,13 @@ STALE <source-file>:<line>
   artifact: <TYPE-NNN>
 ```
 
-### Specwatch check (MANDATORY pre-step)
+### Bookends for every artifact operation
 
-**Before every artifact operation** (create, edit, transition, audit), check for stale references:
+**Before:** Run `scripts/specwatch.sh scan`. If `.agents/specwatch.log` is produced, surface stale references as warnings and fix them (or acknowledge false positives) before proceeding. Delete the log when clear. The scan has no external dependencies — it uses only Python 3 and the filesystem.
 
-1. If `.agents/specwatch.log` exists and is non-empty, read its contents and surface the stale references as warnings.
-2. Present each entry: source file, line number, broken path, and suggested fix.
-3. Fix stale references before proceeding with the operation (or acknowledge them if they are false positives).
-4. After addressing, delete the log file to clear the warnings.
+**After:** Run `scripts/specwatch.sh scan` again to catch any stale references introduced by the operation itself.
 
-### Sentinel keepalive
-
-**After every artifact operation** (create, edit, transition, audit), refresh the specwatch sentinel:
-
-```bash
-scripts/specwatch.sh touch
-```
-
-This keeps the background watcher alive. If no spec-management operation runs for the timeout period (default 1 hour), the watcher self-terminates.
+The background `watch` mode (requires `fswatch`) is available for long-running sessions but is not part of the default workflow.
 
 ## Dependency graph
 
@@ -66,6 +134,7 @@ The `specgraph.sh` script builds and queries the artifact dependency graph from 
 
 | Command | What it does |
 |---------|-------------|
+| `overview` | **Default.** Hierarchy tree with status indicators + execution tracking |
 | `build` | Force-rebuild graph from frontmatter |
 | `blocks <ID>` | What does this artifact depend on? (direct dependencies) |
 | `blocked-by <ID>` | What depends on this artifact? (inverse lookup) |
@@ -75,16 +144,7 @@ The `specgraph.sh` script builds and queries the artifact dependency graph from 
 | `mermaid` | Mermaid diagram to stdout |
 | `status` | Summary table by type and phase |
 
-**When to use:**
-- Before transitioning an artifact to a new phase, run `blocks <ID>` to verify dependencies are resolved.
-- To find unblocked work, run `ready` — it lists active/planned artifacts whose dependencies are all in resolved statuses.
-- To understand the full dependency chain, run `tree <ID>` for transitive closure.
-- To generate a visual overview, pipe `mermaid` output into a `.md` file or render it directly.
-
-**Edge types:**
-- `depends-on` — explicit blocking dependency (from `depends-on:` frontmatter)
-- `parent-vision` — hierarchy edge (from `parent-vision:` frontmatter)
-- `parent-epic` — hierarchy edge (from `parent-epic:` frontmatter)
+Run `blocks <ID>` before phase transitions to verify dependencies are resolved. Run `ready` to find unblocked work. Run `tree <ID>` for transitive dependency chains.
 
 ## Lifecycle table format
 
@@ -105,8 +165,6 @@ Commit hashes reference the repo state at the time of the transition, not the co
 
 Every doc-type directory keeps a single lifecycle index (`list-<type>.md`). **Refreshing the index is the final step of every artifact operation** — creation, content edits, phase transitions, and abandonment. No artifact change is complete until the index reflects it.
 
-Use sub-agents to parallelize this work: Agent 1 should audit all lifecycle tables across docs/ for correctness. Agent 2 should check all cross-references between specs resolve to valid files. Agent 3 should verify naming conventions match our standards.
-
 ### What "refresh" means
 
 1. Read (or create) `docs/<type>/list-<type>.md`.
@@ -126,31 +184,58 @@ Use sub-agents to parallelize this work: Agent 1 should audit all lifecycle tabl
 
 This rule is referenced as the **index refresh step** in the workflows below. Do not skip it.
 
-## Auditing Artifacts
+## Auditing artifacts
 
-Use an agent to audit all spec artifacts in docs/ for lifecycle compliance — check each has valid status, hash stamps, and matching index entries — then report gaps as a structured table with file paths and missing fields.
+Audits touch every artifact, so **always parallelize with sub-agents** — serial auditing is too slow and misses the cross-cutting checks that only make sense when run together. Spawn three agents in a single turn:
 
-Always include a 1-2 sentence summary of an artifact, not just its title, in tables.
+| Agent | Responsibility |
+|-------|---------------|
+| **Lifecycle auditor** | Check every artifact in `docs/` for valid status field, lifecycle table with hash stamps, and matching row in the appropriate `list-<type>.md` index. |
+| **Cross-reference checker** | Verify all `parent-*`, `depends-on`, `linked-*`, and `addresses` frontmatter values resolve to existing artifact files. Flag dangling references. |
+| **Naming & structure validator** | Confirm directory/file names follow `(TYPE-NNN)-Title` convention, templates have required frontmatter fields, and folder-type artifacts contain a primary `.md` file. |
+
+Each agent reports gaps as a structured table with file path, issue type, and missing/invalid field. Merge the three tables into a single audit report. Always include a 1-2 sentence summary of each artifact (not just its title) in result tables.
 
 ## Status overview
 
-Run `specgraph.sh status` for a project-wide progress snapshot — one table per artifact type, listing every artifact with its ID, current phase, and title.
+When the user asks for status, progress, or "what's next?", **default to showing both spec-management and execution-tracking layers** unless they specifically ask for only one. The `overview` command is the single entry point.
 
-Run `specgraph.sh next` for a quick "what should I work on?" view — shows ready items (unblocked, in-progress or not-yet-started) with what completing each would unblock, plus any blocked items and what they're waiting on.
+### `specgraph.sh overview` (primary — use this by default)
 
-Both are read-only operations. They do not modify any files.
+Renders a hierarchy tree in the terminal showing every artifact with its status, blocking dependencies, and execution-tracking progress:
 
-### Combined "what's next?" flow
+```
+  ✓ VISION-001: Personal Agent Patterns [Active]
+  ├── → EPIC-007: Spec Management System [Active]
+  │   ├── ✓ SPEC-001: Artifact Lifecycle [Implemented]
+  │   ├── ✓ SPEC-002: Dependency Graph [Implemented]
+  │   └── → SPEC-003: Cross-reference Validation [Draft]
+  │         ↳ blocked by: SPIKE-002
+  └── → EPIC-008: Execution Tracking [Proposed]
 
-When asked "what's next?" or "what should I work on?", combine **both** layers:
+── Cross-cutting ──
+  ├── → ADR-001: Graph Storage Format [Adopted]
+  └── → PERSONA-001: Solo Developer [Validated]
 
-1. **Spec layer** — run `specgraph.sh next` to find which artifacts are ready at the planning level (all dependencies resolved).
-2. **Task layer** — invoke the **execution-tracking** skill and run `bd ready --json` to find concrete unblocked tasks in the execution backend.
-3. **Present both together:** spec-level ready items (with what they'd unblock) and task-level ready items (claimable work). If bd is not initialized or has no tasks, note that and show only the spec layer.
+── Execution Tracking ──
+  (bd status output here)
+```
 
-This ensures "what's next?" answers both "which specs can move forward?" and "which concrete tasks can I pick up right now?"
+**Status indicators:** `✓` = resolved (Complete/Implemented/Adopted/etc.), `→` = active/in-progress. Blocked dependencies show inline with `↳ blocked by:`. Cross-cutting artifacts (ADR, Persona, Runbook, Bug, Spike) appear in their own section. The execution-tracking tail calls `bd status` automatically.
+
+### Other read-only commands
+
+| Command | When to use |
+|---------|-------------|
+| `specgraph.sh status` | Flat summary table grouped by artifact type — useful for counts and phase distribution |
+| `specgraph.sh next` | Ready items + what they'd unblock, blocked items + what they need — useful for deciding what to work on |
+| `specgraph.sh mermaid` | Mermaid diagram to stdout — useful for documentation or visual export |
 
 ## Creating artifacts
+
+### Error handling
+
+When an operation fails (missing parent, number collision, script error, etc.), consult [references/troubleshooting.md](references/troubleshooting.md) for the recovery procedure. Do not improvise workarounds — the troubleshooting guide covers the known failure modes.
 
 ### Workflow
 
@@ -168,14 +253,16 @@ Each artifact type has a definition file (lifecycle phases, conventions, folder 
 
 | Type | Definition | Template |
 |------|-----------|----------|
-| Product Vision (VISION-NNN) | [references/vision-definition.md](references/vision-definition.md) | [references/vision-template.md.j2](references/vision-template.md.j2) |
-| User Journey (JOURNEY-NNN) | [references/journey-definition.md](references/journey-definition.md) | [references/journey-template.md.j2](references/journey-template.md.j2) |
-| Epic (EPIC-NNN) | [references/epic-definition.md](references/epic-definition.md) | [references/epic-template.md.j2](references/epic-template.md.j2) |
-| User Story (STORY-NNN) | [references/story-definition.md](references/story-definition.md) | [references/story-template.md.j2](references/story-template.md.j2) |
-| Agent Spec (SPEC-NNN) | [references/spec-definition.md](references/spec-definition.md) | [references/spec-template.md.j2](references/spec-template.md.j2) |
-| Research Spike (SPIKE-NNN) | [references/spike-definition.md](references/spike-definition.md) | [references/spike-template.md.j2](references/spike-template.md.j2) |
-| Persona (PERSONA-NNN) | [references/persona-definition.md](references/persona-definition.md) | [references/persona-template.md.j2](references/persona-template.md.j2) |
-| ADR (ADR-NNN) | [references/adr-definition.md](references/adr-definition.md) | [references/adr-template.md.j2](references/adr-template.md.j2) |
+| Product Vision (VISION-NNN) | [references/vision-definition.md](references/vision-definition.md) | [references/vision-template.md.template](references/vision-template.md.template) |
+| User Journey (JOURNEY-NNN) | [references/journey-definition.md](references/journey-definition.md) | [references/journey-template.md.template](references/journey-template.md.template) |
+| Epic (EPIC-NNN) | [references/epic-definition.md](references/epic-definition.md) | [references/epic-template.md.template](references/epic-template.md.template) |
+| User Story (STORY-NNN) | [references/story-definition.md](references/story-definition.md) | [references/story-template.md.template](references/story-template.md.template) |
+| Agent Spec (SPEC-NNN) | [references/spec-definition.md](references/spec-definition.md) | [references/spec-template.md.template](references/spec-template.md.template) |
+| Research Spike (SPIKE-NNN) | [references/spike-definition.md](references/spike-definition.md) | [references/spike-template.md.template](references/spike-template.md.template) |
+| Persona (PERSONA-NNN) | [references/persona-definition.md](references/persona-definition.md) | [references/persona-template.md.template](references/persona-template.md.template) |
+| ADR (ADR-NNN) | [references/adr-definition.md](references/adr-definition.md) | [references/adr-template.md.template](references/adr-template.md.template) |
+| Runbook (RUNBOOK-NNN) | [references/runbook-definition.md](references/runbook-definition.md) | [references/runbook-template.md.template](references/runbook-template.md.template) |
+| Bug (BUG-NNN) | [references/bug-definition.md](references/bug-definition.md) | [references/bug-template.md.template](references/bug-template.md.template) |
 
 ## Phase transitions
 
@@ -192,9 +279,9 @@ Phases listed in AGENTS.md are available waypoints, not mandatory gates. An arti
 
 1. Validate the target phase is reachable from the current phase (same or later in the sequence; intermediate phases may be skipped).
 2. Update the artifact's status field in frontmatter.
-3. Commit the change.
+3. Commit the transition change.
 4. Append a row to the artifact's lifecycle table with the commit hash from step 3.
-5. Amend the commit to include the hash stamp.
+5. Commit the hash stamp as a **separate commit** — never amend. Two distinct commits keeps the stamped hash reachable in git history and avoids interactive-rebase pitfalls.
 6. **Index refresh step** — move the artifact's row to the new phase table (see [Index maintenance](#index-maintenance)).
 
 ### Completion rules
@@ -205,34 +292,20 @@ Phases listed in AGENTS.md are available waypoints, not mandatory gates. An arti
 
 ## Implementation plans
 
-Implementation plans are not a doc-type artifact. They bridge declarative specs (`docs/`) and execution tracking. All concrete CLI operations are handled by the **execution-tracking** skill — this skill describes *what* to do, not *how*.
+Implementation plans bridge declarative specs (`docs/`) and execution tracking. They are not doc-type artifacts. All CLI operations are handled by the **execution-tracking** skill — invoke it to bootstrap the task backend before creating plans.
 
-### Prerequisites
+### Workflow
 
-Before creating or modifying implementation plans, invoke the **execution-tracking** skill to bootstrap the task backend (availability check, installation if missing, initialization). That skill owns the install, recovery, and CLI command layer.
-
-### Seeding a plan from a spec
-
-1. An Agent Spec (or Epic) may include an "Implementation Approach" section sketching the high-level plan. This seeds the implementation plan but is not the plan of record.
-2. When work begins, create an **implementation plan** for the spec artifact, linked via an **origin ref** (e.g., `SPEC-003`).
-3. Create **tasks** under the implementation plan with dependencies between them. Tag each task with a **spec tag** for the originating spec.
-
-### Lineage and cross-spec impact
-
-- Every implementation plan has an **origin ref** — an immutable link to the spec that seeded it.
-- Every task carries one or more **spec tags** — mutable labels recording which specs it currently affects.
-- When a task impacts additional specs, add spec tags for the new specs and create **dependencies** linking related tasks across plans.
-- Track provenance when tasks spawn from existing ones.
-
-### Parallel coordination
-
-- Use the execution-tracking skill's parallel coordination features (swarms, formulas) when multiple agents need to pick up **ready work** from the same implementation plan.
+1. A Spec/Epic's "Implementation Approach" section seeds the plan but is not the plan of record.
+2. Create an implementation plan linked via an **origin ref** (e.g., `SPEC-003`). Create tasks with dependencies, each tagged with **spec tags** for originating specs.
+3. When a task impacts additional specs, add spec tags and cross-plan dependencies.
 
 ### Closing the loop
 
-- Progress is tracked in the execution backend, not in the spec doc. The Agent Spec's lifecycle table records the transition to "Implemented" once the implementation plan completes.
-- Cross-spec tasks should be noted in each affected artifact's lifecycle table entry (e.g., "Implemented — shared serializer also covers SPEC-007").
+- Progress lives in the execution backend, not the spec doc. Transition the spec to "Implemented" once the plan completes.
+- Note cross-spec tasks in each affected artifact's lifecycle entry (e.g., "Implemented — shared serializer also covers SPEC-007").
+- If execution reveals the spec is unworkable, the execution-tracking skill's escalation protocol flows control back to this skill for spec updates before re-planning.
 
 ### Fallback
 
-If the **execution-tracking** skill is not available in the current agent environment, fall back to the agent's built-in todo system with canonical states (`todo`, `in_progress`, `blocked`, `done`). The plan structure (ordered steps, dependencies, completion tracking) remains the same — only the backend changes. Lineage is maintained by including artifact IDs in task titles or notes (e.g., `[SPEC-003] Add export endpoint`).
+If execution-tracking is unavailable, fall back to the agent's built-in todo system (`todo`, `in_progress`, `blocked`, `done`). Maintain lineage by including artifact IDs in task titles (e.g., `[SPEC-003] Add export endpoint`).
