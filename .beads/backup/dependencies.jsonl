@@ -8,6 +8,14 @@
 {"created_at":"2026-03-03T10:08:56Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-fw4","issue_id":"iac-remote-desktop-node-4i1","type":"blocks"}
 {"created_at":"2026-03-03T10:08:56Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-odh","issue_id":"iac-remote-desktop-node-4i1","type":"blocks"}
 {"created_at":"2026-03-03T02:00:43Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-5la","issue_id":"iac-remote-desktop-node-62f","type":"parent"}
+{"created_at":"2026-03-04T16:23:38Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h","issue_id":"iac-remote-desktop-node-68h.1","type":"parent-child"}
+{"created_at":"2026-03-04T16:23:38Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h","issue_id":"iac-remote-desktop-node-68h.2","type":"parent-child"}
+{"created_at":"2026-03-04T16:23:38Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h","issue_id":"iac-remote-desktop-node-68h.3","type":"parent-child"}
+{"created_at":"2026-03-04T16:23:48Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h","issue_id":"iac-remote-desktop-node-68h.4","type":"parent-child"}
+{"created_at":"2026-03-04T16:23:48Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h","issue_id":"iac-remote-desktop-node-68h.5","type":"parent-child"}
+{"created_at":"2026-03-04T16:23:48Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h","issue_id":"iac-remote-desktop-node-68h.6","type":"parent-child"}
+{"created_at":"2026-03-04T16:23:52Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h.5","issue_id":"iac-remote-desktop-node-68h.6","type":"blocks"}
+{"created_at":"2026-03-04T16:23:48Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-68h","issue_id":"iac-remote-desktop-node-68h.7","type":"parent-child"}
 {"created_at":"2026-03-03T10:09:22Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-01g","issue_id":"iac-remote-desktop-node-690","type":"blocks"}
 {"created_at":"2026-03-03T10:09:22Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-ioy","issue_id":"iac-remote-desktop-node-690","type":"blocks"}
 {"created_at":"2026-03-03T10:09:22Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-m7o","issue_id":"iac-remote-desktop-node-690","type":"blocks"}
