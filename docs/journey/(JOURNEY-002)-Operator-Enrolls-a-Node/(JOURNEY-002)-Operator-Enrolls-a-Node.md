@@ -1,7 +1,7 @@
 ---
 title: "Operator Enrolls a Linux or macOS Node"
 artifact: JOURNEY-002
-status: Draft
+status: Validated
 author: cristos
 created: 2026-03-04
 last-updated: 2026-03-04

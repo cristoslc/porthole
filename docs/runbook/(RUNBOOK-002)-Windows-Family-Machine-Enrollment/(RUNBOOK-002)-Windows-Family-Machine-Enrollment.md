@@ -1,7 +1,7 @@
 ---
 title: "Windows Family Machine Enrollment"
 artifact: RUNBOOK-002
-status: Draft
+status: Active
 mode: manual
 trigger: on-demand
 author: cristos

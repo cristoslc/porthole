@@ -1,7 +1,7 @@
 ---
 title: "Mixed-Provider Hub Provisioning"
 artifact: STORY-001
-status: Draft
+status: Ready
 author: cristos
 created: 2026-03-03
 last-updated: 2026-03-03

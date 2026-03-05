@@ -1,7 +1,7 @@
 ---
 title: "Linux/macOS Node Enrollment"
 artifact: RUNBOOK-001
-status: Draft
+status: Active
 mode: manual
 trigger: on-demand
 author: cristos

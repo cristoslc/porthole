@@ -1,7 +1,7 @@
 ---
 title: "Hub Disaster Recovery"
 artifact: JOURNEY-004
-status: Draft
+status: Validated
 author: cristos
 created: 2026-03-04
 last-updated: 2026-03-04
@@ -201,6 +201,7 @@ journey
 4. **Guacamole admin password in state**: Store a hashed Guacamole admin password
    in `network.sops.yaml` and have `seed-guac` (or an Ansible task) apply it on
    every hub deploy.
+5. **Back up hub state:** use backrest+restic to maintain B2 backups of the hub and restore them on re-creation.
 
 ## Lifecycle
 

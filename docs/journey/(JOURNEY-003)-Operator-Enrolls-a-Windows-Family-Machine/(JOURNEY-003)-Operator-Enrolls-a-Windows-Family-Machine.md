@@ -1,7 +1,7 @@
 ---
 title: "Operator Enrolls a Windows Family Machine"
 artifact: JOURNEY-003
-status: Draft
+status: Validated
 author: cristos
 created: 2026-03-04
 last-updated: 2026-03-04
