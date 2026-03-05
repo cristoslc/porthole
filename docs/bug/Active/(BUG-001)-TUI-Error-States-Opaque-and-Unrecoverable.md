@@ -10,7 +10,7 @@ affected-artifacts:
   - SPEC-009
   - EPIC-007
 discovered-in: "JOURNEY-002 walkthrough — running ./setup.sh on a fresh node"
-fix-ref: ""
+fix-ref: "iac-remote-desktop-node-3b9"
 depends-on: []
 ---
 
