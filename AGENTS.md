@@ -13,3 +13,4 @@ Implementation of any SPEC artifact (Epic, Story, Agent Spec, Spike) requires an
 ## Issue Tracking
 
 This project uses **bd (beads)** for all issue tracking. Do NOT use markdown TODOs or task lists. Invoke the **execution-tracking** skill for all bd operations — it provides the full command reference and workflow.
+
