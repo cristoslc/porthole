@@ -4,7 +4,7 @@ artifact: JOURNEY-001
 status: Validated
 author: cristos
 created: 2026-03-04
-last-updated: 2026-03-04
+last-updated: 2026-03-05
 parent-vision: VISION-001
 linked-personas: []
 depends-on: []
@@ -66,6 +66,12 @@ The TUI checks for three preconditions:
 After initialization, the TUI shows a summary of the network state: subnet, domain,
 hub endpoint. The operator proceeds to Hub Check.
 
+> **PP-04:** `porthole init` accepts no `--domain` option. The internal WireGuard
+> domain (used for the CoreDNS `.wg` zone) defaults to `wg` and cannot be set at
+> initialization time. Operators who want a custom suffix (e.g., `home` or `fleet`)
+> discover this only after the fact and must hand-edit `network.sops.yaml` directly —
+> there is no supported CLI path to configure it.
+
 > **PP-02:** `porthole init` requires the hub's FQDN as input, but the FQDN must
 > exist in DNS before Terraform can run. The operator must decide (and possibly
 > pre-create) a DNS name before they have a server IP — the ordering is awkward for
@@ -126,6 +132,7 @@ journey
       Generate age key if absent: 4: Operator
       Write .sops.yaml config: 4: Operator
       Run porthole init (FQDN required): 2: Operator
+      Set internal WireGuard domain: 2: Operator
     section Hub Spinup
       Select compute and DNS provider: 2: Operator
       Enter API tokens: 3: Operator
@@ -156,6 +163,13 @@ journey
 > their configs won't be on the new hub until sync runs. The operator must know to
 > run this manually.
 
+### PP-04 — Internal WireGuard domain not configurable at init
+> **PP-04:** `porthole init` accepts no `--domain` option. The internal WireGuard
+> domain defaults to `wg` and is baked into `network.sops.yaml` at initialization
+> time with no supported CLI path to override it. Operators who want `<peer>.home`
+> or `<peer>.fleet` instead of `<peer>.wg` must hand-edit the state file. Similarly,
+> `porthole add` always sets `dns_name` to the peer name with no `--dns-name` override.
+
 ### Pain Points Summary
 
 | ID | Pain Point | Score | Stage | Root Cause | Opportunity |
@@ -163,6 +177,7 @@ journey
 | JOURNEY-001.PP-01 | No pre-flight token checklist before spinup form | 2 | Hub Spinup | TUI collects provider choice and tokens in the same form, no preview of what's needed | Add a "what you'll need" summary screen before the spinup form |
 | JOURNEY-001.PP-02 | FQDN required before server exists (chicken-and-egg) | 2 | Secrets | `porthole init` takes endpoint as input but hub IP isn't known yet | Allow `porthole init` with a placeholder FQDN; let TUI update endpoint after `terraform output` |
 | JOURNEY-001.PP-03 | No automatic `porthole sync` after hub rebuild | 2 | Verification | TUI only runs Terraform + Ansible; porthole sync is a separate CLI step | TUI should offer to run `porthole sync` after Ansible completes |
+| JOURNEY-001.PP-04 | Internal WireGuard domain not configurable at init | 2 | Secrets | `porthole init` hardcodes domain to `wg`; no `--domain` flag; `porthole add` always uses peer name as `dns_name` | Add `--domain` to `porthole init` and `--dns-name` to `porthole add` |
 
 ## Opportunities
 
@@ -172,6 +187,9 @@ journey
    offer to update the hub endpoint in `network.sops.yaml` if the IP changed.
 3. **Post-spinup sync prompt**: After Ansible succeeds, prompt the operator to run
    `porthole sync` to push peer configs to the new hub.
+4. **Configurable WireGuard domain**: Add `--domain` to `porthole init` and
+   `--dns-name` to `porthole add` so operators can choose a custom internal domain
+   suffix rather than accepting the hardcoded `wg` default.
 
 ## Lifecycle
 
