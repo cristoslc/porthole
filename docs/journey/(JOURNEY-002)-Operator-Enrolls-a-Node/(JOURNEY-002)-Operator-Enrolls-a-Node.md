@@ -197,6 +197,12 @@ journey
 > Guacamole admin credentials (`guacadmin/guacadmin`) are not changed by any
 > automated step, leaving the gateway insecure after deployment.
 
+### PP-06 — TUI error states are opaque and unrecoverable
+> **PP-06:** When a prerequisite check fails (e.g., Terraform not installed), the TUI
+> shows an `[x]` with no explanation of what failed or how to fix it. The **Continue**
+> button is non-functional, there is no remediation guidance, and there is no clear
+> way to quit the TUI. The operator is stranded. See [BUG-001](../../bug/Reported/(BUG-001)-TUI-Error-States-Opaque-and-Unrecoverable.md).
+
 ### Pain Points Summary
 
 | ID | Pain Point | Score | Stage | Root Cause | Opportunity |
@@ -206,6 +212,7 @@ journey
 | JOURNEY-002.PP-03 | No step-by-step enrollment runbook | 2 | CLI Enrollment | README has conceptual command reference, not an operator runbook | Create RUNBOOK-001: Linux/macOS Node Enrollment |
 | JOURNEY-002.PP-04 | No `porthole install-peer` command | 2 | CLI Enrollment | gen-peer-scripts generates but does not install | Add `porthole install-peer <name>` command that copies files and enables services |
 | JOURNEY-002.PP-05 | Guacamole seed not applied; default admin password unchanged | 2 | Verification | seed-guac is a codegen step; no Guacamole admin bootstrap procedure exists | Document Guacamole first-run setup; optionally automate seed application |
+| JOURNEY-002.PP-06 | TUI error states opaque and unrecoverable | 1 | Prerequisites | Failed checks show [x] with no explanation; Continue is non-functional; no quit mechanism | Show error details, remediation steps, disable Continue until resolved, always offer quit. See BUG-001 |
 
 ## Opportunities
 
