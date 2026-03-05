@@ -1,7 +1,7 @@
 ---
 title: "Node Bootstrap TUI Error States Are Opaque and Unrecoverable"
 artifact: BUG-001
-status: Reported
+status: Active
 author: cristos
 created: 2026-03-05
 last-updated: 2026-03-05
@@ -56,6 +56,34 @@ encountering this on a fresh machine has no way to complete setup through the TU
 and must `Ctrl+C` kill the process, then figure out what to do from scratch. This
 undermines the entire purpose of the guided bootstrap TUI (SPEC-009) and makes
 JOURNEY-002 Stage 2 (Prerequisites) a dead end.
+
+## Root Cause Analysis
+
+Six code gaps across the TUI produce the three reported symptoms:
+
+| Gap | File | Line(s) | Issue |
+|-----|------|---------|-------|
+| **#1** | `screens/prerequisites.py` | 82 | Continue button `disabled=not all_ok` — correctly disabled, but **no message** explaining why |
+| **#2** | `screens/prerequisites.py` | 86-91 | Failed rows render `[x] terraform` — no `(not installed)` detail or context |
+| **#3** | `screens/prerequisites.py` | 17-25 | Install commands exist in `platform.py` but are never shown to the operator before clicking Install |
+| **#4** | `app.py` | PortholeApp class | No `BINDINGS`, no `action_quit`, no Footer help text — operator is trapped |
+| **#5** | All screens | secrets.py:170, hub_check.py:64-74, hub_spinup.py:210-215 | Error messages only appear in RichLog after user action — no persistent validation banner |
+| **#6** | `app.py` | PortholeApp class | No `Ctrl+C` / graceful shutdown handler |
+
+All paths are relative to `src/porthole_setup/`.
+
+### Symptom-to-gap mapping
+
+- **Continue non-functional:** Gap #1 — button is disabled (correct) but no explanation shown (broken UX)
+- **`[x]` with no explanation:** Gaps #2 + #3 — no detail text, no remediation
+- **No way to quit:** Gaps #4 + #6 — no bindings, no handler
+
+### Fix approach
+
+1. Add global quit binding + Footer help to `PortholeApp` (Gaps #4, #6)
+2. Add error detail + remediation text to failed prerequisite rows (Gaps #2, #3)
+3. Add validation banner widget explaining disabled Continue state (Gap #1)
+4. Repeat validation banner pattern across Secrets, Hub Check, Hub Spinup, Summary screens (Gap #5)
 
 ## Lifecycle
 

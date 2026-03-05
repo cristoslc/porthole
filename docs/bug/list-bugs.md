@@ -2,13 +2,13 @@
 
 ## Reported
 
-| ID | Title | Severity | Affected Artifacts | Created | Last Updated | Commit | Notes |
-|----|-------|----------|--------------------|---------|--------------|--------|-------|
-| BUG-001 | Node Bootstrap TUI Error States Are Opaque and Unrecoverable | high | SPEC-009, EPIC-007 | 2026-03-05 | 2026-03-05 | 6c746d4 | Continue non-functional, [x] with no explanation, no quit mechanism |
+_None._
 
 ## Active
 
-_None._
+| ID | Title | Severity | Affected Artifacts | Created | Last Updated | Commit | Notes |
+|----|-------|----------|--------------------|---------|--------------|--------|-------|
+| BUG-001 | Node Bootstrap TUI Error States Are Opaque and Unrecoverable | high | SPEC-009, EPIC-007 | 2026-03-05 | 2026-03-05 | _pending_ | Root-caused: 6 code gaps in TUI error handling and quit mechanism |
 
 ## Fixed
 
