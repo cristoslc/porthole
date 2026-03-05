@@ -20,3 +20,4 @@ build/
 
 # Claude Code agent worktrees (ephemeral session state)
 .claude/worktrees/
+.agents/specwatch.log
