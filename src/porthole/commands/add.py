@@ -5,7 +5,7 @@ import click
 from porthole import config, keys, models, render, state, subnet
 
 
-def run_add(name: str, role: str, platform: str | None = None) -> None:
+def run_add(name: str, role: str, platform: str | None = None, dns_name: str | None = None) -> None:
     """Add a new peer to the mesh network."""
     state_path = config.STATE_FILE
     if not state_path.exists():
@@ -30,7 +30,7 @@ def run_add(name: str, role: str, platform: str | None = None) -> None:
         ip=str(ip),
         public_key=public_key,
         private_key=private_key,
-        dns_name=name,
+        dns_name=dns_name or name,
         role=role,
         reverse_ssh_port=reverse_port,
         platform=platform,

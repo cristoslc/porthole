@@ -5,7 +5,7 @@ import click
 from porthole import config, keys, models, sops, state
 
 
-def run_init(endpoint: str, age_key: str) -> None:
+def run_init(endpoint: str, age_key: str, domain: str = "wg") -> None:
     """Initialize a new mesh network with hub as the first peer."""
     state_path = config.STATE_FILE
     if state_path.exists():
@@ -33,6 +33,7 @@ def run_init(endpoint: str, age_key: str) -> None:
     network = models.Network(
         hub=hub_config,
         peers=[hub_peer],
+        domain=domain,
         guacamole_admin_password=guacamole_admin_password,
     )
 

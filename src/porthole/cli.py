@@ -12,11 +12,12 @@ def cli():
 @cli.command()
 @click.option("--endpoint", required=True, help="Hub endpoint (e.g. hub.example.com:51820)")
 @click.option("--age-key", required=True, help="Age public key for SOPS encryption")
-def init(endpoint, age_key):
+@click.option("--domain", default="wg", show_default=True, help="Internal WireGuard DNS domain (e.g. home, fleet)")
+def init(endpoint, age_key, domain):
     """Initialize a new mesh network."""
     from porthole.commands.init import run_init
 
-    run_init(endpoint, age_key)
+    run_init(endpoint, age_key, domain)
 
 
 @cli.command()
@@ -25,11 +26,13 @@ def init(endpoint, age_key):
               help="Peer role (default: workstation)")
 @click.option("--platform", default=None, type=click.Choice(["linux", "macos", "windows"]),
               help="OS platform — controls Guacamole protocol (linux=xrdp, macos=vnc, windows=rdp)")
-def add(name, role, platform):
+@click.option("--dns-name", "dns_name", default=None,
+              help="CoreDNS label for this peer (default: peer name)")
+def add(name, role, platform, dns_name):
     """Add a new peer to the mesh network."""
     from porthole.commands.add import run_add
 
-    run_add(name, role, platform)
+    run_add(name, role, platform, dns_name)
 
 
 @cli.command()
