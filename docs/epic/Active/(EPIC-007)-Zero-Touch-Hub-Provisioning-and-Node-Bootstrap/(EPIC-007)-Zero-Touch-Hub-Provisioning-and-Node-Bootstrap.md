@@ -79,7 +79,7 @@ a `setup.sh` bash shim that invokes a uv-managed Textual TUI.
 
 | Type | ID | Title | Status |
 |------|----|-------|--------|
-| Bug | [BUG-001](../../../bug/Reported/(BUG-001)-TUI-Error-States-Opaque-and-Unrecoverable.md) | Node Bootstrap TUI Error States Are Opaque and Unrecoverable | Reported |
+| Bug | [BUG-001](../../../bug/Active/(BUG-001)-TUI-Error-States-Opaque-and-Unrecoverable.md) | Node Bootstrap TUI Error States Are Opaque and Unrecoverable | Reported |
 | Spike | [SPIKE-008](../../../research/Planned/(SPIKE-008)-Automated-Textual-TUI-Workflow-Testing/(SPIKE-008)-Automated-Textual-TUI-Workflow-Testing.md) | Automated Textual TUI Workflow Testing | Planned |
 
 ## Key Dependencies
