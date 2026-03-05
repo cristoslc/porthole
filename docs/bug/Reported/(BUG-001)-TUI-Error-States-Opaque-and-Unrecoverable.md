@@ -61,4 +61,4 @@ JOURNEY-002 Stage 2 (Prerequisites) a dead end.
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Reported | 2026-03-05 | _pending_ | Discovered during fresh-node enrollment walkthrough |
+| Reported | 2026-03-05 | 6c746d4 | Discovered during fresh-node enrollment walkthrough |

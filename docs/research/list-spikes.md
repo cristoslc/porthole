@@ -4,7 +4,7 @@
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
-| SPIKE-008 | Automated Textual TUI Workflow Testing | cristos | 2026-03-05 | 2026-03-05 | _pending_ | Can Textual TUI flows be tested end-to-end like web apps? Supports BUG-001 fix |
+| SPIKE-008 | Automated Textual TUI Workflow Testing | cristos | 2026-03-05 | 2026-03-05 | 6c746d4 | Can Textual TUI flows be tested end-to-end like web apps? Supports BUG-001 fix |
 
 ## Active
 

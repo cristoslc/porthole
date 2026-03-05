@@ -72,4 +72,4 @@ _To be populated during Active phase._
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Planned | 2026-03-05 | _pending_ | Created to support BUG-001 fix and prevent TUI regression |
+| Planned | 2026-03-05 | 6c746d4 | Created to support BUG-001 fix and prevent TUI regression |
