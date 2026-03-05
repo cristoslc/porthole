@@ -90,3 +90,4 @@ All paths are relative to `src/porthole_setup/`.
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Reported | 2026-03-05 | 6c746d4 | Discovered during fresh-node enrollment walkthrough |
+| Active | 2026-03-05 | d1bf23a | Root-caused: 6 code gaps; fix approach defined |
