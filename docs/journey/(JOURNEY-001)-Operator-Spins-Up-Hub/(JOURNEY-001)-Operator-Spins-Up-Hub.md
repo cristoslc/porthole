@@ -196,3 +196,4 @@ journey
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-04 | 031aaaa | Initial creation — first-time hub spinup via TUI |
+| Validated | 2026-03-04 | cfa7218 | PP-04 added: internal WireGuard domain not configurable at init |
