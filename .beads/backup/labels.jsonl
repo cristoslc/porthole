@@ -26,6 +26,12 @@
 {"issue_id":"iac-remote-desktop-node-f41.5","label":"spec:SPEC-010"}
 {"issue_id":"iac-remote-desktop-node-f41.6","label":"spec:SPEC-010"}
 {"issue_id":"iac-remote-desktop-node-f41.7","label":"spec:SPEC-010"}
+{"issue_id":"iac-remote-desktop-node-f7y.1","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-f7y.2","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-f7y.3","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-f7y.4","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-f7y.5","label":"story:STORY-001"}
+{"issue_id":"iac-remote-desktop-node-f7y.6","label":"story:STORY-001"}
 {"issue_id":"iac-remote-desktop-node-nt9.1","label":"spec:SPEC-003"}
 {"issue_id":"iac-remote-desktop-node-nt9.2","label":"spec:EPIC-005"}
 {"issue_id":"iac-remote-desktop-node-nt9.3","label":"spec:EPIC-005"}

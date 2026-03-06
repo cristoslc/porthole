@@ -59,6 +59,12 @@
 {"created_at":"2026-03-05T23:44:57Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f41","issue_id":"iac-remote-desktop-node-f41.7","type":"parent-child"}
 {"created_at":"2026-03-05T23:45:03Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f41.5","issue_id":"iac-remote-desktop-node-f41.7","type":"blocks"}
 {"created_at":"2026-03-05T23:45:03Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f41.6","issue_id":"iac-remote-desktop-node-f41.7","type":"blocks"}
+{"created_at":"2026-03-06T00:28:29Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f7y","issue_id":"iac-remote-desktop-node-f7y.1","type":"parent-child"}
+{"created_at":"2026-03-06T00:28:29Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f7y","issue_id":"iac-remote-desktop-node-f7y.2","type":"parent-child"}
+{"created_at":"2026-03-06T00:28:29Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f7y","issue_id":"iac-remote-desktop-node-f7y.3","type":"parent-child"}
+{"created_at":"2026-03-06T00:28:29Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f7y","issue_id":"iac-remote-desktop-node-f7y.4","type":"parent-child"}
+{"created_at":"2026-03-06T00:28:30Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f7y","issue_id":"iac-remote-desktop-node-f7y.5","type":"parent-child"}
+{"created_at":"2026-03-06T00:28:30Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-f7y","issue_id":"iac-remote-desktop-node-f7y.6","type":"parent-child"}
 {"created_at":"2026-03-03T10:08:50Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-418","issue_id":"iac-remote-desktop-node-fvl","type":"blocks"}
 {"created_at":"2026-03-03T10:08:50Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-ier","issue_id":"iac-remote-desktop-node-fw4","type":"blocks"}
 {"created_at":"2026-03-03T10:09:04Z","created_by":"Cristos L-C","depends_on_id":"iac-remote-desktop-node-8uq","issue_id":"iac-remote-desktop-node-hul","type":"discovered-from"}
