@@ -112,9 +112,20 @@ def main() -> None:
         _run_check()
         return
 
-    from porthole_setup.app import PortholeApp  # noqa: PLC0415
-    app = PortholeApp()
-    app.run()
+    try:
+        from porthole_setup.app import PortholeApp  # noqa: PLC0415
+        app = PortholeApp()
+        app.run()
+    except Exception:
+        import traceback  # noqa: PLC0415
+        print("\nporthole-setup crashed. Traceback:\n", file=sys.stderr)
+        traceback.print_exc()
+        print(
+            "\nIf this is an import error, try:  uv sync\n"
+            "Report bugs at the project repo.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

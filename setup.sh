@@ -29,4 +29,12 @@ if ! command -v uv &>/dev/null; then
     echo "uv installed successfully."
 fi
 
-exec uv run python -m porthole_setup "$@"
+uv run python -m porthole_setup "$@"
+rc=$?
+if [ $rc -ne 0 ]; then
+    echo ""
+    echo "porthole-setup exited with code $rc."
+    echo "If you see an import error above, try:  uv sync"
+    echo "For a full traceback, run:  uv run python -m porthole_setup ${*:---check}"
+fi
+exit $rc
