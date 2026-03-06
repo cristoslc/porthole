@@ -4,7 +4,7 @@
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
-| SPEC-010 | TUI Navigation and Lifecycle Tests | cristos | 2026-03-05 | 2026-03-05 | — | Initial creation |
+| SPEC-010 | TUI Navigation and Lifecycle Tests | cristos | 2026-03-05 | 2026-03-05 | 39958ca | Initial creation |
 
 ## Review
 

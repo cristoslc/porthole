@@ -193,4 +193,4 @@ Mock at function boundary, not subprocess level:
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-05 | — | Initial creation |
+| Draft | 2026-03-05 | 39958ca | Initial creation |
