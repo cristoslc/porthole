@@ -1,13 +1,17 @@
 # ---------------------------------------------------------------------------
-# main.tf — Hub VPS, SSH key, and firewall
-#
-# Reference provider: DigitalOcean
-# To adapt to another provider, swap the resource types below and update
-# versions.tf + variables.tf. The logical structure stays the same.
+# main.tf — Hub VPS, SSH key, and firewall (DigitalOcean compute)
 # ---------------------------------------------------------------------------
 
 provider "digitalocean" {
   token = var.do_token
+}
+
+provider "hetznerdns" {
+  apitoken = var.hcloud_token
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }
 
 # ---------------------------------------------------------------------------

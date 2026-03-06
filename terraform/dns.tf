@@ -1,33 +1,63 @@
 # ---------------------------------------------------------------------------
-# dns.tf — DNS A record for the hub hostname
+# dns.tf — Pluggable DNS A record for the hub hostname
 #
-# Prerequisite: the parent domain (e.g. "example.com") must already exist
-# as a DigitalOcean-managed domain. This configuration looks it up via a
-# data source; Terraform will not create or destroy the domain itself.
+# Set var.dns_provider to activate the appropriate module:
+#   cloudflare   — uses cloudflare/cloudflare provider (CLOUDFLARE_API_TOKEN)
+#   digitalocean — uses digitalocean/digitalocean provider (TF_VAR_do_token)
+#   hetzner      — uses timohirt/hetznerdns provider (TF_VAR_hcloud_token)
+#   none         — no DNS record created; manage DNS manually
 #
-# Example: if hub_hostname = "hub.example.com", the data source looks up
-# "example.com" and creates an A record for the subdomain "hub".
+# Prerequisite: the parent domain must already exist as a zone in the chosen
+# provider. Terraform creates only the A record for the hub subdomain.
+#
+# Example: hub_hostname = "hub.example.com"
+#   → zone/domain = "example.com", subdomain = "hub"
 # ---------------------------------------------------------------------------
 
 locals {
-  # Split "hub.example.com" into subdomain="hub" and domain="example.com".
-  # Works for a single-level subdomain. Adjust the index if deeper nesting
-  # is required (e.g. "vpn.hub.example.com").
   hostname_parts = split(".", var.hub_hostname)
   subdomain      = local.hostname_parts[0]
   domain_name    = join(".", slice(local.hostname_parts, 1, length(local.hostname_parts)))
 }
 
-# Look up the existing DigitalOcean domain — must already exist.
-data "digitalocean_domain" "hub" {
-  name = local.domain_name
+module "dns_cloudflare" {
+  count  = var.dns_provider == "cloudflare" ? 1 : 0
+  source = "./modules/dns_cloudflare"
+
+  zone_name = local.domain_name
+  subdomain = local.subdomain
+  ip        = digitalocean_droplet.hub.ipv4_address
+  api_token = var.cloudflare_api_token
+
+  providers = {
+    cloudflare = cloudflare
+  }
 }
 
-# Create an A record pointing the hub subdomain at the Droplet's public IP.
-resource "digitalocean_record" "hub_a" {
-  domain = data.digitalocean_domain.hub.id
-  type   = "A"
-  name   = local.subdomain
-  value  = digitalocean_droplet.hub.ipv4_address
-  ttl    = 300
+module "dns_digitalocean" {
+  count  = var.dns_provider == "digitalocean" ? 1 : 0
+  source = "./modules/dns_digitalocean"
+
+  domain    = local.domain_name
+  subdomain = local.subdomain
+  ip        = digitalocean_droplet.hub.ipv4_address
+  do_token  = var.do_token
+
+  providers = {
+    digitalocean = digitalocean
+  }
+}
+
+module "dns_hetzner" {
+  count  = var.dns_provider == "hetzner" ? 1 : 0
+  source = "./modules/dns_hetzner"
+
+  domain_name = local.domain_name
+  subdomain   = local.subdomain
+  ip          = digitalocean_droplet.hub.ipv4_address
+  apitoken    = var.hcloud_token
+
+  providers = {
+    hetznerdns = hetznerdns
+  }
 }

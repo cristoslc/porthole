@@ -6,6 +6,17 @@ terraform {
       source  = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
+    # DNS providers — only the one matching var.dns_provider is actively used.
+    # All must be declared here so `terraform init` downloads them.
+    # Credentials are only validated at plan/apply time for modules that run.
+    hetznerdns = {
+      source  = "timohirt/hetznerdns"
+      version = "~> 2.0"
+    }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
   }
 
   # Local state is used by default. To use a remote backend, uncomment and

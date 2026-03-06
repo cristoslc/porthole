@@ -4,6 +4,35 @@ variable "do_token" {
   sensitive   = true
 }
 
+# ---------------------------------------------------------------------------
+# DNS provider selection
+# ---------------------------------------------------------------------------
+
+variable "dns_provider" {
+  description = "Which DNS provider to use for the hub A record. Set to 'none' to skip DNS (manage manually). Valid values: cloudflare, digitalocean, hetzner, none."
+  type        = string
+  default     = "none"
+
+  validation {
+    condition     = contains(["cloudflare", "digitalocean", "hetzner", "none"], var.dns_provider)
+    error_message = "dns_provider must be one of: cloudflare, digitalocean, hetzner, none."
+  }
+}
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token. Required when dns_provider = cloudflare. Set via TF_VAR_cloudflare_api_token or CLOUDFLARE_API_TOKEN."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "hcloud_token" {
+  description = "Hetzner Cloud/DNS API token. Required when dns_provider = hetzner. Set via TF_VAR_hcloud_token."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "region" {
   description = "DigitalOcean region slug where the hub Droplet will be created."
   type        = string
@@ -27,14 +56,3 @@ variable "ssh_key_path" {
   default     = "~/.ssh/id_ed25519.pub"
 }
 
-# ---------------------------------------------------------------------------
-# Provider-portability note
-# ---------------------------------------------------------------------------
-# The variables above map to DigitalOcean concepts. Adapting to another
-# cloud provider (Hetzner, Vultr, Linode, etc.) requires:
-#   1. Replacing the provider block in versions.tf.
-#   2. Replacing resource types in main.tf and dns.tf.
-#   3. Renaming or aliasing provider-specific variables (e.g. do_token ->
-#      hcloud_token) and updating variable descriptions accordingly.
-# The logical structure (VPS + SSH key + firewall + DNS) remains the same
-# across providers; only the resource type names change.

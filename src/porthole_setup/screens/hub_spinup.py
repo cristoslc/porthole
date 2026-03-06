@@ -39,7 +39,7 @@ _DNS_ENV_HINTS: list[tuple[str, str]] = [
     ("CLOUDFLARE_API_TOKEN",     "cloudflare"),
     ("TF_VAR_cloudflare_api_token", "cloudflare"),
     ("TF_VAR_do_token",          "digitalocean"),
-    ("TF_VAR_hetznerdns_token",  "hetzner"),
+    ("TF_VAR_hcloud_token",      "hetzner"),
 ]
 
 # Env var name for each DNS provider's token
