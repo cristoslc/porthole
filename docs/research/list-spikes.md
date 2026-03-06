@@ -2,9 +2,7 @@
 
 ## Planned
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPIKE-008 | Automated Textual TUI Workflow Testing | cristos | 2026-03-05 | 2026-03-05 | 6c746d4 | Can Textual TUI flows be tested end-to-end like web apps? Supports BUG-001 fix |
+_No spikes in this phase._
 
 ## Active
 
@@ -20,6 +18,7 @@ _No spikes in this phase._
 | SPIKE-005 | Securing Guacamole on Hub | cristos | 2026-02-28 | 2026-02-28 | a785ec8 | Network binding, TLS, auth, Docker deployment, firewall; informs EPIC-005 |
 | SPIKE-006 | WireGuard Fallback & Recovery | cristos | 2026-02-28 | 2026-02-28 | a785ec8 | Watchdog, reverse SSH, recovery scripts; informs EPIC-001 |
 | SPIKE-007 | Ephemeral VPS Hub Feasibility | cristos | 2026-02-28 | 2026-02-28 | 3abdcad | Ephemeral vs always-on hub, DNS endpoint strategy; informs ADR-004 |
+| SPIKE-008 | Automated Textual TUI Workflow Testing | cristos | 2026-03-05 | 2026-03-05 | 3dceecb | Can Textual TUI flows be tested end-to-end like web apps? Supports BUG-001 fix |
 
 ## Abandoned
 
