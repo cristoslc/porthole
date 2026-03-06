@@ -208,4 +208,4 @@ journey
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-04 | 031aaaa | Initial creation — hub VPS loss and rebuild from repo |
-| Validated | 2026-03-06 | audit-fix | Remediation — transition was not recorded |
+| Validated | 2026-03-06 | b8d0a11 | Remediation — transition was not recorded |
