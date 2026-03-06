@@ -168,6 +168,7 @@ class SecretsScreen(Screen):
         )
         all_ok = self.age_ok and self.sops_ok and self.state_ok
         yield Button("Continue →", id="continue-btn", variant="success", disabled=not all_ok)
+        yield Button("← Back", id="back-btn", variant="default")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -342,8 +343,11 @@ class SecretsScreen(Screen):
         else:
             log.write("[bold red]✗ network.sops.yaml not found after porthole init[/]")
 
+    @on(Button.Pressed, "#back-btn")
+    def _back(self) -> None:
+        self.app.pop_screen()
+
     @on(Button.Pressed, "#continue-btn")
     def _continue(self) -> None:
-        # Hub Check screen (not yet implemented — stub navigation)
         from porthole_setup.screens.hub_check import HubCheckScreen  # noqa: PLC0415
         self.app.push_screen(HubCheckScreen())

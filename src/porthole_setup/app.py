@@ -15,6 +15,7 @@ class PortholeApp(App):
     """Interactive node enrollment wizard for the Porthole fleet."""
 
     TITLE = "Porthole Setup"
+    BINDINGS = [("ctrl+q", "quit", "Quit")]
 
     SCREENS = {
         "prerequisites": PrerequisitesScreen,

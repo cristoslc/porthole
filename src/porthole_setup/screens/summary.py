@@ -67,10 +67,6 @@ class SummaryScreen(Screen):
         yield Footer()
 
     def on_mount(self) -> None:
-        row = self.query_one("#button-row", Vertical)
-        row.mount(
-            Button("← Back", id="back-btn", variant="default"),
-        )
         self._run_checks()
 
     # ------------------------------------------------------------------
