@@ -22,6 +22,18 @@ async def test_continue_disabled_when_tool_missing(monkeypatch):
     monkeypatch.setattr(
         "porthole_setup.screens.prerequisites.detect_os", lambda: OS.MACOS
     )
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.get_install_command",
+        lambda t, o: ["echo", "ok"],
+    )
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.get_tool_description",
+        lambda t: "test tool",
+    )
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.get_manual_hint",
+        lambda t, o: None,
+    )
 
     app = PortholeApp()
     async with app.run_test(size=(120, 40)) as pilot:

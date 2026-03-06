@@ -66,6 +66,14 @@ def mock_all_installed(monkeypatch):
         "porthole_setup.screens.prerequisites.get_install_command",
         lambda t, o: ["echo", "ok"],
     )
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.get_tool_description",
+        lambda t: "test tool",
+    )
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.get_manual_hint",
+        lambda t, o: None,
+    )
 
 
 @pytest.fixture
