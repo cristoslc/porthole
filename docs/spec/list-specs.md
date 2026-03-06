@@ -2,9 +2,7 @@
 
 ## Draft
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPEC-010 | TUI Navigation and Lifecycle Tests | cristos | 2026-03-05 | 2026-03-05 | 39958ca | Initial creation |
+_No specs in this phase._
 
 ## Review
 
@@ -18,6 +16,7 @@ _No specs in this phase._
 
 | ID | Title | Author | Created | Last Updated | Commit | Notes |
 |----|-------|--------|---------|--------------|--------|-------|
+| SPEC-010 | TUI Navigation and Lifecycle Tests | cristos | 2026-03-05 | 2026-03-05 | e471800 | 23 tests pass, production fixes included |
 | SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 32f5763 | All 5 screens + --check flag complete |
 | SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | e56f0ee | backend.tf (both providers), DO firewall ports, Guacamole schema init + seed exec + platform template, guacamole_db_password |
 | SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | porthole CLI implements all templates, state schema, modules; adds platform field, peer-config, install-peer |
