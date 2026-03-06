@@ -1,10 +1,11 @@
 ---
 title: "Node Bootstrap TUI Error States Are Opaque and Unrecoverable"
 artifact: BUG-001
-status: Active
+status: Abandoned
 author: cristos
 created: 2026-03-05
 last-updated: 2026-03-05
+abandoned-reason: "Specious — bootstrap should install prereqs automatically, not present pass/fail checks"
 severity: high
 affected-artifacts:
   - SPEC-009
@@ -91,3 +92,4 @@ All paths are relative to `src/porthole_setup/`.
 |-------|------|--------|-------|
 | Reported | 2026-03-05 | 6c746d4 | Discovered during fresh-node enrollment walkthrough |
 | Active | 2026-03-05 | d1bf23a | Root-caused: 6 code gaps; fix approach defined |
+| Abandoned | 2026-03-05 | 7209b5b | Specious — bootstrap should install prereqs, not present pass/fail checks |

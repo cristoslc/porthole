@@ -24,4 +24,4 @@ _None._
 
 | ID | Title | Severity | Affected Artifacts | Created | Last Updated | Commit | Notes |
 |----|-------|----------|--------------------|---------|--------------|--------|-------|
-| BUG-001 | Node Bootstrap TUI Error States Are Opaque and Unrecoverable | high | SPEC-009, EPIC-007 | 2026-03-05 | 2026-03-05 | pending | Specious — bootstrap should install prereqs, not present pass/fail checks |
+| BUG-001 | Node Bootstrap TUI Error States Are Opaque and Unrecoverable | high | SPEC-009, EPIC-007 | 2026-03-05 | 2026-03-05 | 7209b5b | Specious — bootstrap should install prereqs, not present pass/fail checks |
