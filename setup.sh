@@ -34,7 +34,14 @@ rc=$?
 if [ $rc -ne 0 ]; then
     echo ""
     echo "porthole-setup exited with code $rc."
-    echo "If you see an import error above, try:  uv sync"
-    echo "For a full traceback, run:  uv run python -m porthole_setup ${*:---check}"
+    echo ""
+    log_file="$HOME/.local/state/porthole/setup.log"
+    if [ -f "$log_file" ]; then
+        echo "--- Log ($log_file) ---"
+        cat "$log_file"
+        echo "--- End log ---"
+    else
+        echo "No log file found. Try:  uv run python -m porthole_setup --check"
+    fi
 fi
 exit $rc

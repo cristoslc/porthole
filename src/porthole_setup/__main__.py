@@ -106,26 +106,85 @@ def _run_check() -> None:
 
 def main() -> None:
     """Parse flags and launch the Textual app (or run --check mode)."""
+    import logging  # noqa: PLC0415
+
     args = sys.argv[1:]
 
     if "--check" in args:
         _run_check()
         return
 
+    debug = "--debug" in args
+
+    # Set up file logging so crashes are captured even when the TUI
+    # takes over the terminal.
+    log_path = _setup_logging(debug)
+    log = logging.getLogger("porthole_setup")
+    log.info("porthole-setup starting (Python %s)", sys.version)
+    log.info("args=%s, debug=%s", args, debug)
+
+    # Validate imports before handing off to Textual
     try:
+        log.info("Importing modules…")
         from porthole_setup.app import PortholeApp  # noqa: PLC0415
-        app = PortholeApp()
-        app.run()
+        from porthole_setup.platform import (  # noqa: PLC0415
+            INSTALL_COMMANDS,
+            NEEDS_SUDO,
+            TOOL_DESCRIPTIONS,
+            detect_os,
+        )
+        from porthole_setup.screens.prerequisites import TOOLS  # noqa: PLC0415
+
+        os_type = detect_os()
+        log.info("OS detected: %s", os_type)
+        log.info("Tools to check: %s", [t[1] for t in TOOLS])
+        log.info("Install commands available for: %s", list(INSTALL_COMMANDS.keys()))
+        log.info("NEEDS_SUDO: %s", NEEDS_SUDO)
+        log.info("Descriptions defined for: %s", list(TOOL_DESCRIPTIONS.keys()))
+
+        import textual  # noqa: PLC0415
+        log.info("Textual version: %s", textual.__version__)
+
     except Exception:
         import traceback  # noqa: PLC0415
-        print("\nporthole-setup crashed. Traceback:\n", file=sys.stderr)
-        traceback.print_exc()
-        print(
-            "\nIf this is an import error, try:  uv sync\n"
-            "Report bugs at the project repo.",
-            file=sys.stderr,
-        )
+        msg = traceback.format_exc()
+        log.error("Import failed:\n%s", msg)
+        print(f"\nporthole-setup failed to import required modules:\n\n{msg}", file=sys.stderr)
+        print(f"Full log at: {log_path}", file=sys.stderr)
         sys.exit(1)
+
+    # Run the TUI
+    try:
+        log.info("Launching TUI…")
+        app = PortholeApp()
+        app.run()
+        log.info("TUI exited normally")
+    except Exception:
+        import traceback  # noqa: PLC0415
+        msg = traceback.format_exc()
+        log.error("TUI crashed:\n%s", msg)
+        print(f"\nporthole-setup crashed. Traceback:\n\n{msg}", file=sys.stderr)
+        print(f"Full log at: {log_path}", file=sys.stderr)
+        sys.exit(1)
+
+
+def _setup_logging(debug: bool = False) -> str:
+    """Configure logging to file; return the log file path."""
+    import logging  # noqa: PLC0415
+    from pathlib import Path  # noqa: PLC0415
+
+    log_dir = Path.home() / ".local" / "state" / "porthole"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_path = log_dir / "setup.log"
+
+    logging.basicConfig(
+        filename=str(log_path),
+        filemode="w",
+        level=logging.DEBUG if debug else logging.INFO,
+        format="%(asctime)s %(levelname)-5s %(name)s: %(message)s",
+        datefmt="%H:%M:%S",
+    )
+    return str(log_path)
 
 
 if __name__ == "__main__":

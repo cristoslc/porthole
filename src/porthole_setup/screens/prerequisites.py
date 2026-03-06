@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from dataclasses import dataclass, field
 
 from textual import on, work
@@ -19,6 +20,8 @@ from porthole_setup.platform import (
     get_tool_description,
     is_installed,
 )
+
+_log = logging.getLogger(__name__)
 
 # (binary_to_check, display_name_shown_in_ui, platform_key_for_install_commands)
 TOOLS: list[tuple[str, str, str]] = [
@@ -64,15 +67,20 @@ class PrerequisitesScreen(Screen):
     def __init__(self) -> None:
         super().__init__()
         self._os = detect_os()
-        self._states = {
-            binary: _TS(
+        _log.info("PrerequisitesScreen.__init__ OS=%s", self._os)
+        self._states = {}
+        for binary, display, pk in TOOLS:
+            installed = is_installed(binary)
+            _log.info("  tool %s (%s): installed=%s", display, binary, installed)
+            self._states[binary] = _TS(
                 binary=binary,
                 display=display,
                 platform_key=pk,
-                installed=is_installed(binary),
+                installed=installed,
             )
-            for binary, display, pk in TOOLS
-        }
+        _log.info("__init__ complete: %d tools, %d installed",
+                   len(self._states),
+                   sum(1 for ts in self._states.values() if ts.installed))
 
     # ------------------------------------------------------------------
     # Compose
@@ -94,13 +102,17 @@ class PrerequisitesScreen(Screen):
     # ------------------------------------------------------------------
 
     def on_mount(self) -> None:
+        _log.info("on_mount called")
         self._rebuild_rows()
         self._refresh_continue()
+        _log.info("on_mount complete")
 
     def _rebuild_rows(self) -> None:
         """Re-render tool rows after install status changes."""
+        _log.info("_rebuild_rows starting")
         container = self.query_one("#tool-list", Vertical)
         container.remove_children()
+        _log.info("  old children removed")
 
         any_missing = False
         for ts in self._states.values():
@@ -171,6 +183,7 @@ class PrerequisitesScreen(Screen):
 
         # Update subtitle
         missing = sum(1 for ts in self._states.values() if not ts.installed)
+        _log.info("  mounted all rows, missing=%d", missing)
         try:
             subtitle = self.query_one("#subtitle", Static)
             if missing == 0:
@@ -179,8 +192,9 @@ class PrerequisitesScreen(Screen):
                 subtitle.update(
                     f"[bold]{missing} of {len(self._states)} tools missing[/] — install them below"
                 )
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as exc:  # noqa: BLE001
+            _log.error("  subtitle update failed: %s", exc)
+        _log.info("_rebuild_rows complete")
 
     @on(Button.Pressed, "#continue-btn")
     def _continue(self) -> None:
