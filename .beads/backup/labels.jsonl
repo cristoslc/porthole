@@ -14,6 +14,11 @@
 {"issue_id":"iac-remote-desktop-node-68h.6","label":"spec:SPEC-008"}
 {"issue_id":"iac-remote-desktop-node-68h.7","label":"spec:SPEC-008"}
 {"issue_id":"iac-remote-desktop-node-aka","label":"spec:SPEC-006"}
+{"issue_id":"iac-remote-desktop-node-d4k.1","label":"spec:SPIKE-008"}
+{"issue_id":"iac-remote-desktop-node-d4k.2","label":"spec:SPIKE-008"}
+{"issue_id":"iac-remote-desktop-node-d4k.3","label":"spec:SPIKE-008"}
+{"issue_id":"iac-remote-desktop-node-d4k.4","label":"spec:SPIKE-008"}
+{"issue_id":"iac-remote-desktop-node-d4k.5","label":"spec:SPIKE-008"}
 {"issue_id":"iac-remote-desktop-node-nt9.1","label":"spec:SPEC-003"}
 {"issue_id":"iac-remote-desktop-node-nt9.2","label":"spec:EPIC-005"}
 {"issue_id":"iac-remote-desktop-node-nt9.3","label":"spec:EPIC-005"}
