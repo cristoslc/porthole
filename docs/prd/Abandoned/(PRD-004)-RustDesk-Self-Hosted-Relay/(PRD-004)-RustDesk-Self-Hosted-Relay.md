@@ -6,7 +6,7 @@
 **Last Updated:** 2026-02-28
 **Research:** None (architecture is well-documented; no spike needed)
 **ADR:** [(ADR-001) RustDesk for Remote Desktop](../../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md), [(ADR-003) Network Layer for Remote Fleet](../../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md)
-**Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Related:** [(SPEC-002) Remote Desktop Bootstrap](../../../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md)
 
 ### Lifecycle

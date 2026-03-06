@@ -31,7 +31,7 @@ depends-on: []
 
 The [product landscape](../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/product-landscape.md) identified multiple combinations that satisfy all requirements on paper. **Which one actually works best in practice?**
 
-Desk research ([SPIKE-001](../\(SPIKE-001\)-Remote-Desktop-and-Mesh-Networking-Solutions/\(SPIKE-001\)-Remote-Desktop-and-Mesh-Networking-Solutions.md), [SPIKE-002](../\(SPIKE-002\)-Commercial-Remote-Desktop-Solution-Evaluation/\(SPIKE-002\)-Commercial-Remote-Desktop-Solution-Evaluation.md)) and the product landscape have narrowed the field. The remaining questions can't be answered by analysis — they require installing software on real machines and using it.
+Desk research ([SPIKE-001](../(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md), [SPIKE-002](../(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md)) and the product landscape have narrowed the field. The remaining questions can't be answered by analysis — they require installing software on real machines and using it.
 
 ## Gate
 

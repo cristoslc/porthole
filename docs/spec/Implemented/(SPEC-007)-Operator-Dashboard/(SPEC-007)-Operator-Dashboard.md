@@ -18,8 +18,8 @@ depends-on:
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
-**Parent Epic:** [(EPIC-004) Operator Dashboard](../../../epic/Proposed/(EPIC-004)-Operator-Dashboard/(EPIC-004)-Operator-Dashboard.md)
-**Depends on:** [SPEC-003](../Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard + SSH state must exist)
+**Parent Epic:** [(EPIC-004) Operator Dashboard](../../../epic/Complete/(EPIC-004)-Operator-Dashboard/(EPIC-004)-Operator-Dashboard.md)
+**Depends on:** [SPEC-003](../(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard + SSH state must exist)
 
 ### Lifecycle
 

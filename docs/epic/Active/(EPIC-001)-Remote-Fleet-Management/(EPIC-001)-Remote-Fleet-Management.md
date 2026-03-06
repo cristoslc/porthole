@@ -80,22 +80,22 @@ infrastructure or manual per-machine network configuration.
 
 | Type | ID | Title | Status | Notes |
 |------|----|-------|--------|-------|
-| Spike | [SPIKE-001](../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
-| Spike | [SPIKE-002](../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
-| Spike | [SPIKE-004](../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md) | Remote Desktop Agent Architecture | Complete | RustDesk vs NoMachine vs Guacamole for R10 compliance |
-| Spike | [SPIKE-005](../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md) | Securing Guacamole on Hub | Complete | Guacamole hardening: WireGuard-only binding, TOTP, TLS via DNS-01 |
-| Spike | [SPIKE-006](../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md) | WireGuard Fallback & Recovery | Complete | Five-layer recovery model: watchdog, reverse SSH, SMS, RustDesk, OS-level |
-| Spike | [SPIKE-007](../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | Complete | Ephemeral vs always-on hub; DNS endpoint strategy; rebuild-from-repo model |
-| ADR | [ADR-001](../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Superseded | Superseded by ADR-005 (Guacamole gateway model) |
-| ADR | [ADR-003](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Abandoned | Evaluated Tailscale vs ZeroTier vs WireGuard; superseded by ADR-004 |
-| ADR | [ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Adopted | Self-hosted WireGuard via VPS; replaces ADR-003 |
-| ADR | [ADR-005](../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md) | Remote Desktop Access Model | Adopted | Guacamole gateway + native protocols; replaces ADR-001 |
-| Spec | [SPEC-002](../../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Deprecated | ADR-005 supersedes RustDesk with Guacamole + native protocols |
-| Spec | [SPEC-003](../../spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) | WireGuard Hub & Mesh Network | Implemented | porthole CLI: hub config, state schema, CoreDNS, peer enrollment |
-| Spec | [SPEC-004](../../spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md) | Guacamole Remote Desktop Gateway | Implemented | Docker Compose stack, Caddy TLS, seed-guac command |
-| Spec | [SPEC-005](../../spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md) | Node Health & Recovery Agent | Implemented | wg-watchdog, reverse SSH tunnel, gen-peer-scripts command |
-| PRD | [PRD-004](../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | WireGuard mesh eliminates the need for a relay |
-| Epic | [EPIC-007](../../epic/Proposed/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap.md) | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | Proposed | Terraform + Ansible for hub IaC; Textual TUI for node enrollment |
+| Spike | [SPIKE-001](../../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
+| Spike | [SPIKE-002](../../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
+| Spike | [SPIKE-004](../../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md) | Remote Desktop Agent Architecture | Complete | RustDesk vs NoMachine vs Guacamole for R10 compliance |
+| Spike | [SPIKE-005](../../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md) | Securing Guacamole on Hub | Complete | Guacamole hardening: WireGuard-only binding, TOTP, TLS via DNS-01 |
+| Spike | [SPIKE-006](../../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md) | WireGuard Fallback & Recovery | Complete | Five-layer recovery model: watchdog, reverse SSH, SMS, RustDesk, OS-level |
+| Spike | [SPIKE-007](../../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | Complete | Ephemeral vs always-on hub; DNS endpoint strategy; rebuild-from-repo model |
+| ADR | [ADR-001](../../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Superseded | Superseded by ADR-005 (Guacamole gateway model) |
+| ADR | [ADR-003](../../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Abandoned | Evaluated Tailscale vs ZeroTier vs WireGuard; superseded by ADR-004 |
+| ADR | [ADR-004](../../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Adopted | Self-hosted WireGuard via VPS; replaces ADR-003 |
+| ADR | [ADR-005](../../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md) | Remote Desktop Access Model | Adopted | Guacamole gateway + native protocols; replaces ADR-001 |
+| Spec | [SPEC-002](../../../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Deprecated | ADR-005 supersedes RustDesk with Guacamole + native protocols |
+| Spec | [SPEC-003](../../../spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) | WireGuard Hub & Mesh Network | Implemented | porthole CLI: hub config, state schema, CoreDNS, peer enrollment |
+| Spec | [SPEC-004](../../../spec/Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md) | Guacamole Remote Desktop Gateway | Implemented | Docker Compose stack, Caddy TLS, seed-guac command |
+| Spec | [SPEC-005](../../../spec/Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md) | Node Health & Recovery Agent | Implemented | wg-watchdog, reverse SSH tunnel, gen-peer-scripts command |
+| PRD | [PRD-004](../../../prd/Abandoned/(PRD-004)-RustDesk-Self-Hosted-Relay/(PRD-004)-RustDesk-Self-Hosted-Relay.md) | RustDesk Self-Hosted Relay | Abandoned | WireGuard mesh eliminates the need for a relay |
+| Epic | [EPIC-007](../(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap.md) | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | Proposed | Terraform + Ansible for hub IaC; Textual TUI for node enrollment |
 
 ## Key dependencies
 
@@ -118,7 +118,7 @@ infrastructure or manual per-machine network configuration.
    servers, and family machines alike. It detects the platform and role, and
    installs only what is appropriate. No separate repo is needed.
 
-3. **Guacamole deployment** (settled by [SPIKE-005](../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)):
+3. **Guacamole deployment** (settled by [SPIKE-005](../../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)):
    Guacamole runs on the VPS hub, bound to the WireGuard interface
    (10.100.0.1) so it is only reachable from within the mesh. TLS via DNS-01
    (Cloudflare). Auth: database + TOTP, with TOTP bypass for the WireGuard

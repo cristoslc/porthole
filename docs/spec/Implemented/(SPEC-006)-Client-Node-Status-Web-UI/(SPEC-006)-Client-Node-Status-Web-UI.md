@@ -19,8 +19,8 @@ depends-on:
 **Author:** cristos
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
-**Parent Epic:** [(EPIC-003) Client Node Web UI](../../../epic/Active/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md)
-**Depends on:** [SPEC-003](../Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard must exist), [SPEC-005](../Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md) (watchdog patterns)
+**Parent Epic:** [(EPIC-003) Client Node Web UI](../../../epic/Complete/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md)
+**Depends on:** [SPEC-003](../(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard must exist), [SPEC-005](../(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md) (watchdog patterns)
 
 ### Lifecycle
 

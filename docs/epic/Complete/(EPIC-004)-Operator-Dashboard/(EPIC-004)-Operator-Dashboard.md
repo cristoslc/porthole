@@ -58,7 +58,7 @@ Give the operator a single-pane view of the entire WireGuard mesh network withou
 
 | Type | ID | Title | Status | Notes |
 |------|----|-------|--------|-------|
-| Spec | [SPEC-007](../../spec/Implemented/(SPEC-007)-Operator-Dashboard/(SPEC-007)-Operator-Dashboard.md) | Operator Dashboard | Implemented | porthole dashboard command; Python stdlib HTTP server; /api/status JSON |
+| Spec | [SPEC-007](../../../spec/Implemented/(SPEC-007)-Operator-Dashboard/(SPEC-007)-Operator-Dashboard.md) | Operator Dashboard | Implemented | porthole dashboard command; Python stdlib HTTP server; /api/status JSON |
 
 ## Key dependencies
 

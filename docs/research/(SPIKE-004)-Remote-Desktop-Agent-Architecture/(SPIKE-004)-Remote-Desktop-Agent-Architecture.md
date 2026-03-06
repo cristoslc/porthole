@@ -15,7 +15,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [EPIC-001](../../epic/Proposed/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Parent:** [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Question:** Can RustDesk and NoMachine run as silent background agents while also acting as clients, or should the fleet use a gateway model like Apache Guacamole instead?
 **Gate:** Pre-MVP
 **Risks addressed:**

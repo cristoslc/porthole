@@ -15,7 +15,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [EPIC-005](../../epic/Proposed/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md)
+**Parent:** [EPIC-005](../../epic/Complete/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md)
 **Question:** How should Guacamole be secured on a VPS that also serves as the WireGuard hub, given that the hub must be fully fungible and rebuildable?
 **Gate:** Pre-MVP
 **Risks addressed:**

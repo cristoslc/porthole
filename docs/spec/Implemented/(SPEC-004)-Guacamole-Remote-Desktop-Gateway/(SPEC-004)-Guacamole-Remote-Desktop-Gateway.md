@@ -27,7 +27,7 @@ addresses:
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Research:** [(SPIKE-004) Remote Desktop Agent Architecture](../../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md), [(SPIKE-005) Securing Guacamole on Hub](../../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)
 **ADR:** [(ADR-005) Remote Desktop Access Model](../../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md)
-**Depends on:** [SPEC-003](../Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard network must exist)
+**Depends on:** [SPEC-003](../(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard network must exist)
 
 ### Lifecycle
 
