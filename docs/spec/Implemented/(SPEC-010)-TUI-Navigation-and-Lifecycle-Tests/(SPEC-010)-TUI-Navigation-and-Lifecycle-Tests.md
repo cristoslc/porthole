@@ -1,7 +1,7 @@
 ---
 title: "TUI Navigation and Lifecycle Tests"
 artifact: SPEC-010
-status: Draft
+status: Implemented
 author: cristos
 created: 2026-03-05
 last-updated: 2026-03-05
