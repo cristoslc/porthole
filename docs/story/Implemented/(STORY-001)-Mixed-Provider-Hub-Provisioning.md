@@ -26,3 +26,4 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-03 | 269e517 | Initial creation |
+| Implemented | 2026-03-06 | 9805541 | Mixed-provider DNS for both terraform dirs |
