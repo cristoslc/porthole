@@ -7,6 +7,8 @@ created: 2026-02-28
 last-updated: 2026-02-28
 parent-epic: EPIC-001
 depends-on: []
+question: "Is it operationally feasible to run the WireGuard hub as an ephemeral, on-demand VPS — destroyed when not in use — rather than as a persistent server?"
+gate: "Cold start under 10 minutes from a fresh build, IP stability solved via DNS without manual peer reconfiguration, Terraform+cloud-init automation achievable, all hub state derived from git repo"
 ---
 
 # SPIKE-007: Ephemeral VPS Hub Feasibility
@@ -15,7 +17,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [ADR-004](../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md)
+**Parent:** [ADR-004](../../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md)
 **Question:** Is it operationally feasible to run the WireGuard hub as an ephemeral, on-demand VPS — destroyed when not in use — rather than as a persistent server?
 **Gate:** Pre-ADR
 **Risks addressed:**

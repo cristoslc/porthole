@@ -7,6 +7,8 @@ created: 2026-02-27
 last-updated: 2026-02-27
 parent-epic: EPIC-001
 depends-on: []
+question: "Which commercial remote desktop solution best fits a personal fleet of ~10 machines across Linux, macOS, and Windows with privacy, NAT traversal, unattended access, and low-maintenance requirements?"
+gate: "At least 10 commercial remote desktop solutions evaluated with current data, each assessed against platforms, self-hosting, pricing, P2P vs relay, NAT traversal, unattended access, Linux quality, privacy, and automation"
 ---
 
 # SPIKE-002: Commercial Remote Desktop Solution Evaluation
@@ -15,7 +17,7 @@ depends-on: []
 **Author:** Claude
 **Created:** 2026-02-27
 **Last Updated:** 2026-02-27
-**Parent:** [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Parent:** [EPIC-001](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 
 ### Lifecycle
 

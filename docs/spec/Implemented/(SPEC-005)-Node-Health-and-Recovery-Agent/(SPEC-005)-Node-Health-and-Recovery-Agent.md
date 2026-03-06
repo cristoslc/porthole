@@ -23,7 +23,7 @@ addresses:
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**Research:** [(SPIKE-006) WireGuard Fallback & Recovery](../../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md)
+**Research:** [(SPIKE-006) WireGuard Fallback & Recovery](../../../research/Complete/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md)
 **Depends on:** [SPEC-003](../(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) (WireGuard network must exist)
 
 ### Lifecycle

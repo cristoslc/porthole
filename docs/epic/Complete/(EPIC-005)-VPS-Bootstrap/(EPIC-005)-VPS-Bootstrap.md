@@ -8,6 +8,11 @@ last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on:
   - EPIC-002
+success-criteria:
+  - porthole sync --full on fresh Ubuntu VPS installs WireGuard, CoreDNS, enables IP forwarding, deploys configs, brings up network
+  - Full rebuild from clone-to-connected under 10 minutes
+  - VPS runs no services beyond WireGuard, CoreDNS, SSH, and the status script
+  - Bootstrap process is idempotent — running twice produces the same result
 ---
 
 # EPIC-005: VPS Bootstrap & Disaster Recovery
@@ -16,7 +21,7 @@ depends-on:
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+**Parent Vision:** [VISION-001](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
 

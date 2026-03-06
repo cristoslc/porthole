@@ -7,6 +7,8 @@ created: 2026-02-28
 last-updated: 2026-02-28
 parent-epic: EPIC-001
 depends-on: []
+question: "Can RustDesk and NoMachine run as silent background agents while also acting as clients, or should the fleet use a gateway model like Apache Guacamole instead?"
+gate: "Determine which model (local agent or gateway) satisfies R10 (silent background operation), R3 (cross-platform), R6 (family passive after setup), and R8 (low maintenance) across Linux, macOS, and Windows"
 ---
 
 # SPIKE-004: Remote Desktop Agent Architecture
@@ -15,7 +17,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Parent:** [EPIC-001](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Question:** Can RustDesk and NoMachine run as silent background agents while also acting as clients, or should the fleet use a gateway model like Apache Guacamole instead?
 **Gate:** Pre-MVP
 **Risks addressed:**

@@ -225,3 +225,4 @@ journey
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-04 | 031aaaa | Initial creation — Windows family machine enrollment |
+| Validated | 2026-03-06 | audit-fix | Remediation — transition was not recorded |

@@ -1,27 +1,19 @@
 # Research Spikes Index
 
-## Planned
-
-_No spikes in this phase._
-
-## Active
-
-_No spikes in this phase._
-
 ## Complete
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPIKE-001 | Remote Desktop and Mesh Networking Solutions | cristos | 2026-02-27 | 2026-02-27 | 6df2003 | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
-| SPIKE-002 | Commercial Remote Desktop Solution Evaluation | Claude | 2026-02-27 | 2026-02-27 | 6df2003 | Comparative analysis of 11 commercial remote desktop tools |
-| SPIKE-004 | Remote Desktop Agent Architecture | cristos | 2026-02-28 | 2026-02-28 | 6d1cb09 | RustDesk vs NoMachine vs Guacamole for R10 compliance; informs ADR-005 |
-| SPIKE-005 | Securing Guacamole on Hub | cristos | 2026-02-28 | 2026-02-28 | a785ec8 | Network binding, TLS, auth, Docker deployment, firewall; informs EPIC-005 |
-| SPIKE-006 | WireGuard Fallback & Recovery | cristos | 2026-02-28 | 2026-02-28 | a785ec8 | Watchdog, reverse SSH, recovery scripts; informs EPIC-001 |
-| SPIKE-007 | Ephemeral VPS Hub Feasibility | cristos | 2026-02-28 | 2026-02-28 | 3abdcad | Ephemeral vs always-on hub, DNS endpoint strategy; informs ADR-004 |
-| SPIKE-008 | Automated Textual TUI Workflow Testing | cristos | 2026-03-05 | 2026-03-05 | 3dceecb | Can Textual TUI flows be tested end-to-end like web apps? Supports BUG-001 fix |
+| ID | Title | Summary | Last Updated | Commit |
+|----|-------|---------|--------------|--------|
+| [SPIKE-001](Complete/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Evaluation of 11 OSS remote desktop and 7 mesh networking solutions for the personal fleet use case. | 2026-02-27 | 6df2003 |
+| [SPIKE-002](Complete/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Comparative analysis of 11 commercial remote desktop tools against fleet requirements. | 2026-02-27 | 6df2003 |
+| [SPIKE-004](Complete/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md) | Remote Desktop Agent Architecture | RustDesk vs NoMachine vs Guacamole analysis for R10 compliance; findings inform ADR-005. | 2026-02-28 | 6d1cb09 |
+| [SPIKE-005](Complete/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md) | Securing Guacamole on Hub | Network binding, TLS, auth, Docker deployment, and firewall research for securing Guacamole on the hub VPS. | 2026-02-28 | a785ec8 |
+| [SPIKE-006](Complete/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md) | WireGuard Fallback & Recovery | Watchdog, reverse SSH, and recovery script research for automated node health and tunnel recovery. | 2026-02-28 | a785ec8 |
+| [SPIKE-007](Complete/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | Ephemeral vs always-on hub analysis and DNS endpoint strategy; informs ADR-004. | 2026-02-28 | 3abdcad |
+| [SPIKE-008](Complete/(SPIKE-008)-Automated-Textual-TUI-Workflow-Testing/(SPIKE-008)-Automated-Textual-TUI-Workflow-Testing.md) | Automated Textual TUI Workflow Testing | Research into whether Textual TUI flows can be tested end-to-end headlessly using the pilot API; GO recommendation. | 2026-03-05 | 36f7d24 |
 
 ## Abandoned
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPIKE-003 | Hands-On Validation of Remote Access Contenders | cristos | 2026-02-28 | 2026-02-28 | d28a5bf | ADR-004/005 adopted before validation; test combinations no longer match adopted stack |
+| ID | Title | Summary | Last Updated | Commit |
+|----|-------|---------|--------------|--------|
+| [SPIKE-003](Abandoned/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Planned hands-on testing of remote access tool combinations; abandoned because ADR-004/005 were adopted before validation. | 2026-02-28 | d28a5bf |

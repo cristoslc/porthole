@@ -1,27 +1,7 @@
 # Bug Index
 
-## Reported
-
-_None._
-
-## Active
-
-_None._
-
-## Fixed
-
-_None._
-
-## Verified
-
-_None._
-
-## Declined
-
-_None._
-
 ## Abandoned
 
-| ID | Title | Severity | Affected Artifacts | Created | Last Updated | Commit | Notes |
-|----|-------|----------|--------------------|---------|--------------|--------|-------|
-| BUG-001 | Node Bootstrap TUI Error States Are Opaque and Unrecoverable | high | SPEC-009, EPIC-007 | 2026-03-05 | 2026-03-05 | 7209b5b | Specious — bootstrap should install prereqs, not present pass/fail checks |
+| ID | Title | Summary | Last Updated | Commit |
+|----|-------|---------|--------------|--------|
+| [BUG-001](Abandoned/(BUG-001)-TUI-Error-States-Opaque-and-Unrecoverable.md) | TUI Error States Opaque and Unrecoverable | Bootstrap TUI presented opaque pass/fail checks with no remediation path; abandoned as specious since bootstrap should install prereqs automatically. | 2026-03-05 | 7209b5b |

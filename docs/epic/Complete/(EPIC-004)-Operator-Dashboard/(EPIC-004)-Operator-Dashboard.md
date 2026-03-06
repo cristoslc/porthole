@@ -8,6 +8,11 @@ last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on:
   - EPIC-002
+success-criteria:
+  - Dashboard displays all peers with last-seen time, transfer stats, and up/down status from a single view
+  - Data refreshed on demand by pulling a status snapshot from the VPS
+  - Dashboard runs on the operator's homelab as a container or service
+  - No persistent connection or agent required on VPS beyond existing status script
 ---
 
 # EPIC-004: Operator Dashboard
@@ -16,7 +21,7 @@ depends-on:
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+**Parent Vision:** [VISION-001](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
 

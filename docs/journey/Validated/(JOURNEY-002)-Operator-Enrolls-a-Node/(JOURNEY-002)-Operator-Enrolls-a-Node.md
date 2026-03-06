@@ -201,7 +201,7 @@ journey
 > **PP-06:** When a prerequisite check fails (e.g., Terraform not installed), the TUI
 > shows an `[x]` with no explanation of what failed or how to fix it. The **Continue**
 > button is non-functional, there is no remediation guidance, and there is no clear
-> way to quit the TUI. The operator is stranded. See [BUG-001](../../bug/Abandoned/(BUG-001)-TUI-Error-States-Opaque-and-Unrecoverable.md).
+> way to quit the TUI. The operator is stranded. See [BUG-001](../../../bug/Abandoned/(BUG-001)-TUI-Error-States-Opaque-and-Unrecoverable.md).
 
 ### Pain Points Summary
 
@@ -233,3 +233,4 @@ journey
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Draft | 2026-03-04 | 031aaaa | Initial creation — Linux/macOS node enrollment via TUI then CLI |
+| Validated | 2026-03-06 | audit-fix | Remediation — transition was not recorded |

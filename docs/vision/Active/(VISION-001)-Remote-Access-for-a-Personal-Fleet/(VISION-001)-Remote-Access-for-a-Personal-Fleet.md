@@ -108,18 +108,18 @@ attention from the operator and nothing from a family member.
 
 | Type | ID | Title | Status |
 |------|----|-------|--------|
-| Journey | [JOURNEY-001](../../journey/(JOURNEY-001)-Operator-Spins-Up-Hub/(JOURNEY-001)-Operator-Spins-Up-Hub.md) | Operator Spins Up a Fresh Hub | Draft |
-| Journey | [JOURNEY-002](../../journey/(JOURNEY-002)-Operator-Enrolls-a-Node/(JOURNEY-002)-Operator-Enrolls-a-Node.md) | Operator Enrolls a Linux or macOS Node | Draft |
-| Journey | [JOURNEY-003](../../journey/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine.md) | Operator Enrolls a Windows Family Machine | Draft |
-| Journey | [JOURNEY-004](../../journey/(JOURNEY-004)-Hub-Disaster-Recovery/(JOURNEY-004)-Hub-Disaster-Recovery.md) | Hub Disaster Recovery | Draft |
-| Epic | [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fleet Management | Active |
-| Epic | [EPIC-002](../../epic/Complete/(EPIC-002)-Provisioning-CLI/(EPIC-002)-Provisioning-CLI.md) | Provisioning CLI & Network State Management | Complete |
-| Epic | [EPIC-003](../../epic/Complete/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md) | Client Node Web UI | Complete |
-| Epic | [EPIC-004](../../epic/Complete/(EPIC-004)-Operator-Dashboard/(EPIC-004)-Operator-Dashboard.md) | Operator Dashboard | Complete |
-| Epic | [EPIC-005](../../epic/Complete/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md) | VPS Bootstrap & Disaster Recovery | Complete |
-| Epic | [EPIC-006](../../epic/Abandoned/(EPIC-006)-Homelab-Service-Exposure/(EPIC-006)-Homelab-Service-Exposure.md) | Homelab Service Exposure | Abandoned |
-| Epic | [EPIC-007](../../epic/Active/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap.md) | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | Proposed |
-| Spike | [SPIKE-003](../../research/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Abandoned |
+| Journey | [JOURNEY-001](../../../journey/Validated/(JOURNEY-001)-Operator-Spins-Up-Hub/(JOURNEY-001)-Operator-Spins-Up-Hub.md) | Operator Spins Up a Fresh Hub | Draft |
+| Journey | [JOURNEY-002](../../../journey/Validated/(JOURNEY-002)-Operator-Enrolls-a-Node/(JOURNEY-002)-Operator-Enrolls-a-Node.md) | Operator Enrolls a Linux or macOS Node | Draft |
+| Journey | [JOURNEY-003](../../../journey/Validated/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine/(JOURNEY-003)-Operator-Enrolls-a-Windows-Family-Machine.md) | Operator Enrolls a Windows Family Machine | Draft |
+| Journey | [JOURNEY-004](../../../journey/Validated/(JOURNEY-004)-Hub-Disaster-Recovery/(JOURNEY-004)-Hub-Disaster-Recovery.md) | Hub Disaster Recovery | Draft |
+| Epic | [EPIC-001](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md) | Remote Fleet Management | Active |
+| Epic | [EPIC-002](../../../epic/Complete/(EPIC-002)-Provisioning-CLI/(EPIC-002)-Provisioning-CLI.md) | Provisioning CLI & Network State Management | Complete |
+| Epic | [EPIC-003](../../../epic/Complete/(EPIC-003)-Client-Web-UI/(EPIC-003)-Client-Web-UI.md) | Client Node Web UI | Complete |
+| Epic | [EPIC-004](../../../epic/Complete/(EPIC-004)-Operator-Dashboard/(EPIC-004)-Operator-Dashboard.md) | Operator Dashboard | Complete |
+| Epic | [EPIC-005](../../../epic/Complete/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md) | VPS Bootstrap & Disaster Recovery | Complete |
+| Epic | [EPIC-006](../../../epic/Abandoned/(EPIC-006)-Homelab-Service-Exposure/(EPIC-006)-Homelab-Service-Exposure.md) | Homelab Service Exposure | Abandoned |
+| Epic | [EPIC-007](../../../epic/Active/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap/(EPIC-007)-Zero-Touch-Hub-Provisioning-and-Node-Bootstrap.md) | Zero-Touch Hub Provisioning & Interactive Node Bootstrap | Proposed |
+| Spike | [SPIKE-003](../../../research/Abandoned/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders/(SPIKE-003)-Hands-On-Validation-of-Remote-Access-Contenders.md) | Hands-On Validation of Remote Access Contenders | Abandoned |
 
 ## Supporting documents
 

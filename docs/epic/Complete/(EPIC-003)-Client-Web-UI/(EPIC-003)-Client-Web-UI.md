@@ -8,6 +8,11 @@ last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on:
   - EPIC-002
+success-criteria:
+  - Each client node runs a local web UI on LAN showing tunnel status, assigned IP, DNS name, and last handshake
+  - UI provides a restart tunnel action for remote troubleshooting
+  - UI runs as a systemd service and auto-starts on boot
+  - Non-technical family members do not need to interact with the UI under normal operation
 ---
 
 # EPIC-003: Client Node Web UI
@@ -16,7 +21,7 @@ depends-on:
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+**Parent Vision:** [VISION-001](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
 

@@ -7,6 +7,12 @@ created: 2026-02-28
 last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on: []
+success-criteria:
+  - Any two managed machines establish a remote desktop session within 30 seconds regardless of NAT/firewall
+  - SSH access works between all managed machines via stable hostnames or IPs
+  - Remote family machines reachable without ongoing technical steps after initial setup
+  - Remote-access network isolated from existing infrastructure (VMs, Docker, local services)
+  - make apply on Linux/macOS configures WireGuard and remote desktop automatically; Windows manual setup under 15 minutes
 ---
 
 # EPIC-001: Remote Fleet Management
@@ -15,7 +21,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-03-03
-**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+**Parent Vision:** [VISION-001](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
 
@@ -80,12 +86,12 @@ infrastructure or manual per-machine network configuration.
 
 | Type | ID | Title | Status | Notes |
 |------|----|-------|--------|-------|
-| Spike | [SPIKE-001](../../../research/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
-| Spike | [SPIKE-002](../../../research/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
-| Spike | [SPIKE-004](../../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md) | Remote Desktop Agent Architecture | Complete | RustDesk vs NoMachine vs Guacamole for R10 compliance |
-| Spike | [SPIKE-005](../../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md) | Securing Guacamole on Hub | Complete | Guacamole hardening: WireGuard-only binding, TOTP, TLS via DNS-01 |
-| Spike | [SPIKE-006](../../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md) | WireGuard Fallback & Recovery | Complete | Five-layer recovery model: watchdog, reverse SSH, SMS, RustDesk, OS-level |
-| Spike | [SPIKE-007](../../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | Complete | Ephemeral vs always-on hub; DNS endpoint strategy; rebuild-from-repo model |
+| Spike | [SPIKE-001](../../../research/Complete/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md) | Remote Desktop and Mesh Networking Solutions | Complete | Evaluation of 11 OSS remote desktop + 7 mesh networking solutions |
+| Spike | [SPIKE-002](../../../research/Complete/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md) | Commercial Remote Desktop Solution Evaluation | Complete | Comparative analysis of 11 commercial remote desktop tools |
+| Spike | [SPIKE-004](../../../research/Complete/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md) | Remote Desktop Agent Architecture | Complete | RustDesk vs NoMachine vs Guacamole for R10 compliance |
+| Spike | [SPIKE-005](../../../research/Complete/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md) | Securing Guacamole on Hub | Complete | Guacamole hardening: WireGuard-only binding, TOTP, TLS via DNS-01 |
+| Spike | [SPIKE-006](../../../research/Complete/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md) | WireGuard Fallback & Recovery | Complete | Five-layer recovery model: watchdog, reverse SSH, SMS, RustDesk, OS-level |
+| Spike | [SPIKE-007](../../../research/Complete/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | Complete | Ephemeral vs always-on hub; DNS endpoint strategy; rebuild-from-repo model |
 | ADR | [ADR-001](../../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Superseded | Superseded by ADR-005 (Guacamole gateway model) |
 | ADR | [ADR-003](../../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Abandoned | Evaluated Tailscale vs ZeroTier vs WireGuard; superseded by ADR-004 |
 | ADR | [ADR-004](../../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Adopted | Self-hosted WireGuard via VPS; replaces ADR-003 |
@@ -118,7 +124,7 @@ infrastructure or manual per-machine network configuration.
    servers, and family machines alike. It detects the platform and role, and
    installs only what is appropriate. No separate repo is needed.
 
-3. **Guacamole deployment** (settled by [SPIKE-005](../../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)):
+3. **Guacamole deployment** (settled by [SPIKE-005](../../../research/Complete/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)):
    Guacamole runs on the VPS hub, bound to the WireGuard interface
    (10.100.0.1) so it is only reachable from within the mesh. TLS via DNS-01
    (Cloudflare). Auth: database + TOTP, with TOTP bypass for the WireGuard

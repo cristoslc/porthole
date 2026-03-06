@@ -7,6 +7,8 @@ created: 2026-02-27
 last-updated: 2026-02-27
 parent-epic: EPIC-001
 depends-on: []
+question: "What are the viable open-source remote desktop and mesh/overlay networking solutions for a personal fleet of ~10 machines across Linux, macOS, and Windows, evaluated against the requirements in VISION-001?"
+gate: "At least 3 remote desktop and 3 mesh networking solutions evaluated with current data, each assessed against platforms, self-hosting, maturity, NAT traversal, unattended access, Linux quality, family-friendliness, and notable limitations"
 ---
 
 # SPIKE-001: Remote Desktop and Mesh Networking Solutions for Personal Fleet
@@ -15,8 +17,8 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-27
 **Last Updated:** 2026-02-27
-**Parent:** [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**Blocks:** [ADR-003](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md)
+**Parent:** [EPIC-001](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Blocks:** [ADR-003](../../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md)
 
 ### Lifecycle
 

@@ -23,7 +23,7 @@ addresses:
 **Created:** 2026-03-03
 **Last Updated:** 2026-03-03
 **Parent Epic:** [(EPIC-001) Remote Fleet Management](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**Research:** [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
+**Research:** [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../../research/Complete/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
 **ADR:** [(ADR-004) WireGuard Hub-and-Spoke Relay](../../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md)
 
 ### Lifecycle

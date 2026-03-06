@@ -9,6 +9,13 @@ parent-vision: VISION-001
 depends-on:
   - EPIC-001
   - EPIC-005
+success-criteria:
+  - Services reachable by <name>.home.example.com from LAN, Tailscale, and internet contexts
+  - Valid TLS in all contexts via single wildcard cert issued with DNS-01
+  - Local DNS resolver returns LAN IPs for private-zone queries; forwards else upstream
+  - Tailscale split DNS routes home.example.com queries to local resolver
+  - VPS performs SNI pass-through to homelab reverse proxy via WireGuard
+  - Internet exposure is opt-in per service (public DNS record + VPS SNI route)
 ---
 
 # EPIC-006: Homelab Service Exposure
@@ -17,7 +24,7 @@ depends-on:
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-03-02
-**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+**Parent Vision:** [VISION-001](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
 

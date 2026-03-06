@@ -7,6 +7,8 @@ created: 2026-02-28
 last-updated: 2026-02-28
 parent-vision: VISION-001
 depends-on: []
+question: "Which remote access combination (from SPIKE-001/002 shortlist) actually works best in practice across desktop quality, family onboarding, SSH, ACL isolation, and stability?"
+gate: "At least one combination passes all five criteria (desktop quality, family onboarding under 30 min, SSH via MagicDNS, ACL isolation, 48-hour stability) or no-go with documented failures and fallback evaluation"
 ---
 
 # SPIKE-003: Hands-On Validation of Remote Access Contenders
@@ -15,7 +17,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [VISION-001](../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+**Parent:** [VISION-001](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 **Blocks:** Final product selection; determines whether EPIC-001 build path is needed
 
 ### Lifecycle
@@ -29,9 +31,9 @@ depends-on: []
 
 ## Question
 
-The [product landscape](../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/product-landscape.md) identified multiple combinations that satisfy all requirements on paper. **Which one actually works best in practice?**
+The [product landscape](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/product-landscape.md) identified multiple combinations that satisfy all requirements on paper. **Which one actually works best in practice?**
 
-Desk research ([SPIKE-001](../(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md), [SPIKE-002](../(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md)) and the product landscape have narrowed the field. The remaining questions can't be answered by analysis — they require installing software on real machines and using it.
+Desk research ([SPIKE-001](../../Complete/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions/(SPIKE-001)-Remote-Desktop-and-Mesh-Networking-Solutions.md), [SPIKE-002](../../Complete/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation/(SPIKE-002)-Commercial-Remote-Desktop-Solution-Evaluation.md)) and the product landscape have narrowed the field. The remaining questions can't be answered by analysis — they require installing software on real machines and using it.
 
 ## Gate
 

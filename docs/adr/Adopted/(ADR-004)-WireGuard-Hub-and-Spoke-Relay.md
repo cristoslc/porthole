@@ -23,7 +23,7 @@ depends-on: []
 **Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Replaces:** [(ADR-003) Network Layer for Remote Fleet](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) (Abandoned)
 **Affects:** [EPIC-002](../../epic/Complete/(EPIC-002)-Provisioning-CLI/(EPIC-002)-Provisioning-CLI.md), [EPIC-005](../../epic/Complete/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md), [EPIC-006](../../epic/Abandoned/(EPIC-006)-Homelab-Service-Exposure/(EPIC-006)-Homelab-Service-Exposure.md)
-**Informed by:** [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
+**Informed by:** [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../research/Complete/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
 
 ### Lifecycle
 

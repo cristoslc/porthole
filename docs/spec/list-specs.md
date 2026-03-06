@@ -1,39 +1,23 @@
 # Agent Spec Lifecycle Index
 
-## Draft
-
-_No specs in this phase._
-
-## Review
-
-_No specs in this phase._
-
-## Approved
-
-_No specs in this phase._
-
 ## Implemented
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPEC-010 | TUI Navigation and Lifecycle Tests | cristos | 2026-03-05 | 2026-03-05 | e471800 | 23 tests pass, production fixes included |
-| SPEC-009 | Node Bootstrap TUI | cristos | 2026-03-03 | 2026-03-04 | 32f5763 | All 5 screens + --check flag complete |
-| SPEC-008 | Hub Infrastructure as Code | cristos | 2026-03-03 | 2026-03-04 | e56f0ee | backend.tf (both providers), DO firewall ports, Guacamole schema init + seed exec + platform template, guacamole_db_password |
-| SPEC-003 | WireGuard Hub & Mesh Network | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | porthole CLI implements all templates, state schema, modules; adds platform field, peer-config, install-peer |
-| SPEC-004 | Guacamole Remote Desktop Gateway | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | Docker Compose stack, Caddy TLS, seed-guac command; adds admin password in state, --apply flag |
-| SPEC-005 | Node Health & Recovery Agent | cristos | 2026-03-03 | 2026-03-04 | 031aaaa | wg-watchdog, reverse SSH tunnel, gen-peer-scripts; notes Windows watchdog code gap; adds reconnect event logging |
-| SPEC-006 | Client Node Status Web UI | cristos | 2026-03-03 | 2026-03-03 | de7cdd1 | Python stdlib HTTP server; wg status + restart button on port 8888 |
-| SPEC-007 | Operator Dashboard | cristos | 2026-03-03 | 2026-03-03 | 6738203 | porthole dashboard command; fleet status via SSH on port 8080 |
+| ID | Title | Summary | Last Updated | Commit |
+|----|-------|---------|--------------|--------|
+| [SPEC-003](Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) | WireGuard Hub & Mesh Network | WireGuard hub-and-spoke network with porthole CLI implementing all templates, state schema, and modules including platform field and peer-config. | 2026-03-04 | d46e0d2 |
+| [SPEC-004](Implemented/(SPEC-004)-Guacamole-Remote-Desktop-Gateway/(SPEC-004)-Guacamole-Remote-Desktop-Gateway.md) | Guacamole Remote Desktop Gateway | Docker Compose stack with Caddy TLS and seed-guac command for browser-based remote desktop via Guacamole on the hub. | 2026-03-04 | 068a4f5 |
+| [SPEC-005](Implemented/(SPEC-005)-Node-Health-and-Recovery-Agent/(SPEC-005)-Node-Health-and-Recovery-Agent.md) | Node Health & Recovery Agent | WireGuard watchdog, reverse SSH tunnel, and gen-peer-scripts for automated node health monitoring and recovery. | 2026-03-04 | 068a4f5 |
+| [SPEC-006](Implemented/(SPEC-006)-Client-Node-Status-Web-UI/(SPEC-006)-Client-Node-Status-Web-UI.md) | Client Node Status Web UI | Python stdlib HTTP server providing WireGuard status and restart button on port 8888 for each client node. | 2026-03-03 | de7cdd1 |
+| [SPEC-007](Implemented/(SPEC-007)-Operator-Dashboard/(SPEC-007)-Operator-Dashboard.md) | Operator Dashboard | porthole dashboard command providing fleet status via SSH on port 8080 for the operator. | 2026-03-03 | 6738203 |
+| [SPEC-008](Implemented/(SPEC-008)-Hub-Infrastructure-as-Code/(SPEC-008)-Hub-Infrastructure-as-Code.md) | Hub Infrastructure as Code | Terraform and Ansible for hub provisioning including backend.tf for both providers, DO firewall, Guacamole schema init, and guacamole_db_password. | 2026-03-04 | e56f0ee |
+| [SPEC-009](Implemented/(SPEC-009)-Node-Bootstrap-TUI/(SPEC-009)-Node-Bootstrap-TUI.md) | Node Bootstrap TUI | Textual TUI for guided node enrollment with 5 screens (prerequisites, secrets, hub check, enrollment, summary) and --check flag. | 2026-03-04 | 32f5763 |
+| [SPEC-010](Implemented/(SPEC-010)-TUI-Navigation-and-Lifecycle-Tests/(SPEC-010)-TUI-Navigation-and-Lifecycle-Tests.md) | TUI Navigation and Lifecycle Tests | Comprehensive test suite covering TUI navigation, back/quit behavior, and screen lifecycle with 23 tests passing plus production fixes. | 2026-03-05 | e471800 |
 
 ## Deprecated
 
-| ID | Title | Author | Created | Last Updated | Commit | Notes |
-|----|-------|--------|---------|--------------|--------|-------|
-| SPEC-002 | Remote Desktop Bootstrap | cristos | 2026-02-26 | 2026-02-28 | d28a5bf | ADR-005 supersedes RustDesk with Guacamole + native protocols |
-
-## Abandoned
-
-_No specs in this phase._
+| ID | Title | Summary | Last Updated | Commit |
+|----|-------|---------|--------------|--------|
+| [SPEC-002](Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | RustDesk-based remote desktop bootstrap, deprecated after ADR-005 superseded RustDesk with Guacamole and native protocols. | 2026-02-28 | d28a5bf |
 
 ---
 

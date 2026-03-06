@@ -21,10 +21,10 @@ depends-on: []
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
 **Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
-**Informed by:** [(SPIKE-004) Remote Desktop Agent Architecture](../../research/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md)
+**Informed by:** [(SPIKE-004) Remote Desktop Agent Architecture](../../research/Complete/(SPIKE-004)-Remote-Desktop-Agent-Architecture/(SPIKE-004)-Remote-Desktop-Agent-Architecture.md)
 **Supersedes:** [(ADR-001) RustDesk for Remote Desktop](../Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md)
 **Affects:** EPIC-001, EPIC-002, SPEC-002
-**Informed by:** [(SPIKE-005) Securing Guacamole on Hub](../../research/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md), [(SPIKE-006) WireGuard Fallback & Recovery](../../research/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md), [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../research/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
+**Informed by:** [(SPIKE-005) Securing Guacamole on Hub](../../research/Complete/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md), [(SPIKE-006) WireGuard Fallback & Recovery](../../research/Complete/(SPIKE-006)-WireGuard-Fallback-Recovery/(SPIKE-006)-WireGuard-Fallback-Recovery.md), [(SPIKE-007) Ephemeral VPS Hub Feasibility](../../research/Complete/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md)
 
 ### Lifecycle
 

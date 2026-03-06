@@ -7,6 +7,8 @@ created: 2026-02-28
 last-updated: 2026-02-28
 parent-epic: EPIC-005
 depends-on: []
+question: "How should Guacamole be secured on a VPS that also serves as the WireGuard hub, given that the hub must be fully fungible and rebuildable?"
+gate: "Guacamole is reachable only from inside the WireGuard tunnel, TLS is automated, connections are generated from repo state, and the entire hub is rebuildable with one command"
 ---
 
 # SPIKE-005: Securing Guacamole on the Hub
@@ -15,7 +17,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [EPIC-005](../../epic/Complete/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md)
+**Parent:** [EPIC-005](../../../epic/Complete/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md)
 **Question:** How should Guacamole be secured on a VPS that also serves as the WireGuard hub, given that the hub must be fully fungible and rebuildable?
 **Gate:** Pre-MVP
 **Risks addressed:**

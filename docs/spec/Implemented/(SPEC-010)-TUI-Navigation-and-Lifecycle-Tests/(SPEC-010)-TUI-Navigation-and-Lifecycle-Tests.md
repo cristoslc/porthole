@@ -9,8 +9,7 @@ parent-epic: EPIC-007
 linked-research:
   - SPIKE-008
 linked-adrs: []
-depends-on:
-  - SPIKE-008
+depends-on: []
 addresses: []
 ---
 

@@ -7,6 +7,13 @@ created: 2026-02-28
 last-updated: 2026-03-03
 parent-vision: VISION-001
 depends-on: []
+success-criteria:
+  - porthole init bootstraps new network with subnet, hub config, and SOPS-encrypted state file
+  - porthole add generates keys, assigns IP, registers DNS, outputs deployable client config
+  - porthole remove revokes a peer and regenerates hub config
+  - porthole sync pushes current hub WireGuard config and DNS zone to VPS via SSH without downtime
+  - All private keys in network.sops.yaml encrypted with age
+  - Project runs via uv run porthole with no pre-installed dependencies beyond uv
 ---
 
 # EPIC-002: Provisioning CLI & Network State Management
@@ -15,7 +22,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-03-03
-**Parent Vision:** [VISION-001](../../../vision/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
+**Parent Vision:** [VISION-001](../../../vision/Active/(VISION-001)-Remote-Access-for-a-Personal-Fleet/(VISION-001)-Remote-Access-for-a-Personal-Fleet.md)
 
 ### Lifecycle
 

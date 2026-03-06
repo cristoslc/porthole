@@ -7,6 +7,8 @@ created: 2026-02-28
 last-updated: 2026-02-28
 parent-epic: EPIC-001
 depends-on: []
+question: "When WireGuard goes down on a remote node, how does the operator regain access to reinstall or reconfigure it?"
+gate: "At least two independent fallback layers exist, covering both automated recovery and operator-assisted remote access, across all three platforms (Linux, macOS, Windows)"
 ---
 
 # SPIKE-006: WireGuard Fallback & Recovery
@@ -15,7 +17,7 @@ depends-on: []
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [EPIC-001](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
+**Parent:** [EPIC-001](../../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Question:** When WireGuard goes down on a remote node, how does the operator regain access to reinstall or reconfigure it?
 **Gate:** Pre-MVP
 **Risks addressed:**
