@@ -80,64 +80,14 @@ class PrerequisitesScreen(Screen):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        missing = sum(1 for ts in self._states.values() if not ts.installed)
-        subtitle = (
-            f"[bold green]All {len(self._states)} tools installed[/]"
-            if missing == 0
-            else f"[bold]{missing} of {len(self._states)} tools missing[/] — install them below"
-        )
-        rows = [self._make_row(ts) for ts in self._states.values()]
         yield ScrollableContainer(
             Label("Required tools", classes="section-title"),
-            Static(subtitle, id="subtitle", classes="tool-row"),
-            Vertical(*rows, id="tool-list"),
+            Static("Checking…", id="subtitle", classes="tool-row"),
+            Vertical(id="tool-list"),
             RichLog(id="log", highlight=True, markup=True),
         )
-        all_ok = all(ts.installed for ts in self._states.values())
-        yield Button("Continue →", id="continue-btn", variant="success", disabled=not all_ok)
+        yield Button("Continue →", id="continue-btn", variant="success", disabled=True)
         yield Footer()
-
-    def _make_row(self, ts: _TS) -> Vertical:
-        """Build a tool block for initial compose (before mount)."""
-        icon = "✓" if ts.installed else "✗"
-        css = "ok" if ts.installed else "bad"
-        desc = get_tool_description(ts.platform_key)
-
-        children: list[Label | Static | Button] = [
-            Label(
-                f"[{css}]{icon}[/]  {ts.display}",
-                id=f"lbl-{ts.binary}",
-                classes="tool-row",
-            ),
-        ]
-        if desc:
-            children.append(Static(f"[dim]{desc}[/]", id=f"desc-{ts.binary}", classes="tool-desc"))
-        if not ts.installed:
-            cmd = get_install_command(ts.platform_key, self._os)
-            hint = get_manual_hint(ts.platform_key, self._os)
-            if cmd:
-                sudo_note = "  [yellow](requires sudo)[/]" if ts.platform_key in NEEDS_SUDO else ""
-                children.append(
-                    Button(f"Install {ts.display}", id=f"btn-{ts.binary}", variant="primary")
-                )
-                children.append(
-                    Static(
-                        f"[dim]Will run: {' '.join(cmd)}[/]{sudo_note}",
-                        classes="tool-hint",
-                    )
-                )
-            elif hint:
-                children.append(
-                    Static(f"[yellow]Manual install:[/] {hint}", classes="tool-hint")
-                )
-            else:
-                children.append(
-                    Static(
-                        "[yellow]No auto-install available — install manually and re-check[/]",
-                        classes="tool-hint",
-                    )
-                )
-        return Vertical(*children, id=f"block-{ts.binary}")
 
     # ------------------------------------------------------------------
     # Events

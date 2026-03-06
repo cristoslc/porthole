@@ -1,4 +1,6 @@
 """Platform detection and tool installation dispatch for Porthole setup."""
+from __future__ import annotations
+
 import platform
 import shutil
 from enum import Enum, auto
