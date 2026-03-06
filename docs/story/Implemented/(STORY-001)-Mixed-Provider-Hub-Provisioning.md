@@ -1,10 +1,10 @@
 ---
 title: "Mixed-Provider Hub Provisioning"
 artifact: STORY-001
-status: Ready
+status: Implemented
 author: cristos
 created: 2026-03-03
-last-updated: 2026-03-03
+last-updated: 2026-03-06
 parent-epic: EPIC-007
 depends-on: []
 ---
