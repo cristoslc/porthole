@@ -5,7 +5,7 @@ license: UNLICENSED
 allowed-tools: Bash, Read, Grep, Glob
 metadata:
   short-description: Update agents scaffolding from upstream
-  version: 1.2.0
+  version: 1.3.0
   author: cristos
 ---
 
@@ -17,7 +17,7 @@ Pull the latest agents-core scaffolding from the upstream repository into the cu
 
 - The working tree must be clean before starting.
 - `npx` is the preferred update path for skills. If unavailable, the skill falls back to pure git.
-- The `agents-upstream` git remote is required for updating `AGENTS.md` and other non-skill scaffolding. If it is missing, the skill will prompt the user to add it.
+- The `agents-upstream` git remote is required for the git fallback path. If it is missing, the skill will prompt the user to add it.
 
 ## Quick check mode
 
@@ -40,11 +40,11 @@ command -v npx >/dev/null 2>&1
 If available, run:
 
 ```bash
-npx skills add https://github.com/cristoslc/LLM-personal-agent-patterns@l3-agents-core --yes
+npx skills add cristoslc/swain --yes
 ```
 
 Track the outcome:
-- **npx succeeded** — skills are updated. Proceed to step 3 to update `AGENTS.md` and other non-skill scaffolding via git.
+- **npx succeeded** — skills are updated. Proceed to step 3 for git fallback of non-skill scaffolding (AGENTS.md, etc.).
 - **npx failed or unavailable** — proceed to step 3, which will handle updating everything (skills included) via git.
 
 ### 3. Git procedure — AGENTS.md and scaffolding (and full fallback)
@@ -60,7 +60,7 @@ git remote get-url agents-upstream
 If it does not exist, tell the user the remote is missing and show them how to add it:
 
 ```
-git remote add agents-upstream https://github.com/cristoslc/LLM-personal-agent-patterns.git
+git remote add agents-upstream https://github.com/cristoslc/swain.git
 ```
 
 Then ask them to re-invoke the skill after adding it.
@@ -70,7 +70,7 @@ Then ask them to re-invoke the skill after adding it.
 Fetch the upstream branch. A regular fetch (not shallow) is needed so git can compute a proper merge base for incremental merges:
 
 ```bash
-git fetch agents-upstream l3-agents-core
+git fetch agents-upstream main
 ```
 
 #### 3c. Check for changes
@@ -81,11 +81,11 @@ The diff scope depends on whether npx already updated the skills:
 
 - **If npx succeeded** — narrow scope (only non-skill scaffolding):
   ```bash
-  git diff HEAD..agents-upstream/l3-agents-core --stat -- AGENTS.md .agents/README.md .agents/AGENTS-SETUP.md import-agents-standalone.sh
+  git diff HEAD..agents-upstream/main --stat -- AGENTS.md .agents/README.md .agents/AGENTS-SETUP.md import-agents-standalone.sh
   ```
 - **If npx failed or was unavailable** — full scope:
   ```bash
-  git diff HEAD..agents-upstream/l3-agents-core --stat -- .agents/ AGENTS.md import-agents-standalone.sh
+  git diff HEAD..agents-upstream/main --stat -- .agents/ AGENTS.md import-agents-standalone.sh
   ```
 
 If the diff is empty, tell the user they are already up to date and stop.
@@ -93,7 +93,7 @@ If the diff is empty, tell the user they are already up to date and stop.
 #### 3d. Merge
 
 ```bash
-git merge agents-upstream/l3-agents-core --allow-unrelated-histories --no-edit
+git merge agents-upstream/main --allow-unrelated-histories --no-edit
 ```
 
 **Why `--allow-unrelated-histories`**: The initial import into most projects used `--squash`, which did not record a merge base. The flag is harmless on subsequent merges where a base already exists — git ignores it when histories are already related.
