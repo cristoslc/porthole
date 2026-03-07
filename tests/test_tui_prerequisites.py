@@ -1,6 +1,8 @@
-"""Tests for PrerequisitesScreen — tool detection and Continue gating."""
+"""Tests for PrerequisitesScreen — ansible-based tool installation."""
 
 from __future__ import annotations
+
+from unittest.mock import MagicMock
 
 import pytest
 from textual.widgets import Button
@@ -12,43 +14,37 @@ pytest_plugins = ["tests.conftest_tui"]
 
 
 @pytest.mark.asyncio
-async def test_continue_disabled_when_tool_missing(monkeypatch):
-    """Continue button is disabled when any tool is not installed."""
-    monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.is_installed", lambda t: t != "sops"
-    )
-    from porthole_setup.platform import OS
-
-    monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.detect_os", lambda: OS.MACOS
-    )
-    monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.get_install_command",
-        lambda t, o: ["echo", "ok"],
-    )
-    monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.get_tool_description",
-        lambda t: "test tool",
-    )
-    monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.get_manual_hint",
-        lambda t, o: None,
-    )
-
+async def test_continue_disabled_on_mount(mock_ansible_noop):
+    """Continue button starts disabled while ansible runs."""
     app = PortholeApp()
     async with app.run_test(size=(120, 40)) as pilot:
         await pilot.pause()
         assert isinstance(app.screen, PrerequisitesScreen)
         btn = app.screen.query_one("#continue-btn", Button)
+        # Button is disabled until ansible succeeds and tools verified
         assert btn.disabled is True
 
 
 @pytest.mark.asyncio
-async def test_continue_enabled_when_all_installed(mock_all_installed):
-    """Continue button is enabled when all tools are installed."""
+async def test_continue_enabled_after_ansible_success(mock_ansible_success):
+    """Continue button enables after ansible succeeds and tools are on PATH."""
+    app = PortholeApp()
+    async with app.run_test(size=(120, 40)) as pilot:
+        # Give the background worker time to complete
+        await pilot.pause()
+        await pilot.pause()
+        await pilot.pause()
+        btn = app.screen.query_one("#continue-btn", Button)
+        assert btn.disabled is False
+
+
+@pytest.mark.asyncio
+async def test_retry_enabled_after_ansible_failure(mock_ansible_failure):
+    """Retry button enables when ansible fails."""
     app = PortholeApp()
     async with app.run_test(size=(120, 40)) as pilot:
         await pilot.pause()
-        assert isinstance(app.screen, PrerequisitesScreen)
-        btn = app.screen.query_one("#continue-btn", Button)
+        await pilot.pause()
+        await pilot.pause()
+        btn = app.screen.query_one("#retry-btn", Button)
         assert btn.disabled is False

@@ -1,0 +1,140 @@
+---
+# Local prerequisites playbook — installs tools needed by porthole-setup.
+#
+# Run with:
+#   ansible-playbook ansible/prereqs.yml --connection local --inventory localhost,
+#
+# uv and ansible are bootstrapped by setup.sh before this runs.
+
+- name: Install porthole prerequisites
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    is_debian: "{{ ansible_facts['os_family'] == 'Debian' }}"
+    is_macos: "{{ ansible_facts['os_family'] == 'Darwin' }}"
+    arch_map:
+      x86_64: amd64
+      aarch64: arm64
+    go_arch: "{{ arch_map[ansible_facts['architecture']] | default('amd64') }}"
+
+  tasks:
+    # ── wireguard-tools ──────────────────────────────────────────────
+    - name: Install wireguard-tools (apt)
+      become: true
+      ansible.builtin.apt:
+        name: wireguard
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      when: is_debian
+
+    - name: Install wireguard-tools (brew)
+      community.general.homebrew:
+        name: wireguard-tools
+        state: present
+      when: is_macos
+
+    # ── age ──────────────────────────────────────────────────────────
+    - name: Install age (apt)
+      become: true
+      ansible.builtin.apt:
+        name: age
+        state: present
+      when: is_debian
+
+    - name: Install age (brew)
+      community.general.homebrew:
+        name: age
+        state: present
+      when: is_macos
+
+    # ── sops ─────────────────────────────────────────────────────────
+    - name: Check if sops is installed
+      ansible.builtin.command: which sops
+      register: sops_check
+      changed_when: false
+      failed_when: false
+
+    - name: Install sops (GitHub release)
+      become: true
+      when: is_debian and sops_check.rc != 0
+      block:
+        - name: Get latest sops version
+          ansible.builtin.uri:
+            url: https://api.github.com/repos/getsops/sops/releases/latest
+            return_content: true
+          register: sops_release
+
+        - name: Download sops binary
+          ansible.builtin.get_url:
+            url: "https://github.com/getsops/sops/releases/download/{{ sops_release.json.tag_name }}/sops-{{ sops_release.json.tag_name }}.linux.{{ go_arch }}"
+            dest: /usr/local/bin/sops
+            mode: "0755"
+
+    - name: Install sops (brew)
+      community.general.homebrew:
+        name: sops
+        state: present
+      when: is_macos and sops_check.rc != 0
+
+    # ── terraform ────────────────────────────────────────────────────
+    - name: Check if terraform is installed
+      ansible.builtin.command: which terraform
+      register: terraform_check
+      changed_when: false
+      failed_when: false
+
+    - name: Install terraform (direct binary download)
+      become: true
+      when: is_debian and terraform_check.rc != 0
+      block:
+        - name: Get latest terraform version
+          ansible.builtin.uri:
+            url: https://checkpoint-api.hashicorp.com/v1/check/terraform
+            return_content: true
+          register: tf_version
+
+        - name: Download and unzip terraform
+          ansible.builtin.unarchive:
+            src: "https://releases.hashicorp.com/terraform/{{ tf_version.json.current_version }}/terraform_{{ tf_version.json.current_version }}_linux_{{ go_arch }}.zip"
+            dest: /usr/local/bin
+            remote_src: true
+            mode: "0755"
+
+    - name: Install terraform (brew)
+      when: is_macos and terraform_check.rc != 0
+      block:
+        - name: Tap hashicorp/tap
+          community.general.homebrew_tap:
+            name: hashicorp/tap
+            state: present
+
+        - name: Install hashicorp/tap/terraform
+          community.general.homebrew:
+            name: hashicorp/tap/terraform
+            state: present
+
+    # ── porthole CLI ─────────────────────────────────────────────────
+    - name: Check if porthole is installed
+      ansible.builtin.command: which porthole
+      register: porthole_check
+      changed_when: false
+      failed_when: false
+
+    - name: Install porthole CLI from local repo
+      ansible.builtin.command: uv tool install --from "{{ playbook_dir }}/.." porthole
+      when: porthole_check.rc != 0
+      changed_when: true
+
+    # ── verification ─────────────────────────────────────────────────
+    - name: Verify all tools are available
+      ansible.builtin.command: "which {{ item }}"
+      loop:
+        - wg
+        - sops
+        - age
+        - terraform
+        - porthole
+      changed_when: false

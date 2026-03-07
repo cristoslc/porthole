@@ -31,7 +31,7 @@ SummaryScreen { background: $surface; }
 """
 
 # Each check: (id_suffix, display_label)
-_TOOL_CHECK_IDS = [(f"tool-{b}", f"tool: {d}") for b, d, _ in TOOLS]
+_TOOL_CHECK_IDS = [(f"tool-{b}", f"tool: {d}") for b, d in TOOLS]
 
 
 class SummaryScreen(Screen):
@@ -78,7 +78,7 @@ class SummaryScreen(Screen):
         results: dict[str, bool] = {}
 
         # --- Tools ---
-        for binary, display, _ in TOOLS:
+        for binary, display in TOOLS:
             ok = is_installed(binary)
             results[f"tool-{binary}"] = ok
             self._set_check(f"tool-{binary}", ok, f"tool: {display}")

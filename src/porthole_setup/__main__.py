@@ -23,7 +23,7 @@ def _run_check() -> None:
     results: list[tuple[str, bool, str]] = []
 
     # --- Prerequisites ---
-    for binary, display, _ in TOOLS:
+    for binary, display in TOOLS:
         ok = is_installed(binary)
         results.append((f"tool:{display}", ok, "installed" if ok else "missing"))
 
@@ -127,20 +127,12 @@ def main() -> None:
     try:
         log.info("Importing modules…")
         from porthole_setup.app import PortholeApp  # noqa: PLC0415
-        from porthole_setup.platform import (  # noqa: PLC0415
-            INSTALL_COMMANDS,
-            NEEDS_SUDO,
-            TOOL_DESCRIPTIONS,
-            detect_os,
-        )
+        from porthole_setup.platform import detect_os  # noqa: PLC0415
         from porthole_setup.screens.prerequisites import TOOLS  # noqa: PLC0415
 
         os_type = detect_os()
         log.info("OS detected: %s", os_type)
         log.info("Tools to check: %s", [t[1] for t in TOOLS])
-        log.info("Install commands available for: %s", list(INSTALL_COMMANDS.keys()))
-        log.info("NEEDS_SUDO: %s", NEEDS_SUDO)
-        log.info("Descriptions defined for: %s", list(TOOL_DESCRIPTIONS.keys()))
 
         import textual  # noqa: PLC0415
         log.info("Textual version: %s", textual.__version__)

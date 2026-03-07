@@ -51,28 +51,72 @@ def make_fake_subprocess(
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture
-def mock_all_installed(monkeypatch):
-    """Patch platform functions so all tools appear installed."""
-    from porthole_setup.platform import OS
+def _fake_popen(returncode=0, stdout_lines=None):
+    """Return a class that fakes subprocess.Popen for ansible-playbook."""
+    class FakePopen:
+        def __init__(self, cmd, **kwargs):
+            self.returncode = returncode
+            self._lines = stdout_lines or []
+            self.stdout = iter(self._lines)
 
+        def wait(self):
+            return self.returncode
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+    return FakePopen
+
+
+@pytest.fixture
+def mock_ansible_noop(monkeypatch):
+    """Patch subprocess.Popen so ansible appears to be running (blocks briefly)."""
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.subprocess.Popen",
+        _fake_popen(returncode=0, stdout_lines=["PLAY [Install porthole prerequisites]\n"]),
+    )
+    # Tools not yet installed — continue should stay disabled
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.is_installed", lambda _: False
+    )
+
+
+@pytest.fixture
+def mock_ansible_success(monkeypatch):
+    """Patch so ansible succeeds and all tools appear installed."""
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.subprocess.Popen",
+        _fake_popen(returncode=0, stdout_lines=["ok: [localhost]\n"]),
+    )
     monkeypatch.setattr(
         "porthole_setup.screens.prerequisites.is_installed", lambda _: True
     )
+
+
+@pytest.fixture
+def mock_ansible_failure(monkeypatch):
+    """Patch so ansible fails."""
     monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.detect_os", lambda: OS.MACOS
+        "porthole_setup.screens.prerequisites.subprocess.Popen",
+        _fake_popen(returncode=1, stdout_lines=["fatal: [localhost]: FAILED!\n"]),
     )
     monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.get_install_command",
-        lambda t, o: ["echo", "ok"],
+        "porthole_setup.screens.prerequisites.is_installed", lambda _: False
+    )
+
+
+@pytest.fixture
+def mock_all_installed(monkeypatch):
+    """Patch so ansible succeeds and all tools are installed (for downstream screens)."""
+    monkeypatch.setattr(
+        "porthole_setup.screens.prerequisites.subprocess.Popen",
+        _fake_popen(returncode=0, stdout_lines=["ok: [localhost]\n"]),
     )
     monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.get_tool_description",
-        lambda t: "test tool",
-    )
-    monkeypatch.setattr(
-        "porthole_setup.screens.prerequisites.get_manual_hint",
-        lambda t, o: None,
+        "porthole_setup.screens.prerequisites.is_installed", lambda _: True
     )
 
 

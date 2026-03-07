@@ -29,6 +29,19 @@ if ! command -v uv &>/dev/null; then
     echo "uv installed successfully."
 fi
 
+if ! command -v ansible-playbook &>/dev/null; then
+    echo "ansible not found -- installing via uv..."
+    uv tool install ansible
+    if ! command -v ansible-playbook &>/dev/null; then
+        echo ""
+        echo "NOTE: ansible was installed but ansible-playbook is not yet on your PATH."
+        echo "Please open a new shell session and re-run this script, or run:"
+        echo "  uv tool install ansible"
+        exit 1
+    fi
+    echo "ansible installed successfully."
+fi
+
 uv run python -m porthole_setup "$@"
 rc=$?
 if [ $rc -ne 0 ]; then

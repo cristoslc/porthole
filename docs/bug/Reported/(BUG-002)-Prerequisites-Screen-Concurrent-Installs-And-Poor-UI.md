@@ -1,5 +1,5 @@
 ---
-title: "Prerequisites screen: concurrent installs cause failures and UI is poor quality"
+title: "Prerequisites screen: TUI should not be a package manager — delegate to ansible"
 artifact: BUG-002
 status: Reported
 author: cristos
@@ -13,7 +13,7 @@ depends-on: []
 execution-tracking: required
 ---
 
-# Prerequisites screen: concurrent installs cause failures and UI is poor quality
+# Prerequisites screen: TUI should not be a package manager — delegate to ansible
 
 ## Description
 
@@ -45,12 +45,11 @@ The prerequisites screen (`src/porthole_setup/screens/prerequisites.py`) has two
 
 ## Expected Behavior
 
-- "Install All" should install tools sequentially (queue-based), avoiding dpkg lock contention.
-- Each tool should show its own status inline (queued / installing / done / failed) without full widget rebuilds.
-- Install output should be clearly delimited per tool.
-- Failures should be reported clearly, and the queue should continue to the next tool.
-- Failed tools should offer a "Retry" button.
-- The log panel (or equivalent feedback area) should be visible by default.
+- `setup.sh` bootstraps uv + ansible as the only shell-level prereqs.
+- The TUI runs an ansible playbook to install all remaining tools.
+- Ansible output streams to the screen in real time.
+- On success, the Continue button enables.
+- On failure, the user sees ansible's error output and can retry.
 
 ## Actual Behavior
 
@@ -67,73 +66,55 @@ This is the first screen users see in the setup wizard. When it fails silently a
 
 ## Fix approach
 
-Adopt proven patterns from the `202602-workstation` TUI codebase (`~/Documents/202602-workstation/scripts/setup_tui/`), which solves all of these problems in a production-tested way.
+**The previous fix (concurrent-to-sequential refactor, commit 6f817e2) was wrong.** It improved the mechanics but preserved the flawed architecture: the TUI acting as a package manager. The TUI should not install tools at all — that's what ansible is for.
 
-### 1. Sequential step pipeline (replaces concurrent workers)
+### Root cause
 
-Replace `@work(exclusive=False)` with a single `@work(thread=True)` method that iterates tools sequentially, matching the workstation's bootstrap pattern:
+The real problem isn't concurrency vs sequencing — it's that the TUI reimplements package management poorly (custom install commands per tool per OS, sudo prompting, PATH manipulation, error recovery). Ansible already solves all of this with idempotent, declarative, cross-platform package installation.
 
-```python
-@work(thread=True)
-def _install_all_sequential(self) -> None:
-    for i, ts in enumerate(queue):
-        self.app.call_from_thread(self._update_status, ts, "installing")
-        try:
-            result = self._run_install_blocking(ts)
-        except Exception as exc:
-            self.app.call_from_thread(self._update_status, ts, "failed")
-            continue
-        self.app.call_from_thread(self._update_status, ts, "done" if result else "failed")
-```
+### Correct approach: delegate to ansible
 
-Reference: `workstation/screens/bootstrap.py` step pipeline pattern (lines ~1127-1140).
+**Bootstrap chain:**
+1. `setup.sh` ensures only two prerequisites: **uv** and **ansible** (via `uv tool install ansible`)
+2. A new `ansible/prereqs.yml` playbook declares the remaining tools as ansible tasks
+3. The prerequisites screen simply runs `ansible-playbook ansible/prereqs.yml`, streams output, and shows pass/fail
 
-### 2. In-place widget updates (replaces teardown/rebuild)
+**What this eliminates:**
+- `platform.py`'s `INSTALL_COMMANDS` dict and all per-tool install logic
+- `NEEDS_SUDO` set and sudo warning UI
+- The entire install queue, ToolStatus enum, per-tool buttons, spinner, timer
+- Interactive password prompting from the TUI
+- Manual PATH manipulation and binary-not-found workarounds
 
-Eliminate `_rebuild_rows()` entirely. Pre-compose all tool rows at mount time. Update state by calling `.update()` on existing Static/Label widgets and toggling `.disabled` on Buttons — never `remove_children()` + re-mount.
+**What the screen becomes:**
+- On mount: run `ansible-playbook ansible/prereqs.yml` in a background thread
+- Stream ansible output to a RichLog (full screen, no sidebar needed)
+- On success: enable Continue button
+- On failure: show error summary, offer Retry button
+- That's it — ~100 lines instead of ~350
 
-Reference: workstation never recreates widgets — uses `query_one("#id", Static).update(new_content)` and `button.disabled = True/False`.
+### Implementation tasks
 
-### 3. Step sidebar with progress indication
-
-Add a sidebar or inline status column showing per-tool state with visual indicators:
-
-- `✓` green = installed
-- `●` yellow + spinner = installing (spinner frames: `"⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"`)
-- `✗` red = failed
-- `○` dim = queued/pending
-
-Optional: elapsed timer via `set_interval(1, _tick_elapsed)`.
-
-Reference: workstation's `_update_sidebar(steps, current_idx)` pattern.
-
-### 4. Streaming subprocess via thread + call_from_thread
-
-Replace `asyncio.create_subprocess_exec` with `subprocess.Popen` in a thread worker, streaming stdout line-by-line and posting to the TUI via `call_from_thread`. This matches workstation's `_run_streaming` pattern and is simpler than async subprocess for Textual.
-
-Consider extracting a `ToolRunner` class (like workstation's `lib/runner.py`) that wraps subprocess calls, handles `FileNotFoundError`/`PermissionError` gracefully, and returns structured results.
-
-### 5. Error recovery with retry
-
-On failure: mark tool as `failed` state, log error clearly, continue queue to next tool. After queue completes, show per-tool "Retry" buttons only for failed tools (like workstation's "Retry Failed" pattern that re-runs only failed phases).
-
-Add a `failed` state to the `_TS` dataclass alongside `installed`/`installing`.
-
-### 6. Always-visible log panel
-
-Show the RichLog by default (remove `display: none` from CSS). Pre-create it in `compose()` with a placeholder message. Use `.display` property toggling if needed, not CSS class manipulation.
+1. **Update `setup.sh`** — add ansible bootstrapping (`uv tool install ansible` if `ansible-playbook` not on PATH)
+2. **Create `ansible/prereqs.yml`** — local playbook that installs wireguard-tools, sops, age, terraform, porthole (via uv). Use `become: yes` for system packages. Handle both Linux (apt) and macOS (homebrew) via ansible's built-in modules.
+3. **Rewrite `prerequisites.py`** — strip down to: run ansible-playbook, stream output, show pass/fail, retry on failure. Use `@work(thread=True)` + `subprocess.Popen` + `call_from_thread` pattern from workstation.
+4. **Simplify `platform.py`** — remove `INSTALL_COMMANDS`, `NEEDS_SUDO`, `get_install_command()`, `get_manual_hint()`, `MANUAL_INSTALL_HINTS`. Keep only `detect_os()`, `is_installed()`, `TOOL_DESCRIPTIONS`, `get_tool_description()` (still useful for display).
+5. **Update tests** — adapt `test_tui_prerequisites.py` and `conftest_tui.py` to the new screen structure.
 
 ### Affected files
 
-- `src/porthole_setup/screens/prerequisites.py` — primary fix target (rewrite install logic, widget management, progress tracking)
-- `src/porthole_setup/platform.py` — may need minor changes for structured result types
+- `setup.sh` — add ansible bootstrapping
+- `ansible/prereqs.yml` — **new** — local prerequisites playbook
+- `src/porthole_setup/screens/prerequisites.py` — rewrite to ansible runner
+- `src/porthole_setup/platform.py` — remove install command infrastructure
+- `tests/test_tui_prerequisites.py` — adapt to new screen
+- `tests/conftest_tui.py` — update mocks
 
-### Reference files (workstation patterns to adapt)
+### Reference patterns
 
-- `~/Documents/202602-workstation/scripts/setup_tui/screens/bootstrap.py` — step pipeline, sidebar, streaming, retry
-- `~/Documents/202602-workstation/scripts/setup_tui/lib/runner.py` — ToolRunner subprocess wrapper
-- `~/Documents/202602-workstation/scripts/setup_tui/lib/setup_logging.py` — dual-stream logging
-- `~/Documents/202602-workstation/scripts/setup_tui/app.py` — CSS patterns, widget update style
+- `~/Documents/202602-workstation/scripts/setup_tui/lib/prereqs.py` — prereqs installer that bootstraps ansible via uv
+- `~/Documents/202602-workstation/scripts/setup_tui/screens/bootstrap.py` — `_run_streaming` for subprocess output, `_step_ansible` for playbook invocation
+- `~/Documents/202602-workstation/setup.sh` — two-stage bootstrap (bash shim → TUI)
 
 ## Lifecycle
 
