@@ -14,6 +14,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
 }
 DOCS_DIR="$REPO_ROOT/docs"
 LOG_FILE="$REPO_ROOT/.agents/specwatch.log"
+IGNORE_FILE="$REPO_ROOT/.agents/specwatch-ignore"
 
 # --- Sentinel and PID paths (repo-specific) ---
 REPO_HASH=$(printf '%s' "$REPO_ROOT" | shasum -a 256 | cut -c1-12)
@@ -70,6 +71,50 @@ log_header() {
   } > "$LOG_FILE"
 }
 
+# --- Ignore list ---
+# Reads .agents/specwatch-ignore for glob patterns to suppress from stale-reference reports.
+# Supports blank lines, # comments, and .gitignore-style glob patterns.
+# Patterns are matched against: source file path (repo-relative), broken link target, and artifact ID.
+
+IGNORE_PATTERNS=()
+
+load_ignore_patterns() {
+  IGNORE_PATTERNS=()
+  [ -f "$IGNORE_FILE" ] || return 0
+  while IFS= read -r line; do
+    # Strip leading/trailing whitespace
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
+    # Skip blank lines and comments
+    [ -z "$line" ] && continue
+    [[ "$line" == \#* ]] && continue
+    IGNORE_PATTERNS+=("$line")
+  done < "$IGNORE_FILE"
+}
+
+# is_ignored <source_rel_path> <link_target> <artifact_id>
+# Returns 0 (true) if any ignore pattern matches any of the three fields.
+is_ignored() {
+  local source_path="$1"
+  local link_target="$2"
+  local artifact_id="$3"
+  [ "${#IGNORE_PATTERNS[@]}" -eq 0 ] && return 1
+  for pattern in "${IGNORE_PATTERNS[@]}"; do
+    # Match against source file path (repo-relative)
+    # shellcheck disable=SC2254
+    if [[ "$source_path" == $pattern ]]; then return 0; fi
+    # Match against the broken link target
+    # shellcheck disable=SC2254
+    if [[ "$link_target" == $pattern ]]; then return 0; fi
+    # Match against the artifact ID (if present)
+    if [ -n "$artifact_id" ]; then
+      # shellcheck disable=SC2254
+      if [[ "$artifact_id" == $pattern ]]; then return 0; fi
+    fi
+  done
+  return 1
+}
+
 # --- Stale reference scanner ---
 # Extracts markdown links [text](path) pointing to local files, checks existence,
 # and suggests corrections using artifact ID extraction.
@@ -78,6 +123,8 @@ scan_stale_refs() {
   local mode="${1:-full}"   # "full" or "event" with artifact ID
   local event_id="${2:-}"   # artifact ID for event-driven mode (e.g., ADR-001)
   local found_stale=0
+
+  load_ignore_patterns
 
   log_header
 
@@ -151,6 +198,12 @@ PYEOF
         artifact_id="${BASH_REMATCH[1]}"
       fi
 
+      # Check ignore list — skip if source path, link target, or artifact ID matches
+      local rel_source_check="${md_file#"$REPO_ROOT"/}"
+      if is_ignored "$rel_source_check" "$link_target" "$artifact_id"; then
+        continue
+      fi
+
       if [ -n "$artifact_id" ]; then
         # Search for the file by artifact ID
         local found_file
@@ -181,13 +234,228 @@ PYEOF
 
   rm -f "$links_tmp"
 
+  # --- Frontmatter reference scan ---
+  # Check all frontmatter artifact ID references (depends-on, parent-*, linked-*, etc.)
+  # for resolution and semantic coherence.
+  local fm_tmp
+  fm_tmp=$(mktemp /tmp/specwatch-fm-XXXXXX)
+
+  python3 - "$DOCS_DIR" > "$fm_tmp" <<'PYEOF'
+import os, re, sys, glob
+
+docs_dir = sys.argv[1]
+
+# Fields that contain artifact ID references (single-value or list)
+SINGLE_REF_FIELDS = ['parent-vision', 'parent-epic', 'superseded-by', 'fix-ref']
+LIST_REF_FIELDS = [
+    'depends-on', 'linked-epics', 'linked-specs', 'linked-stories',
+    'linked-adrs', 'linked-research', 'linked-personas', 'linked-journeys',
+    'linked-designs', 'linked-bugs', 'addresses', 'validates',
+    'affected-artifacts'
+]
+ALL_REF_FIELDS = SINGLE_REF_FIELDS + LIST_REF_FIELDS
+
+# Terminal/suspicious statuses
+TERMINAL_STATUSES = {'Abandoned', 'Rejected', 'Superseded'}
+
+# Phase ordering for mismatch detection (higher = more advanced)
+PHASE_ORDER = {
+    'Draft': 0, 'Proposed': 1, 'Active': 2, 'Approved': 2,
+    'Validated': 2, 'Adopted': 2, 'Implementing': 3,
+    'Implemented': 4, 'Complete': 5, 'Done': 5,
+    'Retired': 6, 'Archived': 6, 'Superseded': 6,
+    'Abandoned': -1, 'Rejected': -1
+}
+
+def extract_frontmatter(filepath):
+    """Return (dict of fields, artifact_id, status, line_map)."""
+    try:
+        with open(filepath) as f:
+            lines = f.readlines()
+    except (OSError, UnicodeDecodeError):
+        return {}, None, None, {}
+
+    if not lines or lines[0].strip() != '---':
+        return {}, None, None, {}
+
+    artifact_id = None
+    status = None
+    refs = {}        # field_name -> [artifact_id, ...]
+    line_map = {}    # field_name -> first line number
+    current_list_field = None
+
+    for i, line in enumerate(lines[1:], 2):
+        if line.strip() == '---':
+            break
+
+        matched = False
+
+        # Single-value field
+        for field in SINGLE_REF_FIELDS:
+            m = re.match(rf'^{re.escape(field)}:\s*(.+)', line)
+            if m:
+                val = m.group(1).strip().strip('"').strip("'")
+                if val and val.upper() != 'NONE' and re.match(r'^[A-Z]+-\d+', val):
+                    refs[field] = [val]
+                    line_map[field] = i
+                current_list_field = None
+                matched = True
+                break
+
+        if not matched:
+            # List field header or inline value
+            for field in LIST_REF_FIELDS:
+                m = re.match(rf'^{re.escape(field)}:\s*$', line)
+                if m:
+                    current_list_field = field
+                    line_map.setdefault(field, i)
+                    refs.setdefault(field, [])
+                    matched = True
+                    break
+                # Inline single-item list: "field: VALUE" or "field: - VALUE"
+                m = re.match(rf'^{re.escape(field)}:\s*-?\s*(.+)', line)
+                if m:
+                    val = m.group(1).strip().strip('"').strip("'")
+                    if val and re.match(r'^[A-Z]+-\d+', val):
+                        refs.setdefault(field, []).append(val)
+                        line_map.setdefault(field, i)
+                    current_list_field = None
+                    matched = True
+                    break
+
+        # List item continuation
+        if not matched and current_list_field:
+            m = re.match(r'^\s+-\s+(.+)', line)
+            if m:
+                val = m.group(1).strip().strip('"').strip("'")
+                if val and re.match(r'^[A-Z]+-\d+', val):
+                    refs.setdefault(current_list_field, []).append(val)
+                matched = True
+            elif not re.match(r'^\s', line):
+                current_list_field = None
+
+        # Extract artifact and status (these can coexist with matched)
+        if not matched:
+            m = re.match(r'^artifact:\s*(.+)', line)
+            if m:
+                artifact_id = m.group(1).strip().strip('"').strip("'")
+            m = re.match(r'^status:\s*(.+)', line)
+            if m:
+                status = m.group(1).strip().strip('"').strip("'")
+
+    return refs, artifact_id, status, line_map
+
+def resolve_artifact_id(artifact_id, docs_dir):
+    """Find the file for an artifact ID. Returns (path, status) or (None, None)."""
+    # Search for files/dirs matching the artifact ID
+    pattern = os.path.join(docs_dir, '**', f'*{artifact_id}*')
+    matches = []
+    for p in glob.glob(pattern, recursive=True):
+        if p.endswith('.md') and not os.path.basename(p).startswith(('list-', 'README')):
+            matches.append(p)
+
+    if not matches:
+        return None, None
+
+    # Prefer the primary .md (one whose name contains the artifact ID)
+    best = matches[0]
+    for m in matches:
+        basename = os.path.basename(m)
+        if artifact_id in basename:
+            best = m
+            break
+
+    # Extract status from the target
+    _, _, target_status, _ = extract_frontmatter(best)
+    return best, target_status
+
+# Build index of all artifacts first (for efficient lookups)
+artifact_index = {}  # artifact_id -> (filepath, status)
+for root, dirs, files in os.walk(docs_dir):
+    for fname in files:
+        if not fname.endswith('.md') or fname.startswith(('list-', 'README')):
+            continue
+        fp = os.path.join(root, fname)
+        _, aid, astatus, _ = extract_frontmatter(fp)
+        if aid:
+            artifact_index[aid] = (fp, astatus)
+
+# Scan all artifacts for frontmatter references
+for root, dirs, files in os.walk(docs_dir):
+    for fname in files:
+        if not fname.endswith('.md') or fname.startswith(('list-', 'README')):
+            continue
+        filepath = os.path.join(root, fname)
+        refs, source_id, source_status, line_map = extract_frontmatter(filepath)
+        if not refs or not source_id:
+            continue
+
+        rel_source = os.path.relpath(filepath, os.path.dirname(docs_dir))
+
+        for field, targets in refs.items():
+            line_num = line_map.get(field, 0)
+            for target_id in targets:
+                # Strip any "PP-NN" suffix for pain point refs (JOURNEY-001.PP-02)
+                base_id = target_id.split('.')[0] if '.' in target_id else target_id
+
+                if base_id in artifact_index:
+                    target_path, target_status = artifact_index[base_id]
+                    rel_target = os.path.relpath(target_path, os.path.dirname(docs_dir))
+
+                    # Check for terminal status
+                    if target_status in TERMINAL_STATUSES:
+                        print(f"WARN\t{rel_source}\t{line_num}\t{field}\t{target_id}\t{rel_target}\ttarget is {target_status}")
+
+                    # Check for phase mismatch
+                    elif source_status and target_status:
+                        src_order = PHASE_ORDER.get(source_status, -99)
+                        tgt_order = PHASE_ORDER.get(target_status, -99)
+                        # Flag if source is significantly more advanced than target
+                        # (e.g., source is Implemented but target is still Draft)
+                        if src_order >= 3 and tgt_order <= 0 and tgt_order != -1:
+                            print(f"WARN\t{rel_source}\t{line_num}\t{field}\t{target_id}\t{rel_target}\tsource is {source_status} but target is still {target_status}")
+                else:
+                    # Unresolvable — try a filesystem search as fallback
+                    found, _ = resolve_artifact_id(base_id, docs_dir)
+                    if found:
+                        # Index was stale? Shouldn't happen, but handle gracefully
+                        rel_found = os.path.relpath(found, os.path.dirname(docs_dir))
+                        print(f"WARN\t{rel_source}\t{line_num}\t{field}\t{target_id}\t{rel_found}\tresolved by search but missing from index")
+                    else:
+                        print(f"STALE_REF\t{rel_source}\t{line_num}\t{field}\t{target_id}\tNONE\tunresolvable artifact ID")
+PYEOF
+
+  # Process frontmatter reference results
+  while IFS=$'\t' read -r severity rel_source line_num field target_id resolved issue; do
+    [ -z "$severity" ] && continue
+
+    # Check ignore list
+    local artifact_id_from_target=""
+    artifact_id_from_target="$target_id"
+    if is_ignored "$rel_source" "$target_id" "$artifact_id_from_target"; then
+      continue
+    fi
+
+    {
+      echo "${severity} ${rel_source}:${line_num} (frontmatter)"
+      echo "  field: ${field}"
+      echo "  target: ${target_id}"
+      echo "  resolved: ${resolved}"
+      echo "  issue: ${issue}"
+      echo ""
+    } >> "$LOG_FILE"
+    found_stale=1
+  done < "$fm_tmp"
+
+  rm -f "$fm_tmp"
+
   if [ "$found_stale" -eq 0 ]; then
-    # Log header with no findings — other processes may check this file
     echo "specwatch: no stale references found."
   else
-    local count
-    count=$(grep -c '^STALE ' "$LOG_FILE" 2>/dev/null || echo 0)
-    echo "specwatch: found ${count} stale reference(s). See ${LOG_FILE}"
+    local stale_count warn_count
+    stale_count=$(grep -c '^STALE' "$LOG_FILE" 2>/dev/null || echo 0)
+    warn_count=$(grep -c '^WARN' "$LOG_FILE" 2>/dev/null || echo 0)
+    echo "specwatch: found ${stale_count} stale reference(s), ${warn_count} warning(s). See ${LOG_FILE}"
   fi
   return $found_stale
 }
@@ -382,7 +650,7 @@ docs_dir = sys.argv[1]
 # (folder-based have a primary .md inside; file-based are the .md directly)
 TYPE_DIRS = {
     'vision', 'journey', 'epic', 'story', 'spec',
-    'research', 'adr', 'persona', 'runbook', 'bug'
+    'research', 'adr', 'persona', 'runbook', 'bug', 'design'
 }
 
 def extract_frontmatter(filepath):
