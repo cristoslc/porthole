@@ -17,7 +17,7 @@ gate: "Cold start under 10 minutes from a fresh build, IP stability solved via D
 **Author:** cristos
 **Created:** 2026-02-28
 **Last Updated:** 2026-02-28
-**Parent:** [ADR-004](../../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md)
+**Parent:** [ADR-004](../../../adr/Superseded/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md)
 **Question:** Is it operationally feasible to run the WireGuard hub as an ephemeral, on-demand VPS — destroyed when not in use — rather than as a persistent server?
 **Gate:** Pre-ADR
 **Risks addressed:**

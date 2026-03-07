@@ -1,10 +1,11 @@
 ---
 artifact: ADR-004
 title: WireGuard Hub-and-Spoke Relay
-status: Adopted
+status: Superseded
+superseded-by: ADR-008
 author: cristos
 created: 2026-02-28
-last-updated: 2026-02-28
+last-updated: 2026-03-07
 linked-epics:
   - EPIC-001
   - EPIC-002
@@ -16,10 +17,11 @@ depends-on: []
 
 # ADR-004: WireGuard Hub-and-Spoke Relay
 
-**Status:** Adopted
+**Status:** Superseded
 **Author:** cristos
 **Created:** 2026-02-28
-**Last Updated:** 2026-02-28
+**Last Updated:** 2026-03-07
+**Superseded by:** [ADR-008 — Nebula Overlay Network](../Adopted/(ADR-008)-Nebula-Overlay-Network.md)
 **Epic:** [(EPIC-001) Remote Fleet Management](../../epic/Active/(EPIC-001)-Remote-Fleet-Management/(EPIC-001)-Remote-Fleet-Management.md)
 **Replaces:** [(ADR-003) Network Layer for Remote Fleet](../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) (Abandoned)
 **Affects:** [EPIC-002](../../epic/Complete/(EPIC-002)-Provisioning-CLI/(EPIC-002)-Provisioning-CLI.md), [EPIC-005](../../epic/Complete/(EPIC-005)-VPS-Bootstrap/(EPIC-005)-VPS-Bootstrap.md), [EPIC-006](../../epic/Abandoned/(EPIC-006)-Homelab-Service-Exposure/(EPIC-006)-Homelab-Service-Exposure.md)
@@ -30,6 +32,7 @@ depends-on: []
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
 | Adopted | 2026-02-28 | d69e12e | Created directly as Adopted; decision made during project merge |
+| Superseded | 2026-03-07 | — | Superseded by ADR-008 (Nebula overlay network) |
 
 ---
 

@@ -4,7 +4,7 @@ title: Remote Access for a Personal Fleet
 status: Active
 author: cristos
 created: 2026-02-27
-last-updated: 2026-03-03
+last-updated: 2026-03-07
 depends-on: []
 ---
 
@@ -30,11 +30,13 @@ Porthole is a hub-and-spoke remote access system for a personal fleet of ~10
 machines — Linux workstations, macOS laptops, headless servers, and family
 members' computers spread across homes and remote locations.
 
-A lightweight VPS acts as the hub: it runs a WireGuard server, a CoreDNS
-resolver, an nftables firewall, and a Guacamole remote desktop gateway. Every
-node in the fleet connects to the hub over WireGuard and is reachable from
-every other node via a stable `<name>.wg` hostname, through NAT, without port
-forwarding. SSH and remote desktop work the same way from anywhere.
+A lightweight VPS acts as the hub: it runs a Nebula lighthouse, a CoreDNS
+resolver, and a Guacamole remote desktop gateway. Every node in the fleet
+connects via Nebula's encrypted overlay network and is reachable from every
+other node via a stable `<name>.wg` hostname, through NAT, without port
+forwarding. Nebula uses UDP hole-punching for direct peer-to-peer connections
+where possible, falling back to the lighthouse as relay. SSH and remote desktop
+work the same way from anywhere.
 
 The hub is provisioned entirely from code (Terraform + Ansible) and is
 designed to be disposable — if it dies, clone the repo, run two commands, and
@@ -127,4 +129,4 @@ attention from the operator and nothing from a family member.
 |----------|-------------|
 | [branding-and-style-guide.md](./branding-and-style-guide.md) | Project name (Porthole), terminology, component names, and writing conventions |
 | [product-landscape.md](./product-landscape.md) | Decision matrix: desktop tools and networking bridges evaluated independently, then combinations scored against requirements |
-| [wireguard-mesh-architecture.md](./wireguard-mesh-architecture.md) | Architecture overview: WireGuard hub-and-spoke relay via VPS, SOPS/age state management, CoreDNS |
+| [wireguard-mesh-architecture.md](./wireguard-mesh-architecture.md) | Architecture overview: Nebula overlay network via VPS lighthouse, SOPS/age state management, CoreDNS. (Historical title — now covers Nebula per ADR-008) |

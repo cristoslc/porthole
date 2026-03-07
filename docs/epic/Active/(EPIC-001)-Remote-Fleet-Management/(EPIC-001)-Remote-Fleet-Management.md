@@ -4,7 +4,7 @@ title: Remote Fleet Management
 status: Active
 author: cristos
 created: 2026-02-28
-last-updated: 2026-03-03
+last-updated: 2026-03-07
 parent-vision: VISION-001
 depends-on: []
 success-criteria:
@@ -12,7 +12,7 @@ success-criteria:
   - SSH access works between all managed machines via stable hostnames or IPs
   - Remote family machines reachable without ongoing technical steps after initial setup
   - Remote-access network isolated from existing infrastructure (VMs, Docker, local services)
-  - make apply on Linux/macOS configures WireGuard and remote desktop automatically; Windows manual setup under 15 minutes
+  - make apply on Linux/macOS configures Nebula and remote desktop automatically; Windows manual setup under 15 minutes
 ---
 
 # EPIC-001: Remote Fleet Management
@@ -77,10 +77,10 @@ infrastructure or manual per-machine network configuration.
 4. The remote-access network is isolated from existing infrastructure —
    remote machines cannot directly reach VMs, Docker containers, or other
    services on the existing local net.
-5. `make apply` on a managed Linux/macOS workstation configures the WireGuard
+5. `make apply` on a managed Linux/macOS workstation configures the Nebula
    network layer and native remote desktop protocols (xrdp on Linux, Screen
    Sharing on macOS) automatically. Windows machines have a documented manual
-   RDP + WireGuard setup procedure that can be completed in under 15 minutes.
+   RDP + Nebula setup procedure that can be completed in under 15 minutes.
 
 ## Child artifacts
 
@@ -94,7 +94,8 @@ infrastructure or manual per-machine network configuration.
 | Spike | [SPIKE-007](../../../research/Complete/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility/(SPIKE-007)-Ephemeral-VPS-Hub-Feasibility.md) | Ephemeral VPS Hub Feasibility | Complete | Ephemeral vs always-on hub; DNS endpoint strategy; rebuild-from-repo model |
 | ADR | [ADR-001](../../../adr/Superseded/(ADR-001)-RustDesk-for-Remote-Desktop.md) | RustDesk for Remote Desktop | Superseded | Superseded by ADR-005 (Guacamole gateway model) |
 | ADR | [ADR-003](../../../adr/Abandoned/(ADR-003)-Network-Layer-for-Remote-Fleet.md) | Network Layer for Remote Fleet | Abandoned | Evaluated Tailscale vs ZeroTier vs WireGuard; superseded by ADR-004 |
-| ADR | [ADR-004](../../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Adopted | Self-hosted WireGuard via VPS; replaces ADR-003 |
+| ADR | [ADR-004](../../../adr/Superseded/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) | WireGuard Hub-and-Spoke Relay | Superseded | Self-hosted WireGuard via VPS; superseded by ADR-008 |
+| ADR | [ADR-008](../../../adr/Adopted/(ADR-008)-Nebula-Overlay-Network.md) | Nebula Overlay Network | Adopted | Certificate-based overlay; replaces WireGuard (ADR-004) |
 | ADR | [ADR-005](../../../adr/Adopted/(ADR-005)-Remote-Desktop-Access-Model.md) | Remote Desktop Access Model | Adopted | Guacamole gateway + native protocols; replaces ADR-001 |
 | Spec | [SPEC-002](../../../spec/Deprecated/(SPEC-002)-Remote-Desktop/(SPEC-002)-Remote-Desktop.md) | Remote Desktop Bootstrap | Deprecated | ADR-005 supersedes RustDesk with Guacamole + native protocols |
 | Spec | [SPEC-003](../../../spec/Implemented/(SPEC-003)-WireGuard-Hub-and-Mesh-Network/(SPEC-003)-WireGuard-Hub-and-Mesh-Network.md) | WireGuard Hub & Mesh Network | Implemented | porthole CLI: hub config, state schema, CoreDNS, peer enrollment |
@@ -105,16 +106,16 @@ infrastructure or manual per-machine network configuration.
 
 ## Key dependencies
 
-- **ADR-004 (Adopted):** WireGuard hub-and-spoke via VPS is the chosen network
-  layer. ADR-003 (Tailscale ACLs recommendation) was abandoned in favor of
-  self-hosted WireGuard for vendor independence and operational sovereignty.
+- **ADR-008 (Adopted):** Nebula overlay network is the chosen network layer,
+  superseding ADR-004 (WireGuard hub-and-spoke). Certificate-based enrollment
+  solves spoke N+1 without SSH; group-based firewall for role-appropriate access.
 - **ADR-005 (Adopted):** Guacamole gateway + native protocols replaces RustDesk
   as the remote desktop model. SPEC-002 (RustDesk install) is now Deprecated.
 
 ## Key decisions pending
 
 1. **Family machine onboarding model**: How do non-technical family members
-   set up and maintain the WireGuard client on their machines?
+   set up and maintain the Nebula client on their machines?
 
 ## Key decisions resolved
 
@@ -125,7 +126,7 @@ infrastructure or manual per-machine network configuration.
    installs only what is appropriate. No separate repo is needed.
 
 3. **Guacamole deployment** (settled by [SPIKE-005](../../../research/Complete/(SPIKE-005)-Securing-Guacamole-on-Hub/(SPIKE-005)-Securing-Guacamole-on-Hub.md)):
-   Guacamole runs on the VPS hub, bound to the WireGuard interface
-   (10.100.0.1) so it is only reachable from within the mesh. TLS via DNS-01
-   (Cloudflare). Auth: database + TOTP, with TOTP bypass for the WireGuard
+   Guacamole runs on the VPS hub, bound to the Nebula interface
+   (10.100.0.1) so it is only reachable from within the overlay. TLS via DNS-01
+   (Cloudflare). Auth: database + TOTP, with TOTP bypass for the Nebula
    subnet.

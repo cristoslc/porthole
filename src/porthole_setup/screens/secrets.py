@@ -1,7 +1,8 @@
-"""Secrets screen — manage age key, .sops.yaml, and network state."""
+"""Secrets screen — manage age key and .sops.yaml configuration."""
 
 from __future__ import annotations
 
+import logging
 import subprocess
 from pathlib import Path
 
@@ -10,33 +11,23 @@ from textual.app import ComposeResult
 from textual.containers import ScrollableContainer, Vertical
 from textual.reactive import reactive
 from textual.screen import Screen
-from textual.widgets import Button, Footer, Header, Input, Label, RichLog
+from textual.widgets import Button, Footer, Header, Label, RichLog
+
+_log = logging.getLogger(__name__)
 
 AGE_KEY_PATH = Path.home() / ".config" / "sops" / "age" / "keys.txt"
 SOPS_CONFIG_PATH = Path(".sops.yaml")
-STATE_PATH = Path("network.sops.yaml")
 
 CSS = """
 SecretsScreen { background: $surface; }
 .section-title { text-style: bold; color: $accent; margin: 1 0 0 1; }
 .status-ok  { color: $success; margin: 0 1; }
 .status-bad { color: $error;   margin: 0 1; }
-.status-warn { color: $warning; margin: 0 1; }
 .info { color: $text-muted; margin: 0 1 1 1; }
 .action-row { layout: horizontal; height: 3; margin: 0 1; }
-#confirm-row { layout: horizontal; height: 3; margin: 0 1; display: none; }
-#confirm-row.visible { display: block; }
-#confirm-input { width: 12; }
 #log { height: 10; border: solid $primary; margin: 1; display: none; }
 #log.visible { display: block; }
 #continue-btn { margin: 1; dock: bottom; }
-"""
-
-_SOPS_YAML_TEMPLATE = """\
-creation_rules:
-  - path_regex: network\\.sops\\.yaml$
-    encrypted_regex: "^private_key$"
-    age: "{age_pubkey}"
 """
 
 
@@ -53,50 +44,19 @@ def _age_pubkey_from_keyfile(path: Path) -> str | None:
         return None
 
 
-def _summarise_state() -> str | None:
-    """Return a one-line summary of network.sops.yaml, or None if unreadable."""
-    try:
-        result = subprocess.run(
-            ["sops", "-d", "--output-type", "json", str(STATE_PATH)],
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-        if result.returncode != 0:
-            return None
-        import json  # noqa: PLC0415
-        data = json.loads(result.stdout)
-        net = data.get("network", {})
-        endpoint = net.get("hub", {}).get("endpoint", "?")
-        peers = net.get("peers", [])
-        return f"endpoint={endpoint}, {len(peers)} peer(s)"
-    except Exception:  # noqa: BLE001
-        return None
-
-
 class SecretsScreen(Screen):
-    """Manage age key, .sops.yaml configuration, and network state file."""
+    """Manage age key and .sops.yaml configuration."""
 
     TITLE = "Step 2 of 5: Secrets"
     CSS = CSS
 
-    # Reactive states — updated after each async operation
     age_ok: reactive[bool] = reactive(False)
     sops_ok: reactive[bool] = reactive(False)
-    state_ok: reactive[bool] = reactive(False)
-    state_summary: reactive[str] = reactive("")
 
     def __init__(self) -> None:
         super().__init__()
-        self._check_initial_state()
-
-    def _check_initial_state(self) -> None:
         self.age_ok = AGE_KEY_PATH.exists()
         self.sops_ok = SOPS_CONFIG_PATH.exists()
-        self.state_ok = STATE_PATH.exists()
-        if self.state_ok:
-            summary = _summarise_state()
-            self.state_summary = summary or "(could not decrypt)"
 
     # ------------------------------------------------------------------
     # Compose
@@ -139,34 +99,9 @@ class SecretsScreen(Screen):
                 id="sops-action",
                 classes="action-row",
             ),
-            # --- network.sops.yaml ---
-            Label("Network state (network.sops.yaml)", classes="section-title"),
-            Label(
-                (f"✓ Found — {self.state_summary}" if self.state_ok else "✗ Not found"),
-                id="state-status",
-                classes="status-ok" if self.state_ok else "status-bad",
-            ),
-            Vertical(
-                Button(
-                    "Initialize state" if not self.state_ok else "Re-initialize state (destructive)",
-                    id="state-btn",
-                    variant="primary" if not self.state_ok else "error",
-                    disabled=not self.age_ok or not self.sops_ok,
-                ),
-                id="state-action",
-                classes="action-row",
-            ),
-            Vertical(
-                Input(
-                    placeholder="type 'yes' to confirm re-initialization",
-                    id="confirm-input",
-                ),
-                Button("Confirm re-initialize", id="confirm-btn", variant="error", disabled=True),
-                id="confirm-row",
-            ),
             RichLog(id="log", highlight=True, markup=True),
         )
-        all_ok = self.age_ok and self.sops_ok and self.state_ok
+        all_ok = self.age_ok and self.sops_ok
         yield Button("Continue →", id="continue-btn", variant="success", disabled=not all_ok)
         yield Button("← Back", id="back-btn", variant="default")
         yield Footer()
@@ -196,33 +131,10 @@ class SecretsScreen(Screen):
             pass
         self._refresh_ui()
 
-    def watch_state_ok(self, ok: bool) -> None:
-        try:
-            summary = f" — {self.state_summary}" if (ok and self.state_summary) else ""
-            self.query_one("#state-status", Label).update(
-                f"✓ Found{summary}" if ok else "✗ Not found"
-            )
-            self.query_one("#state-status").set_class(ok, "status-ok")
-            self.query_one("#state-status").set_class(not ok, "status-bad")
-        except Exception:  # noqa: BLE001
-            pass
-        self._refresh_ui()
-
-    def watch_state_summary(self, summary: str) -> None:
-        try:
-            status = "✓ Found"
-            if summary:
-                status += f" — {summary}"
-            self.query_one("#state-status", Label).update(status)
-        except Exception:  # noqa: BLE001
-            pass
-
     def _refresh_ui(self) -> None:
         try:
             self.query_one("#sops-btn", Button).disabled = not self.age_ok
-            self.query_one("#state-btn", Button).disabled = not (self.age_ok and self.sops_ok)
-            all_ok = self.age_ok and self.sops_ok and self.state_ok
-            self.query_one("#continue-btn", Button).disabled = not all_ok
+            self.query_one("#continue-btn", Button).disabled = not (self.age_ok and self.sops_ok)
         except Exception:  # noqa: BLE001
             pass
 
@@ -233,10 +145,9 @@ class SecretsScreen(Screen):
     @on(Button.Pressed, "#age-btn")
     def _age_pressed(self) -> None:
         if self.age_ok:
-            # Regeneration: show warning and require confirmation
-            self._log("[bold yellow]Warning: regenerating the age key will break decryption of existing network.sops.yaml.[/]")
-            self._log("If you proceed, you will need to re-initialize the network state. Continue anyway? [Use 'Generate key' to proceed.]")
-            # Relabel button to confirm
+            self._show_log()
+            self._log_markup("[bold yellow]Warning: regenerating the age key will break decryption of existing network.sops.yaml.[/]")
+            self._log_markup("If you proceed, you will need to re-initialize the network state.")
             btn = self.query_one("#age-btn", Button)
             btn.label = "Yes, regenerate key (I understand)"
             btn.variant = "error"
@@ -248,100 +159,63 @@ class SecretsScreen(Screen):
     def _age_confirm(self) -> None:
         self._generate_age_key()
 
-    @work(exclusive=True)
-    async def _generate_age_key(self) -> None:
-        log = self.query_one("#log", RichLog)
-        log.add_class("visible")
-        log.write("[bold]Generating age key…[/]")
+    @work(thread=True, exclusive=True)
+    def _generate_age_key(self) -> None:
+        self.app.call_from_thread(self._show_log)
+        self.app.call_from_thread(self._log_markup, "[bold]Generating age key…[/]")
 
         AGE_KEY_PATH.parent.mkdir(parents=True, exist_ok=True)
-        import asyncio  # noqa: PLC0415
-        proc = await asyncio.create_subprocess_exec(
-            "age-keygen", "-o", str(AGE_KEY_PATH),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
+        result = subprocess.run(
+            ["age-keygen", "-o", str(AGE_KEY_PATH)],
+            capture_output=True,
+            text=True,
         )
-        assert proc.stdout is not None
-        async for raw in proc.stdout:
-            log.write(raw.decode(errors="replace").rstrip())
-        rc = await proc.wait()
+        if result.stdout:
+            for line in result.stdout.splitlines():
+                self.app.call_from_thread(self._log_markup, line)
+        if result.stderr:
+            for line in result.stderr.splitlines():
+                self.app.call_from_thread(self._log_markup, line)
 
-        if rc == 0:
-            log.write("[bold green]✓ Age key generated[/]")
+        if result.returncode == 0:
+            self.app.call_from_thread(self._log_markup, "[bold green]✓ Age key generated[/]")
             self.age_ok = True
             pubkey = _age_pubkey_from_keyfile(AGE_KEY_PATH)
             if pubkey:
-                log.write(f"Public key: [bold]{pubkey}[/]")
-            # Reset button
-            btn = self.query_one("[id^='age']", Button)
-            btn.label = "Regenerate key (will break existing state)"
-            btn.variant = "warning"
-            btn.id = "age-btn"
+                self.app.call_from_thread(self._log_markup, f"Public key: [bold]{pubkey}[/]")
+
+            def _reset_btn() -> None:
+                btn = self.query_one("[id^='age']", Button)
+                btn.label = "Regenerate key (will break existing state)"
+                btn.variant = "warning"
+                btn.id = "age-btn"
+
+            self.app.call_from_thread(_reset_btn)
         else:
-            log.write(f"[bold red]✗ age-keygen failed (exit {rc})[/]")
+            self.app.call_from_thread(
+                self._log_markup,
+                f"[bold red]✗ age-keygen failed (exit {result.returncode})[/]",
+            )
 
     @on(Button.Pressed, "#sops-btn")
     def _sops_pressed(self) -> None:
         self._write_sops_config()
 
-    @work(exclusive=True)
-    async def _write_sops_config(self) -> None:
-        log = self.query_one("#log", RichLog)
-        log.add_class("visible")
+    @work(thread=True, exclusive=True)
+    def _write_sops_config(self) -> None:
+        self.app.call_from_thread(self._show_log)
         pubkey = _age_pubkey_from_keyfile(AGE_KEY_PATH)
         if not pubkey:
-            log.write("[bold red]✗ Could not read age public key from key file[/]")
+            self.app.call_from_thread(
+                self._log_markup, "[bold red]✗ Could not read age public key from key file[/]"
+            )
             return
         content = _SOPS_YAML_TEMPLATE.format(age_pubkey=pubkey)
         SOPS_CONFIG_PATH.write_text(content)
-        log.write(f"[bold green]✓ .sops.yaml written (public key: {pubkey})[/]")
+        self.app.call_from_thread(
+            self._log_markup, f"[bold green]✓ .sops.yaml written (public key: {pubkey})[/]"
+        )
         self.sops_ok = True
-
-    @on(Button.Pressed, "#state-btn")
-    def _state_pressed(self) -> None:
-        if self.state_ok:
-            # Destructive — show confirmation input
-            confirm_row = self.query_one("#confirm-row")
-            confirm_row.add_class("visible")
-            self.query_one("#state-btn", Button).disabled = True
-        else:
-            self._init_state()
-
-    @on(Input.Changed, "#confirm-input")
-    def _confirm_changed(self, event: Input.Changed) -> None:
-        ok = event.value.strip().lower() == "yes"
-        self.query_one("#confirm-btn", Button).disabled = not ok
-
-    @on(Button.Pressed, "#confirm-btn")
-    def _confirm_reinit(self) -> None:
-        confirm_row = self.query_one("#confirm-row")
-        confirm_row.remove_class("visible")
-        self.query_one("#state-btn", Button).disabled = False
-        self._init_state()
-
-    @work(exclusive=True)
-    async def _init_state(self) -> None:
-        log = self.query_one("#log", RichLog)
-        log.add_class("visible")
-        log.write("[bold]Initializing network state via porthole init…[/]")
-        log.write("You will be prompted for the hub endpoint (e.g. hub.example.com).")
-
-        # porthole init is interactive; run it in the terminal.
-        # We can't stream its prompts through a Textual widget easily,
-        # so we suspend the app, run it in the terminal, then resume.
-        with self.app.suspend():
-            import subprocess as sp  # noqa: PLC0415
-            result = sp.run(["porthole", "init"])
-
-        if STATE_PATH.exists():
-            summary = _summarise_state()
-            self.state_summary = summary or "(could not decrypt)"
-            self.state_ok = True
-            log.write("[bold green]✓ network.sops.yaml created[/]")
-            if summary:
-                log.write(f"  {summary}")
-        else:
-            log.write("[bold red]✗ network.sops.yaml not found after porthole init[/]")
 
     @on(Button.Pressed, "#back-btn")
     def _back(self) -> None:
@@ -351,3 +225,21 @@ class SecretsScreen(Screen):
     def _continue(self) -> None:
         from porthole_setup.screens.hub_check import HubCheckScreen  # noqa: PLC0415
         self.app.push_screen(HubCheckScreen())
+
+    # ------------------------------------------------------------------
+    # UI helpers
+    # ------------------------------------------------------------------
+
+    def _show_log(self) -> None:
+        self.query_one("#log", RichLog).add_class("visible")
+
+    def _log_markup(self, msg: str) -> None:
+        self.query_one("#log", RichLog).write(msg)
+
+
+_SOPS_YAML_TEMPLATE = """\
+creation_rules:
+  - path_regex: network\\.sops\\.yaml$
+    encrypted_regex: "^private_key$"
+    age: "{age_pubkey}"
+"""

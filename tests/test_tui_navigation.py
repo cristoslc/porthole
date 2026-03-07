@@ -46,7 +46,6 @@ async def test_secrets_continue_pushes_hub_check(
         # All secrets OK -> Continue enabled
         app.screen.age_ok = True
         app.screen.sops_ok = True
-        app.screen.state_ok = True
         await pilot.pause()
 
         await pilot.click("#continue-btn")
@@ -75,7 +74,6 @@ async def test_three_screen_forward_flow(
         # -> HubCheck
         app.screen.age_ok = True
         app.screen.sops_ok = True
-        app.screen.state_ok = True
         await pilot.pause()
         await pilot.click("#continue-btn")
         await pilot.pause()
@@ -122,7 +120,6 @@ async def test_hub_check_back_pops_to_secrets(
 
         app.screen.age_ok = True
         app.screen.sops_ok = True
-        app.screen.state_ok = True
         await pilot.pause()
 
         await pilot.click("#continue-btn")  # -> HubCheck
@@ -150,7 +147,6 @@ async def test_enrollment_back_pops_to_hub_check(
         await pilot.pause()
         app.screen.age_ok = True
         app.screen.sops_ok = True
-        app.screen.state_ok = True
         await pilot.pause()
 
         await pilot.click("#continue-btn")  # -> HubCheck

@@ -1,4 +1,4 @@
 creation_rules:
   - path_regex: network\.sops\.yaml$
-    encrypted_regex: "^private_key$"
+    encrypted_regex: "^(private_key|guacamole_admin_password)$"
     age: "age156zdlx3ysm24xcc0sac4hvfr4dxkx9kp8pr7enu9k2el6jrfqazqkpgear"

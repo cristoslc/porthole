@@ -4,11 +4,11 @@ artifact: EPIC-007
 status: Active
 author: cristos
 created: 2026-03-03
-last-updated: 2026-03-03
+last-updated: 2026-03-07
 parent-vision: VISION-001
 success-criteria:
   - Destroying and rebuilding the hub VPS from scratch produces an identical working hub with no manual steps beyond `terraform apply && ansible-playbook site.yml`.
-  - Running `./setup.sh` on a fresh Linux Mint or macOS machine walks the user through full node enrollment with no prior knowledge of porthole or WireGuard.
+  - Running `./setup.sh` on a fresh Linux Mint or macOS machine walks the user through full node enrollment with no prior knowledge of porthole or Nebula.
   - Running `./setup.sh` on an already-enrolled machine is safe and idempotent — it detects existing state and offers only relevant actions.
   - Secrets (age key, network state) are generated on first run and never re-created unless the user explicitly requests regeneration.
   - The hub spin-up path (Terraform + Ansible) is reachable from the TUI when the hub is not detected.
@@ -50,7 +50,7 @@ a `setup.sh` bash shim that invokes a uv-managed Textual TUI.
 **In scope:**
 
 - Terraform configuration for hub VPS lifecycle (provision, DNS records, firewall rules).
-- Ansible playbook for hub configuration (WireGuard, CoreDNS, nftables, Guacamole, Caddy, tunnel user).
+- Ansible playbook for hub configuration (Nebula lighthouse, CoreDNS, Guacamole, Caddy).
 - `setup.sh` entry point for nodes: bash shim → Textual TUI.
 - TUI flows for: prerequisite installation (Linux Mint and macOS), secret
   management (age key + network state), hub availability check, hub spin-up,
@@ -89,5 +89,6 @@ a `setup.sh` bash shim that invokes a uv-managed Textual TUI.
 - **SPIKE-007 (Complete):** Ephemeral VPS Hub Feasibility — validated that the
   hub can be treated as cattle (destroy + rebuild) rather than a pet, provided
   network state is stored externally.
-- **SPEC-003 (Implemented):** WireGuard Hub & Network — the porthole CLI and
-  network state schema that SPEC-008 and SPEC-009 build on top of.
+- **SPEC-003 (Implemented):** Network Hub & Overlay — the porthole CLI and
+  network state schema that SPEC-008 and SPEC-009 build on top of. (Originally
+  WireGuard; now Nebula per ADR-008.)

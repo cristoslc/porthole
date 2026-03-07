@@ -14,7 +14,8 @@ from textual.widgets import Button, Footer, Header, Label, Static
 
 from porthole_setup.platform import is_installed
 from porthole_setup.screens.prerequisites import TOOLS
-from porthole_setup.screens.secrets import AGE_KEY_PATH, SOPS_CONFIG_PATH, STATE_PATH
+from porthole_setup.screens.secrets import AGE_KEY_PATH, SOPS_CONFIG_PATH
+from porthole_setup.screens.hub_check import STATE_PATH
 from porthole_setup.state import load_state
 
 CSS = """

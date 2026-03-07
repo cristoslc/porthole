@@ -168,7 +168,7 @@ def mock_suspend(monkeypatch):
 
 @pytest.fixture
 def mock_secrets_paths(monkeypatch, tmp_path):
-    """Redirect SecretsScreen path constants to tmp_path with files present."""
+    """Redirect secrets + hub_check path constants to tmp_path with files present."""
     age_key = tmp_path / "keys.txt"
     age_key.parent.mkdir(parents=True, exist_ok=True)
     age_key.write_text("# public key: age1testpubkey123\nAGE-SECRET-KEY-1TEST\n")
@@ -181,11 +181,8 @@ def mock_secrets_paths(monkeypatch, tmp_path):
 
     monkeypatch.setattr("porthole_setup.screens.secrets.AGE_KEY_PATH", age_key)
     monkeypatch.setattr("porthole_setup.screens.secrets.SOPS_CONFIG_PATH", sops_yaml)
-    monkeypatch.setattr("porthole_setup.screens.secrets.STATE_PATH", state_file)
-    monkeypatch.setattr(
-        "porthole_setup.screens.secrets._summarise_state",
-        lambda: "endpoint=hub.example.com, 1 peer(s)",
-    )
+    monkeypatch.setattr("porthole_setup.screens.hub_check.STATE_PATH", state_file)
+    monkeypatch.setattr("porthole_setup.screens.hub_check.AGE_KEY_PATH", age_key)
     return tmp_path
 
 

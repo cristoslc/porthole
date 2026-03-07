@@ -5,6 +5,7 @@
 | ID | Title | Summary | Last Updated | Commit |
 |----|-------|---------|--------------|--------|
 | [BUG-002](Reported/(BUG-002)-Prerequisites-Screen-Concurrent-Installs-And-Poor-UI.md) | Prerequisites screen: TUI should not be a package manager — delegate to ansible | TUI reimplements package management poorly; should delegate to an ansible playbook run by setup.sh. | 2026-03-06 | — |
+| [BUG-003](Reported/(BUG-003)-Secrets-Screen-Porthole-Init-Fails-No-Interactive-Stdin.md) | Secrets screen: porthole init fails — no interactive stdin in async worker | `porthole init` needs interactive stdin but runs inside async worker where `suspend()` doesn't yield terminal. | 2026-03-07 | — |
 
 ## Abandoned
 

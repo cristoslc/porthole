@@ -1,0 +1,33 @@
+network:
+    domain: wg
+    subnet: 10.100.0.0/24
+    hub:
+        endpoint: remote.theblueroost.me:51820
+    peers:
+        - name: hub
+          ip: 10.100.0.1
+          public_key: 3UVub5XYL7taCRa5Xy4QtNMQomhCoJGNBwuPC4Lu8Ew=
+          private_key: ENC[AES256_GCM,data:JUqAJA0f89esFpCzPn+auetFbuaENSf/OfuaQIvHm7EGDv6b81bnZQiAcWU=,iv:QAZG4djPA4wQAvSJSBInqkkSBky0EkUX6xcd6teAEo0=,tag:xoRWyZPx7h+42i/iaIFS9w==,type:str]
+          dns_name: hub
+          role: hub
+    guacamole_admin_password: ENC[AES256_GCM,data:X5kHOTT38lrTJBz+yIPBRbED/S7WebzFragFvnfHJF4=,iv:Ff6/4i365Er7vIEVmYEEqGVEuRT1sVZibMFm+OSUAas=,tag:iQ9Eoh5ZH5SgmXORxXGkkQ==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age156zdlx3ysm24xcc0sac4hvfr4dxkx9kp8pr7enu9k2el6jrfqazqkpgear
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6Sk5XelZBMGZHNFdGOW9Q
+            dXhNMXVMc1hERG85elJnbFJjdVU4bHpPb3cwCjV5SXZmYnFlOEZHbnljUWJhc3Rm
+            TXp1c1NPc2RnN3lvRksyQUExVUIzNWMKLS0tIHFUVmhzaHVrampTOFE4cm5VdHFR
+            L2FhNnlzczRzNWRLUmVtQ0J6Qm9NZlUKZw33WC8wt7DSyJ8hNzwUPk1tvvjcj9dw
+            uNGsH6gsh5EvD93DsKzycsf3UhnkEUns9jFtmSQoWFASQ4mZVMvJVA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-07T05:30:52Z"
+    mac: ENC[AES256_GCM,data:b8y9RWw/bWkrksXm2ROEznWRCdNEbPf5U2sxZ3bcTG6QrPaGtVkDFqDlS6cGYM04GRecUXA1ZphUu/PoTMVKrkpps6nc2SR4BFTkVQoWvIBtnzMh9WFBf0hKYlYHp0Xeok8SX+bkRAVuJuoWt3sfpjOa4yHbPvQqEuOkqJbRJI0=,iv:zC2fGp/fJo9VZw8fktE+grvsjEk/0Deu+b33ZGB5aYQ=,tag:XziC2u775A1XZVjPiZcm4g==,type:str]
+    pgp: []
+    encrypted_regex: ^(private_key|guacamole_admin_password)$
+    version: 3.9.4

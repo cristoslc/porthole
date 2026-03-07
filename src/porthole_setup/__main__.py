@@ -15,9 +15,8 @@ def _run_check() -> None:
     from porthole_setup.screens.secrets import (  # noqa: PLC0415
         AGE_KEY_PATH,
         SOPS_CONFIG_PATH,
-        STATE_PATH,
-        _summarise_state,
     )
+    from porthole_setup.screens.hub_check import STATE_PATH  # noqa: PLC0415
     from porthole_setup.state import load_state  # noqa: PLC0415
 
     results: list[tuple[str, bool, str]] = []
@@ -32,8 +31,15 @@ def _run_check() -> None:
     results.append((".sops.yaml", SOPS_CONFIG_PATH.exists(), str(SOPS_CONFIG_PATH)))
 
     state_ok = STATE_PATH.exists()
-    state_detail = _summarise_state() if state_ok else "missing"
-    results.append(("network.sops.yaml", state_ok, state_detail or "decrypt failed"))
+    if state_ok:
+        try:
+            st = load_state()
+            state_detail = f"endpoint={st.endpoint}"
+        except Exception:  # noqa: BLE001
+            state_detail = "decrypt failed"
+    else:
+        state_detail = "missing"
+    results.append(("network.sops.yaml", state_ok, state_detail))
 
     # --- Hub reachability ---
     hub_host: str | None = None
@@ -110,18 +116,45 @@ def main() -> None:
 
     args = sys.argv[1:]
 
+    if "--help" in args or "-h" in args:
+        print("Usage: porthole-setup [OPTIONS]")
+        print()
+        print("Options:")
+        print("  --check          Non-interactive check mode (no TUI)")
+        print("  --debug          Verbose file logging")
+        print("  --screen NAME    Jump directly to a screen for testing")
+        print("                   Names: prerequisites, secrets, hub_check,")
+        print("                          hub_spinup, enrollment, service_install, summary")
+        print("  --help           Show this help")
+        print()
+        print("Textual dev console (run in a second terminal first):")
+        print("  uv run textual console")
+        print("Then launch with:")
+        print("  uv run textual run --dev -c 'python -m porthole_setup [--screen NAME]'")
+        return
+
     if "--check" in args:
         _run_check()
         return
 
     debug = "--debug" in args
 
+    # --screen NAME: jump directly to a specific screen
+    start_screen: str | None = None
+    if "--screen" in args:
+        idx = args.index("--screen")
+        if idx + 1 < len(args):
+            start_screen = args[idx + 1]
+        else:
+            print("Error: --screen requires a screen name", file=sys.stderr)
+            sys.exit(1)
+
     # Set up file logging so crashes are captured even when the TUI
     # takes over the terminal.
     log_path = _setup_logging(debug)
     log = logging.getLogger("porthole_setup")
     log.info("porthole-setup starting (Python %s)", sys.version)
-    log.info("args=%s, debug=%s", args, debug)
+    log.info("args=%s, debug=%s, start_screen=%s", args, debug, start_screen)
 
     # Validate imports before handing off to Textual
     try:
@@ -149,6 +182,14 @@ def main() -> None:
     try:
         log.info("Launching TUI…")
         app = PortholeApp()
+        if start_screen:
+            if start_screen not in app.SCREENS:
+                valid = ", ".join(sorted(app.SCREENS))
+                print(f"Unknown screen: {start_screen}", file=sys.stderr)
+                print(f"Valid screens: {valid}", file=sys.stderr)
+                sys.exit(1)
+            log.info("Jumping to screen: %s", start_screen)
+            app._start_screen = start_screen
         app.run()
         log.info("TUI exited normally")
     except Exception:

@@ -243,7 +243,7 @@ Two architecture decisions changed both dimensions of this analysis:
 
 ### Networking: WireGuard hub-and-spoke (ADR-004), not Tailscale
 
-[ADR-004](../../../adr/Adopted/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) adopted self-hosted WireGuard hub-and-spoke via an ephemeral VPS. The decision prioritized operational sovereignty and zero SaaS dependency over Tailscale's convenience. Tailscale remains on the existing tailnet for infrastructure services but is not the networking layer for the family fleet.
+[ADR-004](../../../adr/Superseded/(ADR-004)-WireGuard-Hub-and-Spoke-Relay.md) originally adopted self-hosted WireGuard hub-and-spoke via an ephemeral VPS; subsequently superseded by [ADR-008](../../../adr/Adopted/(ADR-008)-Nebula-Overlay-Network.md) which adopts Nebula's certificate-based overlay network. The decision prioritized operational sovereignty and zero SaaS dependency over Tailscale's convenience. Tailscale remains on the existing tailnet for infrastructure services but is not the networking layer for the family fleet.
 
 This changes the scoring for Dimension 2: Tailscale is no longer the networking bridge for fleet machines. Raw WireGuard — listed as "Disqualified" above because it requires a publicly routable endpoint and manual key management — is the adopted approach, with the VPS hub providing the routable endpoint and a CLI tool (`porthole`) automating key management.
 

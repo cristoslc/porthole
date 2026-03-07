@@ -27,5 +27,7 @@ class PortholeApp(App):
         "summary": SummaryScreen,
     }
 
+    _start_screen: str = "prerequisites"
+
     def on_mount(self) -> None:
-        self.push_screen("prerequisites")
+        self.push_screen(self._start_screen)

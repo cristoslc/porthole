@@ -19,7 +19,6 @@ async def _navigate_to_hub_check(pilot, app):
     await pilot.pause()
     app.screen.age_ok = True
     app.screen.sops_ok = True
-    app.screen.state_ok = True
     await pilot.pause()
     await pilot.click("#continue-btn")  # -> HubCheck
     await pilot.pause()
@@ -29,10 +28,10 @@ async def _navigate_to_hub_check(pilot, app):
 
 
 @pytest.mark.asyncio
-async def test_state_not_found_shows_error_and_back_only(
+async def test_state_not_found_shows_init_section(
     mock_all_installed, mock_secrets_paths, monkeypatch, mock_subprocess_success
 ):
-    """When load_state raises, only Back button is shown."""
+    """When load_state raises StateNotFoundError, init section is shown."""
     monkeypatch.setattr(
         "porthole_setup.screens.hub_check.load_state",
         lambda: (_ for _ in ()).throw(StateNotFoundError("missing")),
@@ -42,25 +41,23 @@ async def test_state_not_found_shows_error_and_back_only(
     async with app.run_test(size=(120, 40)) as pilot:
         await _navigate_to_hub_check(pilot, app)
 
-        # Should show error in endpoint label
-        label = app.screen.query_one("#endpoint-label", Label)
-        assert "not found" in str(label.render()).lower()
+        # State label should show not found
+        state_label = app.screen.query_one("#state-label", Label)
+        assert "not found" in str(state_label.render()).lower()
 
-        # Only back button, no continue
-        buttons = app.screen.query("#button-row Button")
-        button_ids = [b.id for b in buttons]
-        assert "back-btn" in button_ids
-        assert "continue-btn" not in button_ids
+        # Init section should be visible with endpoint input and buttons
+        init_section = app.screen.query_one("#init-section")
+        assert init_section.display is True
 
 
 @pytest.mark.asyncio
-async def test_hub_reachable_shows_continue(
+async def test_hub_state_loaded_shows_continue(
     mock_all_installed,
     mock_secrets_paths,
     mock_network_state,
     mock_subprocess_success,
 ):
-    """When hub is reachable, Continue button appears."""
+    """When state loads successfully, Continue button appears."""
     app = PortholeApp()
     async with app.run_test(size=(120, 40)) as pilot:
         await _navigate_to_hub_check(pilot, app)
@@ -68,3 +65,7 @@ async def test_hub_reachable_shows_continue(
         # Should have a continue button
         btn = app.screen.query_one("#continue-btn", Button)
         assert btn.variant == "success"
+
+        # Should also have spinup and reinit buttons
+        app.screen.query_one("#spinup-btn", Button)
+        app.screen.query_one("#reinit-btn", Button)

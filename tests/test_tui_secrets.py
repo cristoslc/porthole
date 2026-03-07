@@ -12,9 +12,12 @@ pytest_plugins = ["tests.conftest_tui"]
 
 
 @pytest.mark.asyncio
-async def test_continue_disabled_when_secrets_missing(mock_all_installed, monkeypatch):
-    """Continue disabled when age/sops/state not all OK."""
-    # Don't redirect paths — let them point to nonexistent defaults
+async def test_continue_disabled_when_secrets_missing(mock_all_installed, monkeypatch, tmp_path):
+    """Continue disabled when age/sops not both OK."""
+    # Point paths to nonexistent files
+    monkeypatch.setattr("porthole_setup.screens.secrets.AGE_KEY_PATH", tmp_path / "no-keys.txt")
+    monkeypatch.setattr("porthole_setup.screens.secrets.SOPS_CONFIG_PATH", tmp_path / "no-.sops.yaml")
+
     app = PortholeApp()
     async with app.run_test(size=(120, 40)) as pilot:
         await pilot.pause()
@@ -40,7 +43,6 @@ async def test_continue_enabled_when_all_secrets_ok(mock_all_installed, mock_sec
         # But reactive state is set in __init__ — update reactives directly
         app.screen.age_ok = True
         app.screen.sops_ok = True
-        app.screen.state_ok = True
         await pilot.pause()
 
         btn = app.screen.query_one("#continue-btn", Button)
