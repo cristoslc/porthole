@@ -26,129 +26,139 @@ depends-on:
 
 ## Interaction Surface
 
-The complete operator-facing interface for managing a Nebula overlay network: the `porthole` CLI (13 commands → redesigned for Nebula) and the `porthole-setup` TUI (7-screen wizard for node enrollment). This design replaces the WireGuard-based CLI (SPEC-003) with a Nebula-native design per ADR-008.
+The complete operator-facing interface for managing a personal Nebula overlay network. Two tools:
 
-**Scope:** Everything the operator types or sees. Not the system internals (Spec), not the user journey narrative (Journey), not the hub infrastructure (SPEC-008).
+- **`porthole` CLI** — 12 commands for network initialization, peer management, provisioning, and status
+- **`porthole-setup` TUI** — 7-screen wizard that walks a new operator through first-time setup and node enrollment
 
-## What changes, what stays
+**Scope:** Everything the operator types or sees. Not system internals (Spec), not the user journey narrative (Journey), not hub infrastructure (SPEC-008).
 
-### Stays the same
-- Click CLI framework, Textual TUI framework
-- SOPS/age encryption for state at rest
-- Jinja2 template rendering pipeline
-- CoreDNS zone generation
-- Guacamole SQL seeding
-- IP allocation from subnet pool
-- TUI screen progression (prerequisites → secrets → hub check → spinup → enroll → services → summary)
-- `setup.sh` bash shim entry point
+## Architecture Overview
 
-### Changes fundamentally
-- **Key generation** → replaced by CA certificate management + per-peer cert signing
-- **`sync` command** → eliminated (lighthouse discovers peers from certs)
-- **Hub config rendering** → lighthouse config instead of wg0.conf
-- **Peer config rendering** → Nebula config.yml + cert bundle instead of wg0.conf
-- **`bootstrap`** → Nebula lighthouse deployment instead of WireGuard + nftables
-- **Service files** → `nebula` service instead of `wg-quick` + watchdog
-- **`status`** → Nebula handshake status instead of `wg show dump`
-- **Firewall** → Nebula's built-in group-based rules replace hub nftables
-- **Hub check screen** → no SSH setup key, no temporary SSH window dance
+Porthole manages a Nebula overlay network using an offline certificate authority model. The operator's workstation holds a CA keypair (encrypted at rest with SOPS/age). Adding a peer means signing a certificate locally — no hub interaction required. The lighthouse (hub node) discovers peers automatically when they present valid certificates.
+
+```
+                        ┌─────────────────────┐
+                        │    Lighthouse (hub)  │
+                        │  nebula + CoreDNS +  │
+                        │  Guacamole           │
+                        │  10.100.0.1          │
+                        └──────┬──────┬────────┘
+                        UDP hole-punch / relay
+                   ┌───────────┘      └───────────┐
+            ┌──────┴──────┐              ┌────────┴─────┐
+            │ workstation │              │    server    │
+            │ 10.100.0.N  │──── p2p ────│  10.100.0.M  │
+            └─────────────┘              └──────────────┘
+```
+
+**Trust model:** The CA private key never leaves the operator's workstation. Peers authenticate by presenting a CA-signed certificate. The lighthouse does not need to know about peers in advance — it validates certificates on connection and facilitates UDP hole-punching for direct peer-to-peer tunnels.
 
 ## CLI Commands
 
-### Redesigned command set
+### Command reference
 
-| Command | Arguments | What it does | Nebula operations |
-|---------|-----------|-------------|-------------------|
-| `porthole init` | `--endpoint`, `--age-key`, `--domain` | Initialize network: create CA, lighthouse config, encrypt state | `nebula-cert ca` → CA key + cert; store in `network.sops.yaml` |
-| `porthole add` | `name`, `--role`, `--platform`, `--dns-name`, `--groups` | Add peer: sign cert, allocate IP, store in state | `nebula-cert sign` → peer cert + key; NO hub update needed |
-| `porthole remove` | `name` | Remove peer from state | Revoke cert (add to blocklist in lighthouse config); no hub sync needed for simple removal |
-| `porthole list` | `--json` | List all peers | Read state, display table with name/IP/groups/role |
-| `porthole peer-config` | `name`, `--out` | Output Nebula config bundle for a peer | Render `config.yml` from template + write cert/key files |
-| `porthole gen-peer-scripts` | `name`, `--out` | Generate service files for a peer | Render systemd/launchd/Windows service files for `nebula` |
-| `porthole install-peer` | `name`, `--host` | Install config + service on a peer via SSH | SCP config bundle, enable nebula service |
-| `porthole bootstrap` | `hub_host` | Provision lighthouse on a VPS | Deploy nebula binary + lighthouse config + CoreDNS + Guacamole |
-| `porthole status` | — | Show live peer status from lighthouse | SSH to lighthouse, parse nebula status or query admin API |
-| `porthole dashboard` | `--port` | Run local web dashboard | HTTP server showing fleet status |
-| `porthole seed-guac` | `--out`, `--apply` | Generate Guacamole seed SQL | Unchanged — reads peer IPs from state |
-| `porthole enroll` | `name` | Transfer config bundle to a peer | Magic Wormhole or manual copy of cert + config bundle |
+| Command | Arguments | Purpose | External tools |
+|---------|-----------|---------|----------------|
+| `porthole init` | `--endpoint`, `--age-key`, `--domain` | Create CA keypair, sign lighthouse certificate, initialize encrypted network state | `nebula-cert ca`, `nebula-cert sign`, `sops` |
+| `porthole add` | `name`, `--role`, `--platform`, `--dns-name`, `--groups` | Allocate IP, sign peer certificate, add to state | `nebula-cert sign` |
+| `porthole remove` | `name` | Remove peer from state, add cert fingerprint to blocklist | — |
+| `porthole list` | `--json` | Display all peers with name, IP, groups, role, platform | — |
+| `porthole peer-config` | `name`, `--out` | Render Nebula config bundle for a peer | Jinja2 |
+| `porthole gen-peer-scripts` | `name`, `--out` | Generate platform-appropriate service files | Jinja2 |
+| `porthole install-peer` | `name`, `--host` | SCP config bundle to peer, enable nebula service | `scp`, `ssh` |
+| `porthole enroll` | `name`, `--manual` | Transfer config bundle to a peer via Magic Wormhole (or `--manual` for file path output) | `wormhole` |
+| `porthole bootstrap` | `hub_host` | Provision lighthouse on a VPS via Terraform + Ansible | `terraform`, `ansible-playbook` |
+| `porthole status` | — | Show live peer status from lighthouse | `ssh` |
+| `porthole dashboard` | `--port` | Run local web dashboard showing fleet status | — |
+| `porthole seed-guac` | `--out`, `--apply` | Generate Guacamole connection seed SQL from peer state | — |
 
-### Commands removed
+### Command details
 
-| Old command | Why removed |
-|-------------|-------------|
-| `porthole sync` | **Eliminated.** Nebula lighthouse discovers peers from their signed certificates. No hub config update needed when adding or removing peers. This was the entire point of switching to Nebula (ADR-008). |
+#### `porthole init`
 
-### Commands changed significantly
+Creates the network's root of trust and initial state file.
 
-**`porthole init`** — the biggest change:
+1. Generate CA keypair: `nebula-cert ca -name "porthole-ca" -duration <cert_duration>`
+2. Sign lighthouse certificate: `nebula-cert sign -name "lighthouse" -ip "10.100.0.1/24" -groups "lighthouse" -ca-crt <ca.crt> -ca-key <ca.key>`
+3. Write `network.sops.yaml` containing CA cert/key, lighthouse cert/key, and network config
+4. Encrypt sensitive fields with SOPS (age key)
 
-```
-Old (WireGuard):
-  1. Generate hub WG keypair (wg genkey | wg pubkey)
-  2. Create network state with hub peer entry
-  3. Encrypt with sops
+#### `porthole add`
 
-New (Nebula):
-  1. Generate CA keypair (nebula-cert ca -name "porthole-ca")
-  2. Sign lighthouse certificate (nebula-cert sign -name "lighthouse" -ip "10.100.0.1/24" -groups "lighthouse")
-  3. Create network state with CA cert/key + lighthouse entry
-  4. Encrypt with sops
-```
+Enrolls a new peer in the network. The operator runs this on their workstation — no hub interaction needed.
 
-**`porthole add`** — no hub interaction:
+1. Decrypt `network.sops.yaml` to access CA key
+2. Allocate next available IP from the subnet pool
+3. Sign peer certificate: `nebula-cert sign -name "<name>" -ip "<ip>/24" -groups "<groups>" -ca-crt <ca.crt> -ca-key <ca.key>`
+4. Append peer entry to state (cert, key, IP, role, platform, groups)
+5. Re-encrypt and write state
 
-```
-Old (WireGuard):
-  1. Generate WG keypair
-  2. Allocate IP
-  3. Add peer to state
-  4. MUST run `porthole sync` to update hub config ← this is eliminated
+The lighthouse discovers this peer when it connects — no config push or restart needed.
 
-New (Nebula):
-  1. Allocate IP
-  2. Sign certificate (nebula-cert sign -name "peer-name" -ip "10.100.0.N/24" -groups "workstation")
-  3. Add peer to state
-  4. Done. Lighthouse discovers peer when it connects.
-```
+#### `porthole remove`
 
-**`porthole remove`** — optional lighthouse update:
+Removes a peer and optionally revokes its certificate immediately.
 
-```
-Old (WireGuard):
-  1. Remove peer from state
-  2. MUST run `porthole sync` to remove peer from hub wg0.conf
+1. Remove peer entry from state
+2. Add the peer's certificate fingerprint to the blocklist
+3. Re-encrypt and write state
 
-New (Nebula):
-  1. Remove peer from state
-  2. Optionally add cert fingerprint to lighthouse's blocklist
-     (Nebula certs have an expiry — removed peers naturally age out.
-      Blocklist is for immediate revocation before expiry.)
-```
+Certificate revocation takes effect in two ways:
+- **Immediate:** Run `porthole deploy-lighthouse` to push the updated blocklist to the lighthouse
+- **Natural:** The peer's certificate expires at its configured duration (default 1 year)
+
+#### `porthole enroll`
+
+Transfers the config bundle to a target peer. Two modes:
+
+- **Default (Magic Wormhole):** Generates a one-time wormhole code. The operator enters the code on the target peer to receive `ca.crt`, `<name>.crt`, `<name>.key`, and `config.yml`.
+- **`--manual`:** Writes the config bundle to a local directory and outputs the path for manual transfer (USB, SCP, etc.).
+
+#### `porthole bootstrap`
+
+Provisions the lighthouse on a fresh VPS:
+
+1. `terraform apply` — creates the VPS, configures DNS, opens UDP port
+2. `ansible-playbook` — installs and configures:
+   - Nebula lighthouse (binary + config + CA cert + lighthouse cert/key)
+   - CoreDNS (`.wg` domain resolution for peers)
+   - Guacamole (Docker stack for browser-based remote desktop)
+
+Cloud-init injects the lighthouse config at first boot. Nebula's built-in firewall handles access control (no separate firewall tooling).
+
+#### `porthole status`
+
+Queries the lighthouse for live peer status via SSH → nebula admin API.
+
+Displayed fields: peer name, overlay IP, certificate groups, last handshake time, relay status, connection type (direct/relayed).
 
 ## State Schema
 
-### `network.sops.yaml` — redesigned
+### `network.sops.yaml`
+
+The single source of truth for the network, stored in the repo and encrypted with SOPS/age.
 
 ```yaml
-# Nebula CA (SOPS-encrypted)
+# Certificate Authority
 ca:
   cert: |
     -----BEGIN NEBULA CERTIFICATE-----
     ...
     -----END NEBULA CERTIFICATE-----
-  key: |                              # SOPS-encrypted field
+  key: |                              # SOPS-encrypted
     -----BEGIN NEBULA ED25519 PRIVATE KEY-----
     ...
     -----END NEBULA ED25519 PRIVATE KEY-----
 
-# Network config
+# Network configuration
 network:
   subnet: "10.100.0.0/24"
-  domain: "wg"                        # DNS domain for CoreDNS (.wg)
-  lighthouse_port: 4242               # Nebula UDP port
-  cert_duration: "8760h"              # 1 year default cert validity
+  domain: "wg"                        # CoreDNS zone (.wg)
+  lighthouse_port: 4242               # Nebula UDP listen port
+  cert_duration: "8760h"              # Default cert validity (1 year)
 
-# Lighthouse (hub)
+# Lighthouse (hub node)
 lighthouse:
   name: "lighthouse"
   endpoint: "hub.example.com"
@@ -157,14 +167,14 @@ lighthouse:
     -----BEGIN NEBULA CERTIFICATE-----
     ...
     -----END NEBULA CERTIFICATE-----
-  key: |                              # SOPS-encrypted field
+  key: |                              # SOPS-encrypted
     -----BEGIN NEBULA ED25519 PRIVATE KEY-----
     ...
     -----END NEBULA ED25519 PRIVATE KEY-----
   groups:
     - lighthouse
 
-# Peers
+# Enrolled peers
 peers:
   - name: "workstation-1"
     ip: "10.100.0.2"
@@ -177,98 +187,33 @@ peers:
       -----BEGIN NEBULA CERTIFICATE-----
       ...
       -----END NEBULA CERTIFICATE-----
-    key: |                            # SOPS-encrypted field
+    key: |                            # SOPS-encrypted
       -----BEGIN NEBULA ED25519 PRIVATE KEY-----
       ...
       -----END NEBULA ED25519 PRIVATE KEY-----
-    reverse_ssh_port: 2202            # For fallback recovery (SPIKE-006)
+    reverse_ssh_port: 2202            # Fallback recovery (SPIKE-006)
 
 # Guacamole
 guacamole:
-  admin_password: "..."               # SOPS-encrypted field
+  admin_password: "..."               # SOPS-encrypted
 
 # Certificate blocklist (revoked peers)
-blocklist: []                         # Cert fingerprints of revoked peers
+blocklist: []                         # Cert fingerprints
 ```
 
-### Key differences from WireGuard schema
+### Key schema concepts
 
-| Field | WireGuard | Nebula |
-|-------|-----------|--------|
-| Hub identity | `public_key` + `private_key` (WG keypair) | `cert` + `key` (signed certificate) |
-| Peer identity | `public_key` + `private_key` (WG keypair) | `cert` + `key` (CA-signed certificate) |
-| CA | None | `ca.cert` + `ca.key` — the root of trust |
-| Groups | None (role field, but not used by WG) | Certificate groups used by Nebula firewall |
-| Port | `51820` (WireGuard) | `4242` (Nebula default) |
-| Blocklist | None | Cert fingerprints for immediate revocation |
-| Cert duration | N/A | Configurable expiry for signed certs |
-
-## TUI Screens
-
-### Screen 1: Prerequisites (minor changes)
-
-**Was:** Install wg, sops, age, terraform, porthole via ansible
-**Now:** Install **nebula**, sops, age, terraform, porthole via ansible
-
-Change: Replace `wireguard-tools` package with `nebula` binary. The ansible playbook downloads the nebula release binary for the platform.
-
-### Screen 2: Secrets (unchanged)
-
-Generate age key, write `.sops.yaml`. No changes — the encryption layer is orthogonal to the tunnel layer.
-
-### Screen 3: Hub Check (simplified)
-
-**Was:**
-- Load `network.sops.yaml`
-- If missing: show endpoint input + "Initialize" button → runs `porthole init --endpoint X --age-key Y`
-- If present: DNS resolution check (informational), always show Continue
-- Buttons: Continue, Spin Up Hub, Re-initialize, Re-check, Back
-
-**Now:** Same flow, but:
-- Remove any SSH-related UI (no setup key, no `hub-ssh-open`/`hub-ssh-close`)
-- The "Initialize" step runs `porthole init` which now creates Nebula CA + lighthouse cert
-- Hub reachability check: attempt Nebula handshake or just DNS resolve (informational)
-
-### Screen 4: Hub Spinup (lighthouse instead of WG hub)
-
-**Was:** `terraform apply` + `ansible-playbook` → provisions WireGuard + CoreDNS + nftables + Guacamole
-**Now:** `terraform apply` + `ansible-playbook` → provisions **Nebula lighthouse** + CoreDNS + Guacamole
-
-Cloud-init injects:
-- Nebula lighthouse binary + config + CA cert + lighthouse cert/key
-- CoreDNS config
-- Guacamole Docker stack
-
-No nftables — Nebula's built-in firewall handles access control.
-
-### Screen 4b: Enrollment (simplified — no sync needed)
-
-**Was:**
-1. Run `porthole add` to register this node in state
-2. Run `porthole sync` to push updated config to hub ← **this step is eliminated**
-3. Generate peer scripts
-
-**Now:**
-1. Run `porthole add` to register this node (signs cert with CA key)
-2. Generate peer config bundle (cert + key + config.yml)
-3. Done — lighthouse discovers this node when nebula starts
-
-The elimination of `sync` is the most visible UX improvement. The operator goes from `add → sync → gen-scripts` to just `add → gen-scripts`.
-
-### Screen 4c: Service Install (nebula instead of wg-quick)
-
-**Was:** Copy wg0.conf + watchdog scripts + SSH tunnel service → enable systemd/launchd units
-**Now:** Copy nebula config.yml + cert + key → enable `nebula` service
-
-Simpler — one service (`nebula`) instead of three (wg-quick + watchdog + ssh-tunnel). The watchdog is less critical because Nebula handles reconnection natively.
-
-### Screen 5: Summary (updated labels)
-
-Replace "WireGuard" with "Nebula" in status checklist items. Check for `nebula` service running instead of `wg0` interface.
+- **CA cert + key** — the root of trust. The CA key is only decrypted on the operator's workstation during `porthole add` / `porthole init`. It is never deployed to any peer or the lighthouse.
+- **Peer identity = CA-signed certificate** — each peer's cert encodes its name, overlay IP, and group memberships. The lighthouse validates certs on connection.
+- **Groups** — map directly to roles (workstation, server, family, lighthouse). Used by Nebula's firewall rules for access control.
+- **Blocklist** — certificate fingerprints of revoked peers. Deployed to the lighthouse config for immediate revocation.
+- **Cert duration** — configurable expiry provides natural credential rotation. A future `porthole renew` command could re-sign expiring certs; for MVP, `porthole add --force` re-signs an existing peer's cert.
 
 ## Nebula Config Templates
 
 ### Lighthouse config (`lighthouse-config.yml.j2`)
+
+Rendered during `porthole bootstrap` and deployed to the hub.
 
 ```yaml
 pki:
@@ -313,7 +258,7 @@ firewall:
       proto: tcp
       groups:
         - workstation
-    # Guacamole web UI — lighthouse only
+    # Guacamole web UI
     - port: 443
       proto: tcp
       groups:
@@ -322,6 +267,8 @@ firewall:
 ```
 
 ### Peer config (`peer-config.yml.j2`)
+
+Rendered by `porthole peer-config` and included in the enrollment bundle.
 
 ```yaml
 pki:
@@ -339,7 +286,7 @@ lighthouse:
 
 listen:
   host: 0.0.0.0
-  port: 0                              # Random port — not a lighthouse
+  port: 0                              # Random port — peers are not lighthouses
 
 punchy:
   punch: true
@@ -361,47 +308,162 @@ firewall:
         - lighthouse
 ```
 
+### Firewall model
+
+Nebula's built-in firewall uses certificate groups for access control. Rules are defined in the config template and deployed with the lighthouse/peer config. No separate firewall tooling is needed.
+
+Group-to-role mapping:
+| Group | Members | Access |
+|-------|---------|--------|
+| `lighthouse` | Hub node | SSH from all groups, ICMP |
+| `workstation` | Operator machines | SSH, RDP (3389), VNC (5900), Guacamole (443) |
+| `server` | Headless nodes | SSH, Guacamole (443) |
+| `family` | Non-technical users | ICMP only (managed via Guacamole) |
+
+## TUI Screens
+
+The `porthole-setup` TUI (built with Textual) guides first-time setup through 7 screens. Entry point: `setup.sh` bash shim.
+
+### Screen 1: Prerequisites
+
+Checks for required tools and offers to install missing ones.
+
+| Tool | Purpose | Install method |
+|------|---------|---------------|
+| `nebula` | Overlay network binary | Ansible playbook (downloads platform release) |
+| `nebula-cert` | Certificate management | Bundled with nebula |
+| `sops` | Secrets encryption | Package manager |
+| `age` | Encryption backend for SOPS | Package manager |
+| `terraform` | VPS provisioning | Package manager |
+| `ansible-playbook` | Configuration management | Package manager / pip |
+
+Actions: "Install All" button, per-tool install buttons, "Re-check", "Continue", "Back".
+
+### Screen 2: Secrets
+
+Generates the age keypair used by SOPS for encrypting `network.sops.yaml`.
+
+1. Generate age key if none exists
+2. Write `.sops.yaml` config pointing to the age public key
+3. Display the age public key for the operator to record
+
+### Screen 3: Hub Check
+
+Determines whether the network has been initialized and the lighthouse is reachable.
+
+**States:**
+- **No state file:** Show endpoint input field + "Initialize" button. Runs `porthole init --endpoint <endpoint> --age-key <key>` to create CA + lighthouse cert + encrypted state.
+- **State exists, lighthouse unreachable:** Show DNS resolution status (informational). Offer "Spin Up Hub" (→ Screen 4) or "Continue" (skip provisioning if lighthouse is managed externally).
+- **State exists, lighthouse reachable:** Show green status. "Continue" to enrollment.
+
+Actions: "Initialize", "Spin Up Hub", "Re-check", "Continue", "Back".
+
+### Screen 4: Hub Spinup
+
+Provisions the lighthouse on a VPS. Runs two stages with live output:
+
+1. **Terraform:** `terraform apply` — creates VPS, configures DNS, opens firewall
+2. **Ansible:** `ansible-playbook` — installs nebula lighthouse, CoreDNS, Guacamole Docker stack
+
+Cloud-init injects the lighthouse config at first boot. Progress is streamed to the TUI.
+
+### Screen 5: Enrollment
+
+Enrolls the current machine as a peer in the network.
+
+1. Prompt for node name, role, and platform (pre-filled where detectable)
+2. Run `porthole add <name> --role <role> --platform <platform>` — signs cert, allocates IP
+3. Run `porthole peer-config <name>` — renders config bundle
+4. Display assigned IP and confirmation
+
+The lighthouse discovers this node automatically when nebula starts — no hub config push needed.
+
+### Screen 6: Service Install
+
+Installs the nebula service on the current machine.
+
+1. Copy config bundle to the platform's nebula config directory
+2. Generate and install the platform-appropriate service unit
+3. Enable and start the nebula service
+4. Verify tunnel connectivity (ping lighthouse overlay IP)
+
+| Platform | Config directory | Service type |
+|----------|-----------------|-------------|
+| Linux | `/etc/nebula/` | systemd unit |
+| macOS | `/etc/nebula/` | launchd plist |
+| Windows | `C:\Program Files\Nebula\` | Windows service |
+
+One service (`nebula`) per node. Nebula handles reconnection natively via `punchy` — no watchdog timer required for basic connectivity. An optional SSH tunnel service (SPIKE-006 Layer 2) is available as an add-on for reverse access fallback.
+
+### Screen 7: Summary
+
+Displays a checklist of completed setup steps:
+
+- [ ] Prerequisites installed
+- [ ] Age key generated and SOPS configured
+- [ ] Network initialized (CA created)
+- [ ] Lighthouse provisioned and reachable
+- [ ] This node enrolled (certificate signed)
+- [ ] Nebula service running (tunnel active)
+
+Shows the node's overlay IP, assigned groups, and lighthouse endpoint.
+
+## Frameworks and Tools
+
+| Component | Tool | Notes |
+|-----------|------|-------|
+| CLI framework | Click | Python CLI with command groups |
+| TUI framework | Textual | Python TUI with screen-based navigation |
+| Template engine | Jinja2 | Renders nebula configs and service files |
+| Secrets encryption | SOPS + age | Encrypts state at rest in the repo |
+| VPS provisioning | Terraform | Creates cloud infrastructure |
+| Configuration management | Ansible | Deploys lighthouse config, CoreDNS, Guacamole |
+| DNS | CoreDNS | `.wg` zone for peer hostname resolution |
+| Remote desktop gateway | Guacamole | Browser-based RDP/VNC via Docker |
+| Peer enrollment transfer | Magic Wormhole | Zero-config file transfer for config bundles |
+| Entry point | `setup.sh` | Bash shim that launches the TUI |
+
 ## Edge Cases and Error States
 
 ### CA key not available
-If `network.sops.yaml` can't be decrypted (age key missing), `porthole add` fails with a clear error: "Cannot sign certificate — age key required to decrypt CA key. Run `porthole-setup` to configure secrets."
+If `network.sops.yaml` can't be decrypted (age key missing), `porthole add` fails with: "Cannot sign certificate — age key required to decrypt CA key. Run `porthole-setup` to configure secrets."
 
 ### Lighthouse unreachable after init
-The lighthouse must be provisioned before peers can connect. If a peer is added but the lighthouse isn't running, the peer's nebula service will retry connection in the background. The TUI's hub check screen detects this and offers the spinup flow.
+The lighthouse must be provisioned before peers can connect. If a peer is added but the lighthouse isn't running, the peer's nebula service retries connection in the background. The TUI's hub check screen detects this and offers the spinup flow.
 
 ### Certificate expiry
-Certs have a configurable duration (default 1 year). A future `porthole renew` command could re-sign expiring certs. For MVP, manual re-signing via `porthole add --force` (re-signs cert for existing peer) is sufficient.
+Certs have a configurable duration (default 1 year). For MVP, `porthole add --force` re-signs an existing peer's cert. A future `porthole renew` command could automate bulk re-signing.
 
 ### Peer revocation
-`porthole remove` adds the peer's cert fingerprint to the blocklist in state. The blocklist is deployed to the lighthouse config. For immediate effect, the lighthouse config must be re-deployed — this is the one case where an SSH-to-lighthouse operation remains (via Ansible). However, cert expiry provides a natural revocation timeline.
+`porthole remove` adds the peer's cert fingerprint to the blocklist in state. For immediate effect, deploy the updated lighthouse config via Ansible (`porthole deploy-lighthouse`). Without deployment, the peer's certificate expires naturally.
 
-### Platform-specific nebula paths
+### Platform-specific paths
+
 | Platform | Binary | Config dir | Service |
 |----------|--------|-----------|---------|
-| Linux | `/usr/local/bin/nebula` | `/etc/nebula/` | `systemd` unit |
-| macOS | `/usr/local/bin/nebula` | `/etc/nebula/` | `launchd` plist |
+| Linux | `/usr/local/bin/nebula` | `/etc/nebula/` | systemd unit |
+| macOS | `/usr/local/bin/nebula` | `/etc/nebula/` | launchd plist |
 | Windows | `C:\Program Files\Nebula\nebula.exe` | `C:\Program Files\Nebula\` | `nebula.exe service install` |
 
 ## Design Decisions
 
-1. **No `sync` command.** The entire WireGuard `sync` workflow (SSH to hub, render config, reload) is eliminated. This is the primary UX win from Nebula adoption (ADR-008). Peers are enrolled by signing a certificate locally — the lighthouse discovers them automatically.
+1. **Offline CA model.** The CA private key lives only on the operator's workstation, encrypted with SOPS/age. Peer enrollment is a local `nebula-cert sign` — no network access to the lighthouse required. This means peers can be added from anywhere, even offline.
 
-2. **Certificate groups map to roles.** The existing `role` field (workstation, server, family) maps directly to Nebula certificate groups. The firewall rules in the lighthouse config use these groups for access control. No separate nftables management.
+2. **Certificate groups as access control.** Roles (workstation, server, family, lighthouse) map directly to Nebula certificate groups. The lighthouse firewall config uses these groups for inbound rules. Access control is defined once in the config template and deployed with the lighthouse — no per-peer firewall management.
 
-3. **Blocklist for revocation, expiry for natural cleanup.** Removing a peer adds its cert fingerprint to a blocklist. This is deployed to the lighthouse config via Ansible. Certs also have a natural expiry, so even without blocklist deployment, a removed peer eventually loses access.
+3. **Blocklist + expiry for revocation.** Two revocation mechanisms: the blocklist provides immediate revocation (requires lighthouse config redeploy), and certificate expiry provides natural credential rotation. Both are passive from the peer's perspective — no client-side action needed.
 
-4. **`enroll` replaces config transfer.** A new `porthole enroll` command handles the "get config to the peer" step, using Magic Wormhole for zero-config transfer or `--manual` for direct file copy. This replaces the ad-hoc `peer-config | scp` pattern.
+4. **Magic Wormhole for enrollment.** `porthole enroll` uses Magic Wormhole for zero-config transfer of the cert bundle to target peers. The operator runs `enroll` on their workstation and reads a code to the person at the target machine. `--manual` mode is available for air-gapped or scripted scenarios.
 
-5. **Single service per node.** WireGuard required wg-quick + watchdog timer + SSH tunnel service. Nebula is a single binary with built-in reconnection (`punchy`), so one service unit suffices. The SSH tunnel service for reverse access fallback (SPIKE-006 Layer 2) remains available as an optional add-on.
+5. **Single service per node.** The `nebula` binary handles tunneling, reconnection (`punchy`), and relay fallback in a single process. One systemd/launchd unit per node. The optional SSH tunnel service (for reverse access fallback per SPIKE-006) is an add-on, not a default.
 
-6. **Watchdog simplified.** Nebula handles its own reconnection via `punchy`. The watchdog script (Layer 1 of SPIKE-006's recovery model) is reduced to a health check that restarts the nebula service if it's unresponsive, rather than the complex DNS re-resolution + WireGuard reload cycle.
+6. **State-in-repo.** `network.sops.yaml` lives in the git repo, encrypted. This gives versioned, auditable network state with no external database. The repo is the single source of truth — `porthole` commands read and write this file.
 
 ## Assets
 
 | File | Description |
 |------|-------------|
-| [cli-command-map.md](./cli-command-map.md) | Detailed before/after mapping of every CLI command |
-| (future) TUI wireframes | Screen mockups if interaction changes warrant them |
+| [cli-command-map.md](./cli-command-map.md) | Detailed command-by-command reference with argument specifications and implementation notes |
 
 ## Lifecycle
 
