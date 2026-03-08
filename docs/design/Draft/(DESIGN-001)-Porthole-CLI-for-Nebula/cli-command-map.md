@@ -1,6 +1,6 @@
 # CLI Command Reference
 
-**Supporting doc for:** [DESIGN-001](./(DESIGN-001)-Porthole-CLI-and-TUI-for-Nebula.md)
+**Supporting doc for:** [DESIGN-001](./(DESIGN-001)-Porthole-CLI-for-Nebula.md)
 
 ## Command inventory
 

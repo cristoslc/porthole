@@ -15,8 +15,10 @@ linked-bugs: []
 linked-adrs:
   - ADR-008
   - ADR-006
+  - ADR-009
 depends-on:
   - ADR-008
+  - ADR-009
   - DESIGN-001
 ---
 
@@ -216,15 +218,15 @@ If the current hostname matches an existing peer in state, the enrollment screen
 
 ## Design Decisions
 
-1. **Ansible as bootstrap tool.** Ansible is the only tool porthole installs directly. All other prerequisites are installed via an Ansible playbook. This gives a single, tested, idempotent install path per platform instead of scattered package manager calls.
+1. **TUI invokes CLI commands.** The TUI is a guided wrapper around `porthole` CLI commands, not a parallel implementation. `porthole init`, `porthole add`, `porthole peer-config`, and `porthole bootstrap` are the same commands the operator would run manually. This keeps behavior consistent and testable.
 
-2. **TUI invokes CLI commands.** The TUI is a guided wrapper around `porthole` CLI commands, not a parallel implementation. `porthole init`, `porthole add`, `porthole peer-config`, and `porthole bootstrap` are the same commands the operator would run manually. This keeps behavior consistent and testable.
+2. **Linear screen progression with back-navigation.** Screens gate forward progression (can't enroll without prerequisites, can't install service without enrollment) but allow back-navigation. This prevents operators from reaching screens with unmet dependencies while allowing corrections.
 
-3. **Linear screen progression with back-navigation.** Screens gate forward progression (can't enroll without prerequisites, can't install service without enrollment) but allow back-navigation. This prevents operators from reaching screens with unmet dependencies while allowing corrections.
+3. **Hub spinup is optional.** If the lighthouse is managed externally (pre-existing VPS, different provisioning tool), the operator skips the spinup screen. The TUI adapts to this by checking lighthouse reachability, not provisioning status.
 
-4. **Hub spinup is optional.** If the lighthouse is managed externally (pre-existing VPS, different provisioning tool), the operator skips the spinup screen. The TUI adapts to this by checking lighthouse reachability, not provisioning status.
+4. **Connectivity check is informational, not gating.** The service install screen verifies tunnel connectivity but does not block progression if the lighthouse is unreachable. The operator may be setting up the workstation before the lighthouse is provisioned.
 
-5. **Connectivity check is informational, not gating.** The service install screen verifies tunnel connectivity but does not block progression if the lighthouse is unreachable. The operator may be setting up the workstation before the lighthouse is provisioned.
+See also: [ADR-009](../../../adr/Adopted/(ADR-009)-Ansible-as-Prerequisite-Bootstrap-Tool.md) — Ansible as the prerequisite bootstrap tool.
 
 ## Lifecycle
 

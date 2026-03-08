@@ -10,7 +10,6 @@ linked-epics:
   - EPIC-001
   - EPIC-002
   - EPIC-005
-  - EPIC-006
 linked-specs: []
 depends-on: []
 ---

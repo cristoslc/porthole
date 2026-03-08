@@ -9,6 +9,7 @@ parent-epic: EPIC-001
 linked-research: []
 linked-adrs:
   - ADR-001
+  - ADR-005
 depends-on: []
 ---
 

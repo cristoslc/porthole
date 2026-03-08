@@ -8,8 +8,7 @@ last-updated: 2026-02-28
 superseded-by: ADR-005
 linked-epics:
   - EPIC-001
-linked-specs:
-  - SPEC-002
+linked-specs: []
 depends-on: []
 ---
 
