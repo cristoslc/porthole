@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "execution-tracking": {
+      "source": "cristoslc/swain",
+      "sourceType": "github",
+      "computedHash": "ae02d629515663e07238eea2c6b8d792030cb49d0502d21217055d4bd6f8e21a"
+    },
+    "governance": {
+      "source": "cristoslc/swain",
+      "sourceType": "github",
+      "computedHash": "2ea025d0a83538a44231d4f872651fc798715ba491f7085a4c49bb5a58360fc4"
+    },
+    "release": {
+      "source": "cristoslc/swain",
+      "sourceType": "github",
+      "computedHash": "2410649d14cd6a63f71537f397be85cc4d13ad71e6290e2e765d0c6e46cf8060"
+    },
+    "spec-management": {
+      "source": "cristoslc/swain",
+      "sourceType": "github",
+      "computedHash": "8ba8eb8991d4173ec00a4adaff61ff5b839341c8a07d0d49ccc1966d3a7eba94"
+    }
+  }
+}
