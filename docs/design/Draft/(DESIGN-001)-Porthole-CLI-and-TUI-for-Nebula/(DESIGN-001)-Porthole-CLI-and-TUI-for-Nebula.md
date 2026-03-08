@@ -1,5 +1,5 @@
 ---
-title: "Porthole CLI and TUI for Nebula"
+title: "Porthole CLI for Nebula"
 artifact: DESIGN-001
 status: Draft
 author: cristos
@@ -8,12 +8,10 @@ last-updated: 2026-03-07
 superseded-by:
 linked-epics:
   - EPIC-001
-  - EPIC-007
 linked-stories: []
 linked-specs:
   - SPEC-003
   - SPEC-008
-  - SPEC-009
 linked-bugs: []
 linked-adrs:
   - ADR-008
@@ -22,16 +20,13 @@ depends-on:
   - ADR-008
 ---
 
-# DESIGN-001: Porthole CLI and TUI for Nebula
+# DESIGN-001: Porthole CLI for Nebula
 
 ## Interaction Surface
 
-The complete operator-facing interface for managing a personal Nebula overlay network. Two tools:
+The `porthole` CLI — 12 commands for managing a personal Nebula overlay network. Covers network initialization, peer enrollment, config rendering, lighthouse provisioning, and fleet status.
 
-- **`porthole` CLI** — 12 commands for network initialization, peer management, provisioning, and status
-- **`porthole-setup` TUI** — 7-screen wizard that walks a new operator through first-time setup and node enrollment
-
-**Scope:** Everything the operator types or sees. Not system internals (Spec), not the user journey narrative (Journey), not hub infrastructure (SPEC-008).
+**Scope:** The CLI command set, its arguments, output, and the state it manages. Not the TUI (DESIGN-002), not system internals (Spec), not hub infrastructure (SPEC-008).
 
 ## Architecture Overview
 
@@ -98,7 +93,7 @@ The lighthouse discovers this peer when it connects — no config push or restar
 
 #### `porthole remove`
 
-Removes a peer and optionally revokes its certificate immediately.
+Removes a peer and revokes its certificate.
 
 1. Remove peer entry from state
 2. Add the peer's certificate fingerprint to the blocklist
@@ -320,116 +315,13 @@ Group-to-role mapping:
 | `server` | Headless nodes | SSH, Guacamole (443) |
 | `family` | Non-technical users | ICMP only (managed via Guacamole) |
 
-## TUI Screens
-
-The `porthole-setup` TUI (built with Textual) guides first-time setup through 7 screens. Entry point: `setup.sh` bash shim.
-
-### Screen 1: Prerequisites
-
-Checks for required tools and offers to install missing ones.
-
-| Tool | Purpose | Install method |
-|------|---------|---------------|
-| `nebula` | Overlay network binary | Ansible playbook (downloads platform release) |
-| `nebula-cert` | Certificate management | Bundled with nebula |
-| `sops` | Secrets encryption | Package manager |
-| `age` | Encryption backend for SOPS | Package manager |
-| `terraform` | VPS provisioning | Package manager |
-| `ansible-playbook` | Configuration management | Package manager / pip |
-
-Actions: "Install All" button, per-tool install buttons, "Re-check", "Continue", "Back".
-
-### Screen 2: Secrets
-
-Generates the age keypair used by SOPS for encrypting `network.sops.yaml`.
-
-1. Generate age key if none exists
-2. Write `.sops.yaml` config pointing to the age public key
-3. Display the age public key for the operator to record
-
-### Screen 3: Hub Check
-
-Determines whether the network has been initialized and the lighthouse is reachable.
-
-**States:**
-- **No state file:** Show endpoint input field + "Initialize" button. Runs `porthole init --endpoint <endpoint> --age-key <key>` to create CA + lighthouse cert + encrypted state.
-- **State exists, lighthouse unreachable:** Show DNS resolution status (informational). Offer "Spin Up Hub" (→ Screen 4) or "Continue" (skip provisioning if lighthouse is managed externally).
-- **State exists, lighthouse reachable:** Show green status. "Continue" to enrollment.
-
-Actions: "Initialize", "Spin Up Hub", "Re-check", "Continue", "Back".
-
-### Screen 4: Hub Spinup
-
-Provisions the lighthouse on a VPS. Runs two stages with live output:
-
-1. **Terraform:** `terraform apply` — creates VPS, configures DNS, opens firewall
-2. **Ansible:** `ansible-playbook` — installs nebula lighthouse, CoreDNS, Guacamole Docker stack
-
-Cloud-init injects the lighthouse config at first boot. Progress is streamed to the TUI.
-
-### Screen 5: Enrollment
-
-Enrolls the current machine as a peer in the network.
-
-1. Prompt for node name, role, and platform (pre-filled where detectable)
-2. Run `porthole add <name> --role <role> --platform <platform>` — signs cert, allocates IP
-3. Run `porthole peer-config <name>` — renders config bundle
-4. Display assigned IP and confirmation
-
-The lighthouse discovers this node automatically when nebula starts — no hub config push needed.
-
-### Screen 6: Service Install
-
-Installs the nebula service on the current machine.
-
-1. Copy config bundle to the platform's nebula config directory
-2. Generate and install the platform-appropriate service unit
-3. Enable and start the nebula service
-4. Verify tunnel connectivity (ping lighthouse overlay IP)
-
-| Platform | Config directory | Service type |
-|----------|-----------------|-------------|
-| Linux | `/etc/nebula/` | systemd unit |
-| macOS | `/etc/nebula/` | launchd plist |
-| Windows | `C:\Program Files\Nebula\` | Windows service |
-
-One service (`nebula`) per node. Nebula handles reconnection natively via `punchy` — no watchdog timer required for basic connectivity. An optional SSH tunnel service (SPIKE-006 Layer 2) is available as an add-on for reverse access fallback.
-
-### Screen 7: Summary
-
-Displays a checklist of completed setup steps:
-
-- [ ] Prerequisites installed
-- [ ] Age key generated and SOPS configured
-- [ ] Network initialized (CA created)
-- [ ] Lighthouse provisioned and reachable
-- [ ] This node enrolled (certificate signed)
-- [ ] Nebula service running (tunnel active)
-
-Shows the node's overlay IP, assigned groups, and lighthouse endpoint.
-
-## Frameworks and Tools
-
-| Component | Tool | Notes |
-|-----------|------|-------|
-| CLI framework | Click | Python CLI with command groups |
-| TUI framework | Textual | Python TUI with screen-based navigation |
-| Template engine | Jinja2 | Renders nebula configs and service files |
-| Secrets encryption | SOPS + age | Encrypts state at rest in the repo |
-| VPS provisioning | Terraform | Creates cloud infrastructure |
-| Configuration management | Ansible | Deploys lighthouse config, CoreDNS, Guacamole |
-| DNS | CoreDNS | `.wg` zone for peer hostname resolution |
-| Remote desktop gateway | Guacamole | Browser-based RDP/VNC via Docker |
-| Peer enrollment transfer | Magic Wormhole | Zero-config file transfer for config bundles |
-| Entry point | `setup.sh` | Bash shim that launches the TUI |
-
 ## Edge Cases and Error States
 
 ### CA key not available
 If `network.sops.yaml` can't be decrypted (age key missing), `porthole add` fails with: "Cannot sign certificate — age key required to decrypt CA key. Run `porthole-setup` to configure secrets."
 
 ### Lighthouse unreachable after init
-The lighthouse must be provisioned before peers can connect. If a peer is added but the lighthouse isn't running, the peer's nebula service retries connection in the background. The TUI's hub check screen detects this and offers the spinup flow.
+The lighthouse must be provisioned before peers can connect. If a peer is added but the lighthouse isn't running, the peer's nebula service retries connection in the background.
 
 ### Certificate expiry
 Certs have a configurable duration (default 1 year). For MVP, `porthole add --force` re-signs an existing peer's cert. A future `porthole renew` command could automate bulk re-signing.
@@ -469,4 +361,4 @@ Certs have a configurable duration (default 1 year). For MVP, `porthole add --fo
 
 | Phase | Date | Commit | Notes |
 |-------|------|--------|-------|
-| Draft | 2026-03-07 | — | Initial design based on ADR-008 adoption and existing CLI inventory |
+| Draft | 2026-03-07 | — | Initial design |
